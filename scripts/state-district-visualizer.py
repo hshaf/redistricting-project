@@ -1,14 +1,13 @@
 import geopandas
 import matplotlib.pyplot as plt
+from constants import *
 
 
-# Modify this accordingly
-DATA_PATH = "../data/va_cong_adopted_2021.zip"
 # Path for output HTML file
 OUTPUT_PATH = "../va_districts.html"
 
 def visualize_districts():
-	va_cd = geopandas.read_file(DATA_PATH)
+	va_cd = geopandas.read_file(VA_DISTRICTS_PATH)
 	m = va_cd.explore()
 	m.save(OUTPUT_PATH)
 
