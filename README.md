@@ -12,3 +12,4 @@ Create `data/` under root directory and add data from the following sources,
 - [2021 Virginia Congressional Districts](https://redistrictingdatahub.org/dataset/2021-virginia-congressional-districts-approved-plan/)
 - [2022 Arizona Congressional Districts](https://redistrictingdatahub.org/dataset/2022-arizona-congressional-districts-approved-plan/)
 - [2022 Wisconsin Congressional Districts](https://redistrictingdatahub.org/dataset/2022-wisconsin-congressional-districts-approved-plan/)
+- [U.S. President Precinct-Level Returns 2020](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/JXPREB)
