@@ -1,7 +1,14 @@
 import "react-bootstrap"
 import { Container, Tab, Tabs } from "react-bootstrap";
+import EnsembleOverview from "./EnsembleOverview";
+import ClusterAnalysis from "./ClusterAnalysis";
+import DistanceMeasures from "./DistanceMeasures";
 
-function VisualComponent() {
+
+
+
+
+export default function VisualComponent() {
     return (
 
 
@@ -13,14 +20,14 @@ function VisualComponent() {
                 className="mb-3"
                 fill
             >
-                <Tab eventKey="general" title="General Info">
-                    Tab content for General selection info
+                <Tab eventKey="ensemble" title="Ensemble Info">
+                    <EnsembleOverview />
                 </Tab>
-                <Tab eventKey="cluster" title="Cluster">
-                    Tab content for Cluster Analysis
+                <Tab eventKey="cluster" title="Cluster Analysis">
+                    <ClusterAnalysis/>
                 </Tab>
-                <Tab eventKey="other" title="Other">
-                    Tab content for other
+                <Tab eventKey="other" title="Distance Measures">
+                    <DistanceMeasures/>
                 </Tab>
             </Tabs>
 
@@ -28,5 +35,3 @@ function VisualComponent() {
 
     );
 }
-
-export default VisualComponent
