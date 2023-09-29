@@ -15,11 +15,13 @@ const data01 = [
 class CustomizedDot extends React.Component {
     render() {
         const { cx, cy } = this.props;
+        var rad = 5;
+        if (this.props.payload['z'] != null) { rad = this.props.payload['z'] }
         //console.log(this.props)
         return (
             <Dot style={{ opacity: 0.6 }}
                 cx={cx} cy={cy}
-                r={this.props.payload['z']}
+                r={rad}
                 stroke="black"
                 strokeWidth={1}
                 fill="#8884d8" />
@@ -57,10 +59,10 @@ export default function EnsembleOverview() {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Cluster Data 1</th>
-                            <th>Cluster Data 2</th>
-                            <th>Cluster Data 3</th>
-                            <th>Cluster Data 4</th>
+                            <th>General Cluster Data 1</th>
+                            <th>General Cluster Data 2</th>
+                            <th>General Cluster Data 3</th>
+                            <th>General Cluster Data 4</th>
                         </tr>
                     </thead>
                     <tbody>
