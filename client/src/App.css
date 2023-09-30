@@ -62,10 +62,10 @@
 
 #visual-pane {
   min-height: 100%;
-  width: 30%;
+  width: 40%;
 }
 
 #map-pane {
   height: 100%;
-  width: 70%;
+  width: 60%;
 }
