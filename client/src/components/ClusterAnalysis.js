@@ -33,7 +33,7 @@ export default function ClusterAnalysis() {
 
     return (
         <Container style={{ height: '80vh' }}>
-            <ResponsiveContainer width="100%" height={350}>
+            <ResponsiveContainer width="100%" height={'50%'}>
                 <ScatterChart
                     margin={{
                         top: 20,

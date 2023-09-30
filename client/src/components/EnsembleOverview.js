@@ -32,7 +32,7 @@ class CustomizedDot extends React.Component {
 export default function EnsembleOverview() {
     return (
         <Container style={{ height: '80vh' }}>
-            <ResponsiveContainer width="100%" height={350}>
+            <ResponsiveContainer width="100%" height={'50%'}>
                 <ScatterChart
                     margin={{
                         top: 20,
@@ -54,7 +54,7 @@ export default function EnsembleOverview() {
 
 
 
-            <div style={{ overflowY: 'scroll', minHeight: '30%' }}>
+            <div style={{ overflowY: 'auto', minHeight: '30%' }}>
                 <Table striped style={{}}>
                     <thead>
                         <tr>

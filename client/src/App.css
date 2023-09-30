@@ -63,9 +63,15 @@
 #visual-pane {
   min-height: 100%;
   width: 30%;
+  overflow-y: auto;
 }
 
 #map-pane {
   height: 100%;
   width: 70%;
+}
+
+#visual-box{
+  display: flex;
+  flex-flow:column;
 }

@@ -12,10 +12,10 @@ export default function VisualComponent() {
     return (
 
 
-        <Container>
-
+        <Container id="visual-box">
+                
             <Tabs
-                defaultActiveKey="home"
+                
                 id="VisualComponentTabs"
                 className="mb-3"
                 fill
