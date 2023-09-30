@@ -1,11 +1,11 @@
-import VisualComponent from "./VisualComponent";
+import DataPane from "./DataPane";
 import CustomMap from './CustomMap';
 
 function DisplayPane () {
   return (
     <div id="display-pane">
       <div id="visual-pane">
-      <VisualComponent></VisualComponent>
+      <DataPane></DataPane>
       </div>
       
       <div id="map-pane">

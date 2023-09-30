@@ -24,7 +24,8 @@ class CustomizedDot extends React.Component {
                 r={rad}
                 stroke="black"
                 strokeWidth={1}
-                fill="#d88478" />
+                fill="#d88478" 
+               />
         );
     }
 };
