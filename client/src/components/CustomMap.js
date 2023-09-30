@@ -1,7 +1,7 @@
 import { MapContainer, TileLayer, useMap, Marker, Popup, GeoJSON } from 'react-leaflet';
 import VADistricts from '../data/va-districts.json';
 import AZDistricts from '../data/az-districts.json';
-// import WIDistricts from '../data/wi-districts.json';
+import WIDistricts from '../data/wi-districts.json';
 
 function CustomMap() {
   return (
@@ -12,7 +12,7 @@ function CustomMap() {
         />
         <GeoJSON weight={1} color='blue' key={'Virginia'} data={VADistricts} />
         <GeoJSON weight={1} color='blue' key={'Arizona'} data={AZDistricts} />
-        {/* <GeoJSON weight={1} color='blue' key={'Wisconsin'} data={WIDistricts} /> */}
+        <GeoJSON weight={1} color='blue' key={'Wisconsin'} data={WIDistricts} />
     </MapContainer>
   );
 }
