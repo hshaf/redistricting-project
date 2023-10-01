@@ -6,7 +6,7 @@ const clusterDotColor = "#8d84d8";
 const currentMapColor = "#D4AF37";
 
 const data01 = {
-  "Arizona" : [
+  "AZ" : [
     {cluster: 0, count: 0, polsbyPopper: 0.3, majMin: 3, partisanLean: 3},
     {cluster: 1, count: 100, polsbyPopper: 0.5, majMin: 0, partisanLean: -2},
     {cluster: 2, count: 80, polsbyPopper: 0.1, majMin: 5, partisanLean: 4},
@@ -14,21 +14,21 @@ const data01 = {
     {cluster: 4, count: 50, polsbyPopper: 0.7, majMin: 1, partisanLean: -5},
     {cluster: 5, count: 30, polsbyPopper: 0.4, majMin: 3, partisanLean: 4}
   ],
-  "Virginia" : [
-    {cluster: 0, count: 0, polsbyPopper: 0.3, majMin: 3, partisanLean: 3},
-    {cluster: 1, count: 200, polsbyPopper: 0.5, majMin: 0, partisanLean: -2},
-    {cluster: 2, count: 20, polsbyPopper: 0.1, majMin: 5, partisanLean: 4},
-    {cluster: 3, count: 50, polsbyPopper: 0.9, majMin: 2, partisanLean: 5},
-    {cluster: 4, count: 150, polsbyPopper: 0.7, majMin: 1, partisanLean: -5},
-    {cluster: 5, count: 70, polsbyPopper: 0.4, majMin: 3, partisanLean: 4}
+  "VA" : [
+    {cluster: 0, count: 0, polsbyPopper: 0.5, majMin: 1, partisanLean: 0},
+    {cluster: 1, count: 200, polsbyPopper: 0.5, majMin: 3, partisanLean: 2},
+    {cluster: 2, count: 20, polsbyPopper: 0.3, majMin: 6, partisanLean: -4},
+    {cluster: 3, count: 50, polsbyPopper: 0.2, majMin: 3, partisanLean: 2},
+    {cluster: 4, count: 150, polsbyPopper: 0.4, majMin: 8, partisanLean: -1},
+    {cluster: 5, count: 70, polsbyPopper: 0.6, majMin: 1, partisanLean: 6}
   ],
-  "Wisconsin" : [
-    {cluster: 0, count: 0, polsbyPopper: 0.3, majMin: 3, partisanLean: 3},
-    {cluster: 1, count: 70, polsbyPopper: 0.5, majMin: 0, partisanLean: -2},
-    {cluster: 2, count: 150, polsbyPopper: 0.1, majMin: 5, partisanLean: 4},
-    {cluster: 3, count: 60, polsbyPopper: 0.9, majMin: 2, partisanLean: 5},
-    {cluster: 4, count: 40, polsbyPopper: 0.7, majMin: 1, partisanLean: -5},
-    {cluster: 5, count: 120, polsbyPopper: 0.4, majMin: 3, partisanLean: 4}
+  "WI" : [
+    {cluster: 0, count: 0, polsbyPopper: 0.9, majMin: 3, partisanLean: 2},
+    {cluster: 1, count: 70, polsbyPopper: 0.3, majMin: 0, partisanLean: -3},
+    {cluster: 2, count: 150, polsbyPopper: 0.7, majMin: 5, partisanLean: -4},
+    {cluster: 3, count: 60, polsbyPopper: 0.8, majMin: 2, partisanLean: -6},
+    {cluster: 4, count: 40, polsbyPopper: 0.3, majMin: 1, partisanLean: 5},
+    {cluster: 5, count: 120, polsbyPopper: 0.5, majMin: 3, partisanLean: 4}
   ]
 }
 
@@ -83,7 +83,15 @@ class EnsembleOverview extends Component {
     );
   }
   render () {
-    var clusterData = data01["Virginia"]; // Change this later
+    if (!this.props.selectedState) {
+      return (
+        <Container style={{ height: '80vh' }}>
+          Select a state to get started
+        </Container>
+      )
+    }
+
+    var clusterData = data01[this.props.selectedState]; // Change this later
     const clusterTableEntries = clusterData.map((cluster) => {
       const clusterNum = (cluster["cluster"] === 0) ? "Current" : cluster["cluster"];
       const numMaps = (cluster["cluster"] === 0) ? "--" : cluster["count"];
@@ -150,14 +158,11 @@ class EnsembleOverview extends Component {
               type="number"
               dataKey={this.state.xAxisVar}
               name={this.axisLabels[this.state.xAxisVar]}
-              label={{ value: this.axisLabels[this.statexAxisVar], offset: -8, position: 'insideBottomRight' }} />
+              label={{ value: this.axisLabels[this.state.xAxisVar], offset: -8, position: 'insideBottomRight' }} />
             <YAxis type="number"
               dataKey={this.state.yAxisVar}
               name={this.axisLabels[this.state.yAxisVar]}
               label={{ value: this.axisLabels[this.state.yAxisVar], offset: -2, angle: -90, position: 'insideBottomLeft' }} />
-            <ZAxis type="number"
-              dataKey="cluster"
-              name="Cluster"/>
             <Tooltip cursor={{ strokeDasharray: '3 3' }} />
             <Legend />
             <Scatter name="Clusters" data={clusterData} fill={clusterDotColor} shape={this.renderScatterplotDot} />

@@ -22,7 +22,7 @@ class DataPane extends Component {
       <Container id="visual-box">
         <Navbar expand="lg" className="bg-body-tertiary">
           <Container>
-            <Navbar.Brand>The Giants</Navbar.Brand>
+            <Navbar.Brand>Team Giants</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="me-auto">
@@ -71,7 +71,9 @@ class DataPane extends Component {
         fill
         >
           <Tab eventKey="ensemble" title="Ensemble Info">
-            <EnsembleOverview />
+            <EnsembleOverview 
+                selectedState={this.props.selectedState}
+                updateSelectedState={this.props.updateSelectedState}/>
           </Tab>
           <Tab eventKey="cluster" title="Cluster Analysis">
             <ClusterAnalysis />

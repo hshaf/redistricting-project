@@ -1,56 +1,128 @@
 import { Button, Container, Table } from "react-bootstrap";
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import React, { Component } from "react";
-import CustomizedDot from "./CustomizeDot";
+import { Component } from "react";
+import VADistrictTest from "../data/va-district-test.json"
+
+const clusterMaps = {
+  "VA" : {
+    "ensemble1" : {
+      "clusterData" : {
+        0 : VADistrictTest
+      }
+    }
+  }
+}
 
 class ClusterAnalysis extends Component {
-  data02 = [
-    { x: 20, y: 60 },
-    { x: 40, y: 290},
-    { x: 90, y: 90 },
-    { x: 98, y: 50 },
-    { x: 80, y: 80 },
-    { x: 10, y: 22 },
-  ];
-
   render () {
+    const clusterName = "Current map"
+
+    const selectedDistrict = 0;
+    const districtData = clusterMaps["VA"]["ensemble1"].clusterData[0].features[selectedDistrict].properties;
+
     return (
       <Container style={{ height: '80vh' }}>
-        <ResponsiveContainer width="100%" height={'50%'}>
-          <ScatterChart
-            margin={{
-              top: 20,
-              right: 10,
-              bottom: 10,
-              left: 15,
-            }}
-          >
-            <CartesianGrid />
-            <XAxis type="number" dataKey="x" name="stature" unit="cm" label={{ value: "Data1", offset: -8, position: 'insideBottomRight' }} />
-            <YAxis type="number" dataKey="y" name="weight" unit="kg" label={{ value: "Data2", offset: -2, angle: -90, position: 'insideBottomLeft' }} />
-            {/* <ZAxis type="number" dataKey="z" scale="linear" range={[0, 500]} name="score" unit="km" /> */}
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-            <Legend />
-            <Scatter name="District Plan" onClick={() => { console.log("Clicktest") }} data={this.data02} fill="#d88478" shape={<CustomizedDot />} />
-          </ScatterChart>
-        </ResponsiveContainer>
         <div style={{minHeight: '30%' }}>
           <Table striped style={{}}>
             <thead>
               <tr>
-                <th>Specific Cluster Data 1</th>
-                <th>Specific Cluster Data 2</th>
-                <th>Specific Cluster Data 3</th>
-                <th>Specific Cluster Data 4</th>
+                <th>{clusterName}</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
-              {/* Some map function for the list of dummy data */}
               <tr>
-                <td>Info1</td>
+                <td>Polsby-Popper</td>
+                <td>{0.5}</td>
+              </tr>
+              <tr>
+                <td>Majority-Minority Districts</td>
+                <td>{2}</td>
+              </tr>
+              <tr>
+                <td>Partisan Lean</td>
+                <td>{3}</td>
+              </tr>
+            </tbody>
+          </Table>
+          <Table striped style={{}}>
+            <thead>
+              <tr>
+                <th>District #{districtData.DISTRICT}</th>
+                <th>Pop</th>
+                <th>%</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Total</td>
+                <td>{districtData.pop_total}</td>
+                <td>100.0</td>
+              </tr>
+              <tr>
+                <td>White</td>
                 <td>Info2</td>
-                <td>Info3</td>
-                <td>Info4</td>
+                <td>{(100 * districtData.pct_white).toFixed(1)}</td>
+              </tr>
+              <tr>
+                <td>Black</td>
+                <td>Info2</td>
+                <td>{(100 * districtData.pct_black).toFixed(1)}</td>
+              </tr>
+              <tr>
+                <td>Native</td>
+                <td>Info2</td>
+                <td>{(100 * districtData.pct_native).toFixed(1)}</td>
+              </tr>
+              <tr>
+                <td>Asian</td>
+                <td>Info2</td>
+                <td>{(100 * districtData.pct_asian).toFixed(1)}</td>
+              </tr>
+              <tr>
+                <td>Pacific</td>
+                <td>Info2</td>
+                <td>{(100 * districtData.pct_pacific).toFixed(1)}</td>
+              </tr>
+              <tr>
+                <td>Two or more races</td>
+                <td>Info2</td>
+                <td>{(100 * districtData.pct_two_or_more).toFixed(1)}</td>
+              </tr>
+              <tr>
+                <td>Hispanic</td>
+                <td>Info2</td>
+                <td>{(100 * districtData.pct_hispanic).toFixed(1)}</td>
+              </tr>
+            </tbody>
+          </Table>
+          <Table striped style={{}}>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Votes</th>
+                <th>%</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Total</td>
+                <td>Info2</td>
+                <td>100.0</td>
+              </tr>
+              <tr>
+                <td>Democrat</td>
+                <td>Info2</td>
+                <td>{(100 * districtData.pct_vote_dem).toFixed(1)}</td>
+              </tr>
+              <tr>
+                <td>Republican</td>
+                <td>Info2</td>
+                <td>{(100 * districtData.pct_vote_rep).toFixed(1)}</td>
+              </tr>
+              <tr>
+                <td>Other</td>
+                <td>Info2</td>
+                <td>{(100 * districtData.pct_vote_other).toFixed(1)}</td>
               </tr>
             </tbody>
           </Table>
