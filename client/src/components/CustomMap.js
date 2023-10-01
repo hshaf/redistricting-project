@@ -11,13 +11,13 @@ class CustomMap extends Component {
   render () {
     return (
       <MapContainer center={[38.86438706880524, -95.47162384288428]} zoom={5} scrollWheelZoom={true}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <GeoJSON weight={1} color='blue' key={'Virginia'} data={VAStateBoundaries} />
-          <GeoJSON weight={1} color='blue' key={'Arizona'} data={AZStateBoundaries} />
-          <GeoJSON weight={1} color='blue' key={'Wisconsin'} data={WIStateBoundaries} />
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <GeoJSON weight={1} color='blue' key={'Virginia'} data={VAStateBoundaries} />
+        <GeoJSON weight={1} color='blue' key={'Arizona'} data={AZStateBoundaries} />
+        <GeoJSON weight={1} color='blue' key={'Wisconsin'} data={WIStateBoundaries} />
       </MapContainer>
     );
   }

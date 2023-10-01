@@ -7,11 +7,11 @@ class DisplayPane extends Component {
     return (
       <div id="display-pane">
         <div id="visual-pane">
-        <DataPane></DataPane>
+          <DataPane></DataPane>
         </div>
         
         <div id="map-pane">
-        <CustomMap></CustomMap>
+          <CustomMap></CustomMap>
         </div>
       </div>
     );
