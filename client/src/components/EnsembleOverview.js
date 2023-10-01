@@ -1,7 +1,6 @@
 import { Button, Container, Nav, NavDropdown, Navbar, Table } from "react-bootstrap";
-import { ScatterChart, Scatter, Cell, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Dot } from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Dot } from 'recharts';
 import { Component } from "react";
-import CustomizedDot from "./CustomizeDot";
 
 const clusterDotColor = "#8d84d8";
 const currentMapColor = "#D4AF37";
@@ -80,7 +79,7 @@ class EnsembleOverview extends Component {
         stroke="black"
         strokeWidth={isCurrent ? 3 : 1}
         fill={isCurrent ? currentMapColor : clusterDotColor} 
-        onClick={() => this.setSelectedCluster(input.payload["cluster"])}/>
+        onClick={() => this.setSelectedCluster(input.payload["cluster"])} />
     );
   }
   render () {
@@ -89,7 +88,7 @@ class EnsembleOverview extends Component {
       const clusterNum = (cluster["cluster"] === 0) ? "Current" : cluster["cluster"];
       const numMaps = (cluster["cluster"] === 0) ? "--" : cluster["count"];
       return (
-        <tr>
+        <tr key={`row-${cluster["cluster"]}`}>
           <td><Button variant="link">{clusterNum}</Button></td>
           <td>{numMaps}</td>
           <td>{cluster[this.state.xAxisVar]}</td>
@@ -157,22 +156,12 @@ class EnsembleOverview extends Component {
               name={this.axisLabels[this.state.yAxisVar]}
               label={{ value: this.axisLabels[this.state.yAxisVar], offset: -2, angle: -90, position: 'insideBottomLeft' }} />
             <ZAxis type="number"
-              dataKey="count"
-              name="count"/>
+              dataKey="cluster"
+              name="Cluster"/>
             <Tooltip cursor={{ strokeDasharray: '3 3' }} />
             <Legend />
-            <Scatter name="Clusters" data={clusterData} fill={clusterDotColor} shape={this.renderScatterplotDot}>
-              {/*clusterData.map((entry, index) => {
-                return (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill="#8884d8"
-                    r={entry.count}
-                    onClick={() => this.setSelectedCluster(entry.cluster)}/>
-                )
-              })*/}
-            </Scatter>
-            <Scatter name="Current" fill={currentMapColor} shape={<CustomizedDot />} />
+            <Scatter name="Clusters" data={clusterData} fill={clusterDotColor} shape={this.renderScatterplotDot} />
+            <Scatter name="Current" fill={currentMapColor} />
           </ScatterChart>
         </ResponsiveContainer>
         <div style={{ overflowY: 'auto', minHeight: '30%' }}>
