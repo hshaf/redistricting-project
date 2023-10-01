@@ -100,16 +100,16 @@ class DataPane extends Component {
         <Container id="info-box">
           <div id="welcome-text">
             <h4>
-              Welcome to Team Giant's redistricting site!
+              Welcome to Team Giant's Redistricting Site!
             </h4>
           </div>
           <div id="getting-started-text">
-            To get started, select a state by either navigating through the "Select State" 
-            dropdown menu or clicking within the boundaries of an outlined state on the map.
+            To get started, choose a state either by using the 'Select State' dropdown menu or by 
+            clicking on a state highlighted in blue on the map.
           </div>
           <div id="state-info-text">
             <h4>
-              State information
+              State Information
             </h4>
           </div>
           <div id="selected-state-text">
