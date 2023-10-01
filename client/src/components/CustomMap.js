@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, useMap, Marker, Popup, GeoJSON } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import React, { Component } from "react";
 import VAStateBoundaries from '../data/va-state-boundary.json';
 import AZStateBoundaries from '../data/az-state-boundary.json';
@@ -15,9 +15,9 @@ class CustomMap extends Component {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <GeoJSON weight={1} color='blue' key={'Virginia'} data={VAStateBoundaries} />
-        <GeoJSON weight={1} color='blue' key={'Arizona'} data={AZStateBoundaries} />
-        <GeoJSON weight={1} color='blue' key={'Wisconsin'} data={WIStateBoundaries} />
+        <GeoJSON weight={1} color='blue' key={'Virginia'} data={VAStateBoundaries} onClick={() => this.props.updateSelectedState("VA")} />
+        <GeoJSON weight={1} color='blue' key={'Arizona'} data={AZStateBoundaries} onClick={() => this.props.updateSelectedState("AZ")} />
+        <GeoJSON weight={1} color='blue' key={'Wisconsin'} data={WIStateBoundaries} onClick={() => this.props.updateSelectedState("WI")} />
       </MapContainer>
     );
   }

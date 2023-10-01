@@ -5,7 +5,10 @@ class HomeScreen extends Component {
   render() {
     return (
       <div id="homescreen">
-        <DisplayPane></DisplayPane>
+        <DisplayPane
+        selectedState={this.props.selectedState}
+        updateSelectedState={this.props.updateSelectedState}
+        />
       </div>
     );
   }

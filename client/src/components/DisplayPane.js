@@ -11,7 +11,10 @@ class DisplayPane extends Component {
         </div>
         
         <div id="map-pane">
-          <CustomMap></CustomMap>
+          <CustomMap
+          selectedState={this.props.selectedState}
+          updateSelectedState={this.props.updateSelectedState}
+          />
         </div>
       </div>
     );
