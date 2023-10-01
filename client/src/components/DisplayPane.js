@@ -1,18 +1,21 @@
 import DataPane from "./DataPane";
 import CustomMap from './CustomMap';
+import React, { Component } from "react";
 
-function DisplayPane () {
-  return (
-    <div id="display-pane">
-      <div id="visual-pane">
-      <DataPane></DataPane>
+class DisplayPane extends Component {
+  render () {
+    return (
+      <div id="display-pane">
+        <div id="visual-pane">
+        <DataPane></DataPane>
+        </div>
+        
+        <div id="map-pane">
+        <CustomMap></CustomMap>
+        </div>
       </div>
-      
-      <div id="map-pane">
-      <CustomMap></CustomMap>
-      </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default DisplayPane;

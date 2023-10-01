@@ -1,9 +1,11 @@
+import React, { Component } from "react";
 
-
-export default function DistanceMeasures(){
-
-    return(
-
-        <h1>hello world</h1>
-    )
+class DistanceMeasures extends Component {
+    render () {
+        return (
+            <h1>hello world</h1>
+        );
+    }
 }
+
+export default DistanceMeasures;
