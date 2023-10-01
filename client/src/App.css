@@ -80,3 +80,7 @@ html, body {
   display: flex;
   flex-flow: column;
 }
+
+#visual-box {
+  padding: 0;
+}

@@ -9,12 +9,30 @@ class DataPane extends Component {
     console.log(event);
   };
 
+  handleStateSelection = (event) => {
+    if (event == 'az') {
+      // Arizona selected
+      this.props.updateSelectedState("AZ");
+    }
+
+    if (event == 'va') {
+      // Virginia selected
+      this.props.updateSelectedState("VA");
+    }
+
+    if (event == 'wi') {
+      // Wisconsin selected
+      this.props.updateSelectedState("WI");
+    }
+  }
+
   handleEnsembleDropdown = (event) => {
     console.log(event);
   };
 
   handleReset = () => {
-    console.log("Reset States");
+    // Deselect current state
+    this.props.updateSelectedState("");
   };
 
   render () {
@@ -32,16 +50,17 @@ class DataPane extends Component {
                 </Nav.Link>
     
                 <NavDropdown 
-                title="State" 
+                title="Select State" 
                 id="state-nav-dropdown" 
-                onSelect={this.handleStateDropdown}>
-                  <NavDropdown.Item eventKey={1}>
+                onSelect={this.handleStateSelection}
+                >
+                  <NavDropdown.Item eventKey={'az'}>
                     Arizona
                   </NavDropdown.Item>
-                  <NavDropdown.Item eventKey={2}>
+                  <NavDropdown.Item eventKey={'va'}>
                     Virginia
                   </NavDropdown.Item>
-                  <NavDropdown.Item eventKey={3}>
+                  <NavDropdown.Item eventKey={'wi'}>
                     Wisconsin
                   </NavDropdown.Item> 
                 </NavDropdown>
@@ -56,9 +75,6 @@ class DataPane extends Component {
                   <NavDropdown.Item eventKey={"id2"}>
                     Ensemble 2
                   </NavDropdown.Item>
-                  <NavDropdown.Item eventKey={"id3"}>
-                    These will be generated depending on state selection
-                  </NavDropdown.Item> 
                 </NavDropdown>
               </Nav>
             </Navbar.Collapse>
