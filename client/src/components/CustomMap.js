@@ -15,9 +15,39 @@ class CustomMap extends Component {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <GeoJSON weight={1} color='blue' key={'Virginia'} data={VAStateBoundaries} onClick={() => this.props.updateSelectedState("VA")} />
-        <GeoJSON weight={1} color='blue' key={'Arizona'} data={AZStateBoundaries} onClick={() => this.props.updateSelectedState("AZ")} />
-        <GeoJSON weight={1} color='blue' key={'Wisconsin'} data={WIStateBoundaries} onClick={() => this.props.updateSelectedState("WI")} />
+        <GeoJSON 
+        weight={1} 
+        color='blue' 
+        key={'Virginia'} 
+        data={VAStateBoundaries} 
+        eventHandlers={{
+          click: () => {
+            this.props.updateSelectedState("VA");
+          }
+        }} 
+        />
+        <GeoJSON 
+        weight={1} 
+        color='blue' 
+        key={'Arizona'} 
+        data={AZStateBoundaries}
+        eventHandlers={{
+          click: () => {
+            this.props.updateSelectedState("AZ");
+          }
+        }}
+        />
+        <GeoJSON 
+        weight={1} 
+        color='blue' 
+        key={'Wisconsin'} 
+        data={WIStateBoundaries} 
+        eventHandlers={{
+          click: () => {
+            this.props.updateSelectedState("WI");
+          }
+        }}  
+        />
       </MapContainer>
     );
   }
