@@ -100,7 +100,7 @@ class DataPane extends Component {
         <Container id="info-box">
           <div id="welcome-text">
             <h4>
-              Welcome to Team Giant's Redistricting Site!
+              Welcome to Team Giants Redistricting Site!
             </h4>
           </div>
           <div id="getting-started-text">
