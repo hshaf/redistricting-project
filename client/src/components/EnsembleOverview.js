@@ -85,10 +85,8 @@ class EnsembleOverview extends Component {
   render () {
     if (!this.props.selectedState) {
       return (
-        <Container style={{ height: '80vh' }}>
-          Select a state to get started
-        </Container>
-      )
+        <div></div>
+      );
     }
 
     var clusterData = data01[this.props.selectedState]; // Change this later

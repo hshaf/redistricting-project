@@ -84,3 +84,50 @@ html, body {
 #visual-box {
   padding: 0;
 }
+
+#team-name-text {
+  color: #0d6efd;
+}
+
+#welcome-text {
+  margin: 0 auto;
+  width: 75%;
+  padding-top: 15px;
+  padding-bottom: 4px;
+}
+
+#getting-started-text {
+  margin: 0 auto;
+  width: 75%;
+  padding-bottom: 12px;
+}
+
+#state-info-text {
+  margin: 0 auto;
+  width: 75%;
+  padding-bottom: 4px;
+}
+
+#selected-state-text {
+  margin: 0 auto;
+  width: 75%;
+  padding-bottom: 12px;
+}
+
+#district-plan-text {
+  margin: 0 auto;
+  width: 75%;
+  padding-bottom: 12px;
+}
+
+#political-results-header {
+  margin: 0 auto;
+  width: 75%;
+  padding-bottom: 4px;
+}
+
+#political-results-text {
+  margin: 0 auto;
+  width: 75%;
+  padding-bottom: 15px;
+}

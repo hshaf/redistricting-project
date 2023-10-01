@@ -36,11 +36,27 @@ class DataPane extends Component {
   };
 
   render () {
+    // Get strings for displaying selecte state and district plan
+    let selectedState = ""
+    let districtPlan = ""
+    if (this.props.selectedState == "VA") {
+      selectedState = "Virginia"
+      districtPlan = "State Assembly"
+    }
+    else if (this.props.selectedState == "AZ") {
+      selectedState = "Arizona"
+      districtPlan = "State Assembly"
+    }
+    else if (this.props.selectedState == "WI") {
+      selectedState = "Wisconsin"
+      districtPlan = "State Senate"
+    }
+
     return (
       <Container id="visual-box">
         <Navbar expand="lg" className="bg-body-tertiary">
           <Container>
-            <Navbar.Brand>Team Giants</Navbar.Brand>
+            <Navbar.Brand><div id="team-name-text">Team Giants</div></Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="me-auto">
@@ -80,6 +96,37 @@ class DataPane extends Component {
             </Navbar.Collapse>
           </Container>
         </Navbar>
+
+        <Container id="info-box">
+          <div id="welcome-text">
+            <h4>
+              Welcome to Team Giant's redistricting site!
+            </h4>
+          </div>
+          <div id="getting-started-text">
+            To get started, select a state by either navigating through the "Select State" 
+            dropdown menu or clicking within the boundaries of an outlined state on the map.
+          </div>
+          <div id="state-info-text">
+            <h4>
+              State information
+            </h4>
+          </div>
+          <div id="selected-state-text">
+            Selected state: {selectedState}
+          </div>
+          <div id="district-plan-text">
+            District plan: {districtPlan}
+          </div>
+          <div id="political-results-header">
+            <h4>
+              Political Results
+            </h4>
+          </div>
+          <div id="political-results-text">
+            Estimated using data from 2020 Presidential Election at the precinct level.
+          </div>
+        </Container>
 
         <Tabs
         id="DataPaneTabs"
