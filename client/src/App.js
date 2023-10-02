@@ -20,7 +20,7 @@ class App extends Component {
       be passing in clusterID - 1. */
       selectedClusterID: -1,
       /* Track ID of currently selected ensemble. 
-      By default this value is 0. User can select
+      By default this value is 0 (first ensemble). User can select
       an ID greater than 0 to view different ensemble. */
       selectedEnsembleID: 0
     };

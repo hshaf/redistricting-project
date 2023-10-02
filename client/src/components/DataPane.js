@@ -156,6 +156,12 @@ class DataPane extends Component {
         </Container>
     }
 
+    // If no state is selected, disable ensemble dropdown in navbar
+    let ensembleDropDisable = false;
+    if (!this.props.selectedState) {
+      ensembleDropDisable = true;
+    }
+
     return (
       <Container id="visual-box">
         <Navbar expand="lg" className="bg-body-tertiary">
@@ -188,7 +194,9 @@ class DataPane extends Component {
                 <NavDropdown 
                 title="Ensemble" 
                 id="ensemble-nav-dropdown" 
-                onSelect={this.handleEnsembleDropdown}>
+                onSelect={this.handleEnsembleDropdown}
+                disabled={ensembleDropDisable}
+                >
                   <NavDropdown.Item eventKey={"id1"}>
                     Ensemble 1
                   </NavDropdown.Item>
