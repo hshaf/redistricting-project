@@ -3,11 +3,9 @@ import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Leg
 import { Component } from "react";
 
 const clusterDotColor = "#8d84d8";
-const currentMapColor = "#D4AF37";
 
 const data01 = {
   "AZ" : [
-    {cluster: 0, count: 0, polsbyPopper: 0.3, majMin: 3, partisanLean: 3},
     {cluster: 1, count: 100, polsbyPopper: 0.5, majMin: 0, partisanLean: -2},
     {cluster: 2, count: 80, polsbyPopper: 0.1, majMin: 5, partisanLean: 4},
     {cluster: 3, count: 160, polsbyPopper: 0.9, majMin: 2, partisanLean: 5},
@@ -15,7 +13,6 @@ const data01 = {
     {cluster: 5, count: 30, polsbyPopper: 0.4, majMin: 3, partisanLean: 4}
   ],
   "VA" : [
-    {cluster: 0, count: 0, polsbyPopper: 0.5, majMin: 1, partisanLean: 0},
     {cluster: 1, count: 200, polsbyPopper: 0.5, majMin: 3, partisanLean: 2},
     {cluster: 2, count: 20, polsbyPopper: 0.3, majMin: 6, partisanLean: -4},
     {cluster: 3, count: 50, polsbyPopper: 0.2, majMin: 3, partisanLean: 2},
@@ -23,7 +20,6 @@ const data01 = {
     {cluster: 5, count: 70, polsbyPopper: 0.6, majMin: 1, partisanLean: 6}
   ],
   "WI" : [
-    {cluster: 0, count: 0, polsbyPopper: 0.9, majMin: 3, partisanLean: 2},
     {cluster: 1, count: 70, polsbyPopper: 0.3, majMin: 0, partisanLean: -3},
     {cluster: 2, count: 150, polsbyPopper: 0.7, majMin: 5, partisanLean: -4},
     {cluster: 3, count: 60, polsbyPopper: 0.8, majMin: 2, partisanLean: -6},
@@ -77,8 +73,8 @@ class EnsembleOverview extends Component {
         cx={cx} cy={cy}
         r={rad}
         stroke="black"
-        strokeWidth={isCurrent ? 3 : 1}
-        fill={isCurrent ? currentMapColor : clusterDotColor} 
+        strokeWidth={1}
+        fill={clusterDotColor}
         onClick={() => this.setSelectedCluster(input.payload["cluster"])} />
     );
   }
@@ -91,8 +87,8 @@ class EnsembleOverview extends Component {
 
     var clusterData = data01[this.props.selectedState]; // Change this later
     const clusterTableEntries = clusterData.map((cluster) => {
-      const clusterNum = (cluster["cluster"] === 0) ? "Current" : cluster["cluster"];
-      const numMaps = (cluster["cluster"] === 0) ? "--" : cluster["count"];
+      const clusterNum = cluster["cluster"]
+      const numMaps = cluster["count"]
       return (
         <tr key={`row-${cluster["cluster"]}`}>
           <td><Button variant="link">{clusterNum}</Button></td>
@@ -164,7 +160,6 @@ class EnsembleOverview extends Component {
             <Tooltip cursor={{ strokeDasharray: '3 3' }} />
             <Legend />
             <Scatter name="Clusters" data={clusterData} fill={clusterDotColor} shape={this.renderScatterplotDot} />
-            <Scatter name="Current" fill={currentMapColor} />
           </ScatterChart>
         </ResponsiveContainer>
         <div style={{ overflowY: 'auto', minHeight: '30%' }}>
