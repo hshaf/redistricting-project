@@ -4,30 +4,6 @@ import { Component } from "react";
 
 const clusterDotColor = "#8d84d8";
 
-const data01 = {
-  "AZ" : [
-    {cluster: 1, count: 100, polsbyPopper: 0.5, majMin: 0, partisanLean: -2},
-    {cluster: 2, count: 80, polsbyPopper: 0.1, majMin: 5, partisanLean: 4},
-    {cluster: 3, count: 160, polsbyPopper: 0.9, majMin: 2, partisanLean: 5},
-    {cluster: 4, count: 50, polsbyPopper: 0.7, majMin: 1, partisanLean: -5},
-    {cluster: 5, count: 30, polsbyPopper: 0.4, majMin: 3, partisanLean: 4}
-  ],
-  "VA" : [
-    {cluster: 1, count: 200, polsbyPopper: 0.5, majMin: 3, partisanLean: 2},
-    {cluster: 2, count: 20, polsbyPopper: 0.3, majMin: 6, partisanLean: -4},
-    {cluster: 3, count: 50, polsbyPopper: 0.2, majMin: 3, partisanLean: 2},
-    {cluster: 4, count: 150, polsbyPopper: 0.4, majMin: 8, partisanLean: -1},
-    {cluster: 5, count: 70, polsbyPopper: 0.6, majMin: 1, partisanLean: 6}
-  ],
-  "WI" : [
-    {cluster: 1, count: 70, polsbyPopper: 0.3, majMin: 0, partisanLean: -3},
-    {cluster: 2, count: 150, polsbyPopper: 0.7, majMin: 5, partisanLean: -4},
-    {cluster: 3, count: 60, polsbyPopper: 0.8, majMin: 2, partisanLean: -6},
-    {cluster: 4, count: 40, polsbyPopper: 0.3, majMin: 1, partisanLean: 5},
-    {cluster: 5, count: 120, polsbyPopper: 0.5, majMin: 3, partisanLean: 4}
-  ]
-}
-
 class EnsembleOverview extends Component {
   constructor(props) {
       super(props);
@@ -58,7 +34,7 @@ class EnsembleOverview extends Component {
     })
   }
   setSelectedCluster = (clusterNum) => {
-    this.props.updateSelectedClusterID(clusterNum - 1);
+    this.props.updateSelectedClusterID(clusterNum);
     // Switch to cluster analysis tab
     this.props.updateTab("cluster");
   }
@@ -77,7 +53,7 @@ class EnsembleOverview extends Component {
         stroke="black"
         strokeWidth={1}
         fill={clusterDotColor}
-        onClick={() => this.setSelectedCluster(input.payload["cluster"])} 
+        onClick={() => this.setSelectedCluster(input.payload["clusterNum"])} 
         />
     );
   }
@@ -87,17 +63,19 @@ class EnsembleOverview extends Component {
         <div></div>
       );
     }
-
-    var clusterData = data01[this.props.selectedState]; // Change this later
+    
+    var clusterData = Object.values(this.props.ensembleData[this.props.selectedState][this.props.selectedEnsembleID].clusters) // Change this to get data from request
     const clusterTableEntries = clusterData.map((cluster) => {
-      const clusterNum = cluster["cluster"]
-      const numMaps = cluster["count"]
+      const clusterNum = cluster["clusterNum"]
+      const numMaps = cluster["count"];
+      const xAxisVar = cluster[this.state.xAxisVar];
+      const yAxisVar = cluster[this.state.yAxisVar];
       return (
-        <tr key={`row-${cluster["cluster"]}`}>
+        <tr key={`row-${clusterNum}`}>
           <td><Button variant="link" onClick={() => this.setSelectedCluster(clusterNum)}>{clusterNum}</Button></td>
           <td>{numMaps}</td>
-          <td>{cluster[this.state.xAxisVar]}</td>
-          <td>{cluster[this.state.yAxisVar]}</td>
+          <td>{xAxisVar}</td>
+          <td>{yAxisVar}</td>
         </tr>
       )}
     );

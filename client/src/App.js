@@ -13,16 +13,13 @@ class App extends Component {
       If no state is selected, then value is "". */
       selectedState: "",
       /* Track ID of currently selected cluster. 
-      If no state or cluster is chosen, then value is -1. 
-      Otherwise, value is 0 or greater. 
-      
-      Note: This value is 0-indexed, meaning you will likely
-      be passing in clusterID - 1. */
-      selectedClusterID: -1,
+      If no state or cluster is chosen, then value is "". 
+      Otherwise, value is "1" or greater. */
+      selectedClusterID: "",
       /* Track ID of currently selected ensemble. 
-      By default this value is 0 (first ensemble). User can select
-      an ID greater than 0 to view different ensemble. */
-      selectedEnsembleID: 0
+      By default this value is "1" (first ensemble). User can select
+      an ID greater than "1" to view different ensemble. */
+      selectedEnsembleID: "1"
     };
   }
 
@@ -41,7 +38,8 @@ class App extends Component {
 
     this.setState({
       selectedState: stateName,
-      selectedClusterID: -1
+      selectedEnsembleID: "1",
+      selectedClusterID: ""
     });
   }
 
@@ -49,7 +47,7 @@ class App extends Component {
     /** 
      * Update the current selected cluster ID.
      * 
-     * @param {number}  clusterID   ID of selected cluster.
+     * @param {String}  clusterID   ID of selected cluster.
      */
 
     this.setState({
@@ -61,11 +59,12 @@ class App extends Component {
     /** 
      * Update the current selected ensemble ID.
      * 
-     * @param {number}  ensembleID   ID of selected ensemble.
+     * @param {String}  ensembleID   ID of selected ensemble.
      */
 
     this.setState({
-      selectedEnsembleID: ensembleID
+      selectedEnsembleID: ensembleID,
+      selectedClusterID: ""
     });
   }
 

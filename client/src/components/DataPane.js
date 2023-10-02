@@ -3,6 +3,7 @@ import EnsembleOverview from "./EnsembleOverview";
 import ClusterAnalysis from "./ClusterAnalysis";
 import DistanceMeasures from "./DistanceMeasures";
 import React, { Component } from "react";
+import ensembleData from "../data/ensemble-data.json"
 
 // Use these constants for checking the value of selectedTab state.
 const ENSEMBLE = 'ensemble';
@@ -47,6 +48,13 @@ class DataPane extends Component {
     this.updateTab(ENSEMBLE);
   }
 
+  handleEnsembleSelection = (event) => {
+    this.props.updateSelectedEnsembleID(event);
+
+    // Reset tab back to ensemble info
+    this.updateTab(ENSEMBLE);
+  };
+
   handleEnsembleDropdown = (event) => {
     console.log(event);
   };
@@ -83,7 +91,7 @@ class DataPane extends Component {
 
     // If cluster not selected, disable cluster analysis tab
     let disableClusterTab = false;
-    if (this.props.selectedClusterID === -1) {
+    if (this.props.selectedClusterID === "") {
       disableClusterTab = true;
     }
 
@@ -99,24 +107,30 @@ class DataPane extends Component {
           <Tab eventKey="ensemble" title="Ensemble Info" >
             <EnsembleOverview 
             selectedState={this.props.selectedState}
+            selectedEnsembleID={this.props.selectedEnsembleID}
             selectedClusterID={this.props.selectedClusterID}
             updateSelectedClusterID={this.props.updateSelectedClusterID}
             selectedTab={this.state.selectedTab}
             updateTab={this.updateTab}
+            ensembleData={ensembleData}
             />
           </Tab>
           <Tab eventKey="cluster" title="Cluster Analysis" disabled={disableClusterTab} >
             <ClusterAnalysis 
             selectedState={this.props.selectedState} 
+            selectedEnsembleID={this.props.selectedEnsembleID}
             selectedClusterID={this.props.selectedClusterID}
             updateSelectedClusterID={this.props.updateSelectedClusterID}
+            ensembleData={ensembleData}
             />
           </Tab>
           <Tab eventKey="distance" title="Distance Measures" >
             <DistanceMeasures 
             selectedState={this.props.selectedState} 
+            selectedEnsembleID={this.props.selectedEnsembleID}
             selectedClusterID={this.props.selectedClusterID}
             updateSelectedClusterID={this.props.updateSelectedClusterID}
+            ensembleData={ensembleData}
             />
           </Tab>
         </Tabs>
@@ -158,8 +172,21 @@ class DataPane extends Component {
 
     // If no state is selected, disable ensemble dropdown in navbar
     let ensembleDropDisable = false;
+    let ensembleDropdownItems = <div></div>;
     if (!this.props.selectedState) {
       ensembleDropDisable = true;
+    }
+    // Otherwise, populate dropdown
+    else {
+      ensembleDropdownItems = Object.values(ensembleData[this.props.selectedState]).map((entry) => {
+        console.log(entry);
+        const entryKey = entry["ensembleNum"];
+        const entryLabel = entry["name"];
+        return (
+          <NavDropdown.Item eventKey={entryKey}>
+            {entryLabel}
+          </NavDropdown.Item>);
+      });
     }
 
     return (
@@ -192,17 +219,12 @@ class DataPane extends Component {
                 </NavDropdown>
 
                 <NavDropdown 
-                title="Ensemble" 
-                id="ensemble-nav-dropdown" 
-                onSelect={this.handleEnsembleDropdown}
-                disabled={ensembleDropDisable}
+                  title="Ensemble" 
+                  id="ensemble-nav-dropdown" 
+                  onSelect={this.handleEnsembleSelection}
+                  disabled={ensembleDropDisable}
                 >
-                  <NavDropdown.Item eventKey={"id1"}>
-                    Ensemble 1
-                  </NavDropdown.Item>
-                  <NavDropdown.Item eventKey={"id2"}>
-                    Ensemble 2
-                  </NavDropdown.Item>
+                  {ensembleDropdownItems}
                 </NavDropdown>
                 <Nav.Item className="ms-auto">
                   <Nav.Link>Selected State: {selectedState}</Nav.Link>
