@@ -5,15 +5,10 @@ import DistanceMeasures from "./DistanceMeasures";
 import React, { Component } from "react";
 
 class DataPane extends Component {
-  constructor(props) {
-      super(props);
-      this.state = {
-          selectedTab: "ensemble"
-      }
-  }
   handleStateDropdown = (event) => {
     console.log(event);
   };
+
   handleStateSelection = (event) => {
     if (event == 'az') {
       // Arizona selected
@@ -40,16 +35,8 @@ class DataPane extends Component {
     this.props.updateSelectedState("");
   };
 
-  setTab = (t) => {
-    this.setState(prevState => {
-      return {
-        "selectedTab" : t
-      }
-    })
-  };
-
   render () {
-    // Get strings for displaying selected state and district plan
+    // Get strings for displaying selecte state and district plan
     let selectedState = ""
     let districtPlan = ""
     if (this.props.selectedState == "VA") {
@@ -63,12 +50,6 @@ class DataPane extends Component {
     else if (this.props.selectedState == "WI") {
       selectedState = "Wisconsin"
       districtPlan = "State Senate"
-    }
-
-    // Swap to Ensemble tab if state/cluster is not selected
-    const isStateSelected = (this.props.selectedState === "");
-    if (this.state.selectedTab !== "ensemble" && isStateSelected) {
-      this.setTab("ensemble");
     }
 
     return (
@@ -111,8 +92,12 @@ class DataPane extends Component {
                     Ensemble 2
                   </NavDropdown.Item>
                 </NavDropdown>
-                <Nav className="ms-auto" style={{ minWidth: "25%" }}>Selected State: {selectedState}</Nav>
-                <Nav style={{ minWidth: "25%" }}>District Plan: {districtPlan}</Nav>
+                <Nav.Item className="ms-auto">
+                  <Nav.Link>Selected State: {selectedState}</Nav.Link>
+                </Nav.Item>
+                <Nav.Item className="ms-auto">
+                  <Nav.Link>District Plan: {districtPlan}</Nav.Link>
+                </Nav.Item>
               </Nav>
             </Navbar.Collapse>
           </Container>
@@ -150,20 +135,19 @@ class DataPane extends Component {
         </Container> */}
 
         <Tabs
-            id="DataPaneTabs"
-            className="mb-3"
-            onSelect={(t) => this.setTab(t)}
-            activeKey={this.state.selectedTab}
+        id="DataPaneTabs"
+        className="mb-3"
+        fill
         >
           <Tab eventKey="ensemble" title="Ensemble Info">
             <EnsembleOverview 
                 selectedState={this.props.selectedState}
                 updateSelectedState={this.props.updateSelectedState}/>
           </Tab>
-          <Tab eventKey="cluster" title="Cluster Analysis" disabled={isStateSelected}>
-            <ClusterAnalysis selectedState={this.props.selectedState}/>
+          <Tab eventKey="cluster" title="Cluster Analysis">
+            <ClusterAnalysis />
           </Tab>
-          <Tab eventKey="other" title="Distance Measures" disabled={isStateSelected}>
+          <Tab eventKey="other" title="Distance Measures">
             <DistanceMeasures />
           </Tab>
         </Tabs>
