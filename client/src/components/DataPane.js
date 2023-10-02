@@ -55,11 +55,11 @@ class DataPane extends Component {
     return (
       <Container id="visual-box">
         <Navbar expand="lg" className="bg-body-tertiary">
-          <Container>
+          <Container className="container-fluid">
             <Navbar.Brand><div id="team-name-text">Team Giants</div></Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
+              <Nav className="container-fluid">
                 <Nav.Link 
                 onClick={this.handleReset}>
                   Reset
@@ -92,13 +92,19 @@ class DataPane extends Component {
                     Ensemble 2
                   </NavDropdown.Item>
                 </NavDropdown>
+                <Nav.Item className="ms-auto">
+                  <Nav.Link>Selected State: {selectedState}</Nav.Link>
+                </Nav.Item>
+                <Nav.Item className="ms-auto">
+                  <Nav.Link>District Plan: {districtPlan}</Nav.Link>
+                </Nav.Item>
               </Nav>
             </Navbar.Collapse>
           </Container>
         </Navbar>
 
-        <Container id="info-box">
-          {/* <div id="welcome-text">
+        {/* <Container id="info-box">
+          <div id="welcome-text">
             <h4>
               Welcome to Team Giants Redistricting Site!
             </h4>
@@ -106,7 +112,7 @@ class DataPane extends Component {
           <div id="getting-started-text">
             To get started, choose a state either by using the 'Select State' dropdown menu or by 
             clicking on a state highlighted in blue on the map.
-          </div> */}
+          </div>
           <div id="state-info-text">
             <h4>
               State Information
@@ -118,15 +124,15 @@ class DataPane extends Component {
           <div id="district-plan-text">
             District plan: {districtPlan}
           </div>
-          {/* <div id="political-results-header">
+          <div id="political-results-header">
             <h4>
               Political Results
             </h4>
           </div>
           <div id="political-results-text">
             Estimated using data from 2020 Presidential Election at the precinct level.
-          </div> */}
-        </Container>
+          </div>
+        </Container> */}
 
         <Tabs
         id="DataPaneTabs"
