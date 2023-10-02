@@ -11,7 +11,18 @@ class App extends Component {
     this.state = {
       /* Track currently selected state ("VA", "AZ", or "WI").
       If no state is selected, then value is "". */
-      selectedState: ""
+      selectedState: "",
+      /* Track ID of currently selected cluster. 
+      If no state or cluster is chosen, then value is -1. 
+      Otherwise, value is 0 or greater. 
+      
+      Note: This value is 0-indexed, meaning you will likely
+      be passing in clusterID - 1. */
+      selectedClusterID: -1,
+      /* Track ID of currently selected ensemble. 
+      By default this value is 0. User can select
+      an ID greater than 0 to view different ensemble. */
+      selectedEnsembleID: 0
     };
   }
 
@@ -29,7 +40,32 @@ class App extends Component {
     if (stateName == this.state.selectedState) return;
 
     this.setState({
-      selectedState: stateName
+      selectedState: stateName,
+      selectedClusterID: -1
+    });
+  }
+
+  updateSelectedClusterID = (clusterID) => {
+    /** 
+     * Update the current selected cluster ID.
+     * 
+     * @param {number}  clusterID   ID of selected cluster.
+     */
+
+    this.setState({
+      selectedClusterID: clusterID
+    });
+  }
+
+  updateSelectedEnsembleID = (ensembleID) => {
+    /** 
+     * Update the current selected ensemble ID.
+     * 
+     * @param {number}  ensembleID   ID of selected ensemble.
+     */
+
+    this.setState({
+      selectedEnsembleID: ensembleID
     });
   }
 
@@ -38,6 +74,10 @@ class App extends Component {
       <HomeScreen 
       selectedState={this.state.selectedState}
       updateSelectedState={this.updateSelectedState}
+      selectedClusterID={this.state.selectedClusterID}
+      updateSelectedClusterID={this.updateSelectedClusterID}
+      selectedEnsembleID={this.state.selectedEnsembleID}
+      updateSelectedEnsembleID={this.updateSelectedEnsembleID}
       />
     );
   }

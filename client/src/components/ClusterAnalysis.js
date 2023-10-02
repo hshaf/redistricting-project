@@ -142,14 +142,13 @@ class ClusterAnalysis extends Component {
     );
   }
   render () {
-    if (!this.props.selectedState) {
+    if (!this.props.selectedState || this.props.selectedClusterID === -1) {
       return (
         <div></div>
       );
     }
 
-    // Change this later
-    const selectedCluster = 1
+    const selectedCluster = this.props.selectedClusterID + 1;
     const clusterName = "Cluster #" + selectedCluster;
     const selectedDistrict = 1;
     const districtData = clusterMaps[this.props.selectedState]["ensemble1"].clusterData[selectedCluster].districts;
@@ -217,7 +216,6 @@ class ClusterAnalysis extends Component {
               dataKey={this.state.yAxisVar}
               name={this.axisLabels[this.state.yAxisVar]}
               label={{ value: this.axisLabels[this.state.yAxisVar], offset: -2, angle: -90, position: 'insideBottomLeft' }} />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
             <Legend />
             <Scatter name="Districts" fill={districtDotColor} data={districtData} shape={this.renderScatterplotDot} />
           </ScatterChart>

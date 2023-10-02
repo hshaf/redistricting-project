@@ -56,6 +56,13 @@ class DataPane extends Component {
     // the welcome information pane.
     let dataTabs = <div></div>
     let welcomePane = <div></div>
+
+    // If cluster not selected, disable cluster analysis tab
+    let disableClusterTab = false;
+    if (this.props.selectedClusterID === -1) {
+      disableClusterTab = true;
+    }
+
     if (this.props.selectedState) {
       dataTabs =
       <Tabs
@@ -66,16 +73,22 @@ class DataPane extends Component {
           <Tab eventKey="ensemble" title="Ensemble Info" >
             <EnsembleOverview 
             selectedState={this.props.selectedState}
+            selectedClusterID={this.props.selectedClusterID}
+            updateSelectedClusterID={this.props.updateSelectedClusterID}
             />
           </Tab>
-          <Tab eventKey="cluster" title="Cluster Analysis" >
+          <Tab eventKey="cluster" title="Cluster Analysis" disabled={disableClusterTab} >
             <ClusterAnalysis 
             selectedState={this.props.selectedState} 
+            selectedClusterID={this.props.selectedClusterID}
+            updateSelectedClusterID={this.props.updateSelectedClusterID}
             />
           </Tab>
           <Tab eventKey="other" title="Distance Measures" >
             <DistanceMeasures 
             selectedState={this.props.selectedState} 
+            selectedClusterID={this.props.selectedClusterID}
+            updateSelectedClusterID={this.props.updateSelectedClusterID}
             />
           </Tab>
         </Tabs>

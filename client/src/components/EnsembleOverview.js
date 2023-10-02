@@ -58,7 +58,7 @@ class EnsembleOverview extends Component {
     })
   }
   setSelectedCluster = (clusterNum) => {
-    console.log("Select cluster " + clusterNum);
+    this.props.updateSelectedClusterID(clusterNum - 1);
   }
   renderScatterplotDot = (input) => {
     const cx = input.cx;
@@ -75,7 +75,8 @@ class EnsembleOverview extends Component {
         stroke="black"
         strokeWidth={1}
         fill={clusterDotColor}
-        onClick={() => this.setSelectedCluster(input.payload["cluster"])} />
+        onClick={() => this.setSelectedCluster(input.payload["cluster"])} 
+        />
     );
   }
   render () {
@@ -91,7 +92,7 @@ class EnsembleOverview extends Component {
       const numMaps = cluster["count"]
       return (
         <tr key={`row-${cluster["cluster"]}`}>
-          <td><Button variant="link">{clusterNum}</Button></td>
+          <td><Button variant="link" onClick={() => this.setSelectedCluster(clusterNum)}>{clusterNum}</Button></td>
           <td>{numMaps}</td>
           <td>{cluster[this.state.xAxisVar]}</td>
           <td>{cluster[this.state.yAxisVar]}</td>
@@ -157,17 +158,17 @@ class EnsembleOverview extends Component {
               dataKey={this.state.yAxisVar}
               name={this.axisLabels[this.state.yAxisVar]}
               label={{ value: this.axisLabels[this.state.yAxisVar], offset: -2, angle: -90, position: 'insideBottomLeft' }} />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
             <Legend />
             <Scatter name="Clusters" data={clusterData} fill={clusterDotColor} shape={this.renderScatterplotDot} />
           </ScatterChart>
         </ResponsiveContainer>
+        <h3>Clusters Overview</h3>
         <div style={{ overflowY: 'auto', minHeight: '30%' }}>
           <Table striped style={{}}>
             <thead>
               <tr>
                 <th>Cluster ID</th>
-                <th># of maps</th>
+                <th># of District Plans</th>
                 <th>{this.axisLabels[this.state.xAxisVar]}</th>
                 <th>{this.axisLabels[this.state.yAxisVar]}</th>
               </tr>
