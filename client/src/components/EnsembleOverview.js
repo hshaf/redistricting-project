@@ -13,9 +13,9 @@ class EnsembleOverview extends Component {
       }
   }
   axisLabels = {
-    "polsbyPopper": "Polsby-Popper",
-    "majMin": "Majority-Minority Districts",
-    "partisanLean": "Partisan Lean"
+    "polsbyPopper": "Avg. Polsby-Popper",
+    "majMin": "Avg. Majority-Minority Districts",
+    "partisanLean": "Avg. Partisan Lean"
   }
   setXAxisVar = (axisOption) => {
     this.setState(prevState => {
@@ -92,13 +92,13 @@ class EnsembleOverview extends Component {
                 id="x-axis-nav-dropdown"
                 onSelect={this.setXAxisVar}>
                 <NavDropdown.Item eventKey={"polsbyPopper"}>
-                  Polsby-Popper
+                  Avg. Polsby-Popper
                 </NavDropdown.Item>
                 <NavDropdown.Item eventKey={"majMin"}>
-                  Majority-Minority
+                  Avg. Majority-Minority
                 </NavDropdown.Item>
                 <NavDropdown.Item eventKey={"partisanLean"}>
-                  Partisan Lean
+                  Avg. Partisan Lean
                 </NavDropdown.Item>
               </NavDropdown>
               <NavDropdown
@@ -106,13 +106,13 @@ class EnsembleOverview extends Component {
                 id="y-axis-nav-dropdown"
                 onSelect={this.setYAxisVar}>
                 <NavDropdown.Item eventKey={"polsbyPopper"}>
-                  Polsby-Popper
+                  Avg. Polsby-Popper
                 </NavDropdown.Item>
                 <NavDropdown.Item eventKey={"majMin"}>
-                  Majority-Minority
+                  Avg. Majority-Minority
                 </NavDropdown.Item>
                 <NavDropdown.Item eventKey={"partisanLean"}>
-                  Partisan Lean
+                  Avg. Partisan Lean
                 </NavDropdown.Item>
               </NavDropdown>
             </Nav>

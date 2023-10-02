@@ -179,11 +179,10 @@ class DataPane extends Component {
     // Otherwise, populate dropdown
     else {
       ensembleDropdownItems = Object.values(ensembleData[this.props.selectedState]).map((entry) => {
-        console.log(entry);
         const entryKey = entry["ensembleNum"];
         const entryLabel = entry["name"];
         return (
-          <NavDropdown.Item eventKey={entryKey}>
+          <NavDropdown.Item key={`ensemble-${entryKey}`} eventKey={entryKey}>
             {entryLabel}
           </NavDropdown.Item>);
       });
