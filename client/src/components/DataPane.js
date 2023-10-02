@@ -145,7 +145,7 @@ class DataPane extends Component {
                 updateSelectedState={this.props.updateSelectedState}/>
           </Tab>
           <Tab eventKey="cluster" title="Cluster Analysis">
-            <ClusterAnalysis />
+            <ClusterAnalysis selectedState={this.props.selectedState} />
           </Tab>
           <Tab eventKey="other" title="Distance Measures">
             <DistanceMeasures />

@@ -137,7 +137,7 @@ class ClusterAnalysis extends Component {
         stroke="black"
         strokeWidth={1}
         fill={districtDotColor}
-        onClick={() => this.setSelectedCluster(input.payload["district"])} />
+        />
     );
   }
   render () {
