@@ -98,7 +98,7 @@ class DataPane extends Component {
         </Navbar>
 
         <Container id="info-box">
-          <div id="welcome-text">
+          {/* <div id="welcome-text">
             <h4>
               Welcome to Team Giants Redistricting Site!
             </h4>
@@ -106,7 +106,7 @@ class DataPane extends Component {
           <div id="getting-started-text">
             To get started, choose a state either by using the 'Select State' dropdown menu or by 
             clicking on a state highlighted in blue on the map.
-          </div>
+          </div> */}
           <div id="state-info-text">
             <h4>
               State Information
@@ -118,14 +118,14 @@ class DataPane extends Component {
           <div id="district-plan-text">
             District plan: {districtPlan}
           </div>
-          <div id="political-results-header">
+          {/* <div id="political-results-header">
             <h4>
               Political Results
             </h4>
           </div>
           <div id="political-results-text">
             Estimated using data from 2020 Presidential Election at the precinct level.
-          </div>
+          </div> */}
         </Container>
 
         <Tabs

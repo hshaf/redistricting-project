@@ -67,13 +67,13 @@ html, body {
 
 #visual-pane {
   min-height: 100%;
-  width: 40%;
+  width: 50%;
   overflow-y: auto;
 }
 
 #map-pane {
   min-height: 100%;
-  width: 60%;
+  width: 50%;
 }
 
 #visual-box {
@@ -89,7 +89,7 @@ html, body {
   color: #0d6efd;
 }
 
-#welcome-text {
+/* #welcome-text {
   margin: 0 auto;
   width: 75%;
   padding-top: 15px;
@@ -100,34 +100,56 @@ html, body {
   margin: 0 auto;
   width: 75%;
   padding-bottom: 12px;
-}
+} */
 
 #state-info-text {
   margin: 0 auto;
-  width: 75%;
+  width: 25%;
+  padding-top: 15px;
   padding-bottom: 4px;
 }
 
 #selected-state-text {
   margin: 0 auto;
-  width: 75%;
+  width: 25%;
   padding-bottom: 12px;
 }
 
 #district-plan-text {
   margin: 0 auto;
-  width: 75%;
+  width: 25%;
   padding-bottom: 12px;
 }
 
-#political-results-header {
+/* #political-results-header {
   margin: 0 auto;
-  width: 75%;
+  width: 25%;
   padding-bottom: 4px;
 }
 
 #political-results-text {
   margin: 0 auto;
-  width: 75%;
+  width: 25%;
   padding-bottom: 15px;
+} */
+
+/* Scrollbar css */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
