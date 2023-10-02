@@ -52,6 +52,69 @@ class DataPane extends Component {
       districtPlan = "State Senate"
     }
 
+    // If no state is selected, we hide the tabs and show
+    // the welcome information pane.
+    let dataTabs = <div></div>
+    let welcomePane = <div></div>
+    if (this.props.selectedState) {
+      dataTabs =
+      <Tabs
+        id="DataPaneTabs"
+        className="mb-3"
+        fill
+        >
+          <Tab eventKey="ensemble" title="Ensemble Info" >
+            <EnsembleOverview 
+            selectedState={this.props.selectedState}
+            />
+          </Tab>
+          <Tab eventKey="cluster" title="Cluster Analysis" >
+            <ClusterAnalysis 
+            selectedState={this.props.selectedState} 
+            />
+          </Tab>
+          <Tab eventKey="other" title="Distance Measures" >
+            <DistanceMeasures 
+            selectedState={this.props.selectedState} 
+            />
+          </Tab>
+        </Tabs>
+    }
+
+    else {
+      welcomePane = 
+      <Container id="info-box">
+          <div id="welcome-text">
+            <h4>
+              Welcome to Team Giants District Plan Site!
+            </h4>
+          </div>
+          <div id="getting-started-text">
+            To get started, choose a state either by using the 'Select State' dropdown menu or by 
+            clicking on a state highlighted in blue on the map.
+          </div>
+          {/* <div id="state-info-text">
+            <h4>
+              State Information
+            </h4>
+          </div>
+          <div id="selected-state-text">
+            Selected state: {selectedState}
+          </div>
+          <div id="district-plan-text">
+            District plan: {districtPlan}
+          </div>
+          <div id="political-results-header">
+            <h4>
+              Political Results
+            </h4>
+          </div>
+          <div id="political-results-text">
+            Estimated using data from 2020 Presidential Election at the precinct level.
+          </div> */}
+        </Container>
+    }
+
     return (
       <Container id="visual-box">
         <Navbar expand="lg" className="bg-body-tertiary">
@@ -103,54 +166,9 @@ class DataPane extends Component {
           </Container>
         </Navbar>
 
-        {/* <Container id="info-box">
-          <div id="welcome-text">
-            <h4>
-              Welcome to Team Giants Redistricting Site!
-            </h4>
-          </div>
-          <div id="getting-started-text">
-            To get started, choose a state either by using the 'Select State' dropdown menu or by 
-            clicking on a state highlighted in blue on the map.
-          </div>
-          <div id="state-info-text">
-            <h4>
-              State Information
-            </h4>
-          </div>
-          <div id="selected-state-text">
-            Selected state: {selectedState}
-          </div>
-          <div id="district-plan-text">
-            District plan: {districtPlan}
-          </div>
-          <div id="political-results-header">
-            <h4>
-              Political Results
-            </h4>
-          </div>
-          <div id="political-results-text">
-            Estimated using data from 2020 Presidential Election at the precinct level.
-          </div>
-        </Container> */}
+        {welcomePane}
 
-        <Tabs
-        id="DataPaneTabs"
-        className="mb-3"
-        fill
-        >
-          <Tab eventKey="ensemble" title="Ensemble Info">
-            <EnsembleOverview 
-                selectedState={this.props.selectedState}
-                updateSelectedState={this.props.updateSelectedState}/>
-          </Tab>
-          <Tab eventKey="cluster" title="Cluster Analysis">
-            <ClusterAnalysis selectedState={this.props.selectedState} />
-          </Tab>
-          <Tab eventKey="other" title="Distance Measures">
-            <DistanceMeasures />
-          </Tab>
-        </Tabs>
+        {dataTabs}
       </Container>
     );
   }

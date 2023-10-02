@@ -89,18 +89,18 @@ html, body {
   color: #0d6efd;
 }
 
-/* #welcome-text {
+#welcome-text {
   margin: 0 auto;
-  width: 75%;
-  padding-top: 15px;
+  width: 85%;
+  padding-top: 65px;
   padding-bottom: 4px;
 }
 
 #getting-started-text {
   margin: 0 auto;
-  width: 75%;
+  width: 85%;
   padding-bottom: 12px;
-} */
+}
 
 #state-info-text {
   margin: 0 auto;
