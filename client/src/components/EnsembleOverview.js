@@ -59,6 +59,8 @@ class EnsembleOverview extends Component {
   }
   setSelectedCluster = (clusterNum) => {
     this.props.updateSelectedClusterID(clusterNum - 1);
+    // Switch to cluster analysis tab
+    this.props.updateTab("cluster");
   }
   renderScatterplotDot = (input) => {
     const cx = input.cx;

@@ -4,7 +4,25 @@ import ClusterAnalysis from "./ClusterAnalysis";
 import DistanceMeasures from "./DistanceMeasures";
 import React, { Component } from "react";
 
+// Use these constants for checking the value of selectedTab state.
+const ENSEMBLE = 'ensemble';
+const CLUSTER = 'cluster';
+const DISTANCE = 'distance';
+
 class DataPane extends Component {
+  constructor () {
+    super();
+    this.state = {
+      selectedTab: ENSEMBLE
+    };
+  }
+
+  updateTab = (tab) => {
+    this.setState({
+      selectedTab: tab
+    });
+  }
+
   handleStateDropdown = (event) => {
     console.log(event);
   };
@@ -24,6 +42,9 @@ class DataPane extends Component {
       // Wisconsin selected
       this.props.updateSelectedState("WI");
     }
+
+    // Reset tab back to ensemble info
+    this.updateTab(ENSEMBLE);
   }
 
   handleEnsembleDropdown = (event) => {
@@ -33,6 +54,9 @@ class DataPane extends Component {
   handleReset = () => {
     // Deselect current state
     this.props.updateSelectedState("");
+
+    // Reset tab back to ensemble info
+    this.updateTab(ENSEMBLE);
   };
 
   render () {
@@ -69,12 +93,16 @@ class DataPane extends Component {
         id="DataPaneTabs"
         className="mb-3"
         fill
+        onSelect={(tab) => this.updateTab(tab)}
+        activeKey={this.state.selectedTab}
         >
           <Tab eventKey="ensemble" title="Ensemble Info" >
             <EnsembleOverview 
             selectedState={this.props.selectedState}
             selectedClusterID={this.props.selectedClusterID}
             updateSelectedClusterID={this.props.updateSelectedClusterID}
+            selectedTab={this.state.selectedTab}
+            updateTab={this.updateTab}
             />
           </Tab>
           <Tab eventKey="cluster" title="Cluster Analysis" disabled={disableClusterTab} >
@@ -84,7 +112,7 @@ class DataPane extends Component {
             updateSelectedClusterID={this.props.updateSelectedClusterID}
             />
           </Tab>
-          <Tab eventKey="other" title="Distance Measures" >
+          <Tab eventKey="distance" title="Distance Measures" >
             <DistanceMeasures 
             selectedState={this.props.selectedState} 
             selectedClusterID={this.props.selectedClusterID}
