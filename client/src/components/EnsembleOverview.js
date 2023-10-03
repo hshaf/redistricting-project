@@ -2,7 +2,7 @@ import { Button, Container, Nav, NavDropdown, Navbar, Table } from "react-bootst
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Dot } from 'recharts';
 import { Component } from "react";
 
-const clusterDotColor = "#8d84d8";
+const clusterDotColor = "#0d6efd";
 
 class EnsembleOverview extends Component {
   constructor(props) {
@@ -80,13 +80,16 @@ class EnsembleOverview extends Component {
       )}
     );
 
+    // Get name of selected ensemble
+    let selectedEnsemble = this.props.ensembleData[this.props.selectedState][this.props.selectedEnsembleID].name;
+
     return (
       <Container style={{ height: '80vh' }}>
         <Navbar expand="lg" className="bg-body-tertiary">
-          <Container>
+          <Container className="container-fluid">
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
+              <Nav className="container-fluid">
               <NavDropdown
                 title="X-Axis"
                 id="x-axis-nav-dropdown"
@@ -115,6 +118,9 @@ class EnsembleOverview extends Component {
                   Avg. Partisan Lean
                 </NavDropdown.Item>
               </NavDropdown>
+              <Nav.Item className="ms-auto">
+                <Nav.Link>Ensemble: {selectedEnsemble}</Nav.Link>
+              </Nav.Item>
             </Nav>
             </Navbar.Collapse>
           </Container>
@@ -142,7 +148,7 @@ class EnsembleOverview extends Component {
             <Scatter name="Clusters" data={clusterData} fill={clusterDotColor} shape={this.renderScatterplotDot} />
           </ScatterChart>
         </ResponsiveContainer>
-        <h3>Clusters Overview</h3>
+        <h4>Clusters Overview</h4>
         <div style={{ overflowY: 'auto', minHeight: '30%' }}>
           <Table striped style={{}}>
             <thead>
