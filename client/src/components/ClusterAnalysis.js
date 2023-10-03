@@ -148,7 +148,7 @@ class ClusterAnalysis extends Component {
               name={this.axisLabels[this.state.yAxisVar]}
               label={{ value: this.axisLabels[this.state.yAxisVar], offset: -2, angle: -90, position: 'insideBottomLeft' }} />
             <Legend />
-            <Scatter name="Districts" fill={districtDotColor} data={districtData} shape={this.renderScatterplotDot} />
+            <Scatter name="District Plans" fill={districtDotColor} data={districtData} shape={this.renderScatterplotDot} />
           </ScatterChart>
         </ResponsiveContainer>
         <h4>
@@ -193,6 +193,7 @@ class ClusterAnalysis extends Component {
             </tbody>
           </Table>
         </div>
+        <div>Political results estimated using data from 2020 Presidential Election at the precinct level.</div>
       </Container>
     );
   }
