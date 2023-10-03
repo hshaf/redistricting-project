@@ -74,8 +74,8 @@ class EnsembleOverview extends Component {
         <tr key={`row-${clusterNum}`}>
           <td><Button variant="link" onClick={() => this.setSelectedCluster(clusterNum)}>{clusterNum}</Button></td>
           <td>{numMaps}</td>
-          <td>{xAxisVar}</td>
-          <td>{yAxisVar}</td>
+          <td>{xAxisVar.toFixed(3)}</td>
+          <td>{yAxisVar.toFixed(3)}</td>
         </tr>
       )}
     );

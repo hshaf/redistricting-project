@@ -64,21 +64,28 @@ class ClusterAnalysis extends Component {
     var clusterData = this.props.ensembleData[this.props.selectedState][this.props.selectedEnsembleID].clusters[this.props.selectedClusterID] // Change this to get data from request
     var districtData = Object.values(clusterData.plans)
     
+    // Fix cluster table values to 3 decimal places if variable is a float
     const clusterName = "Cluster #" + this.props.selectedClusterID + " Overview";
     const clusterNumMaps = clusterData["count"];
-    const clusterPolsbyPopper = clusterData["polsbyPopper"];
-    const clusterMajMin = clusterData["majMin"];
-    const clusterPartisanLean = clusterData["partisanLean"];
+    const clusterPolsbyPopper = clusterData["polsbyPopper"].toFixed(3);
+    const clusterMajMin = clusterData["majMin"].toFixed(3);
+    const clusterPartisanLean = clusterData["partisanLean"].toFixed(3);
 
+    // Generate table for district plan statistics
     const districtPlanEntries = districtData.map((districtPlan) => {
       const districtPlanNum = districtPlan["planNum"]
       const xAxisVar = districtPlan[this.state.xAxisVar];
       const yAxisVar = districtPlan[this.state.yAxisVar];
+      
+      // Fix to 0 decimal places if variable is always an integer, 3 decimal places otherwise
+      const integerVars = ["majMin", "partisanLean"]
+      const xVarDecimals = (integerVars.indexOf(this.state.xAxisVar) === -1 ? 3 : 0)
+      const yVarDecimals = (integerVars.indexOf(this.state.yAxisVar) === -1 ? 3 : 0)
       return (
         <tr key={`row-${districtPlanNum}`}>
           <td>{districtPlanNum}</td>
-          <td>{xAxisVar}</td>
-          <td>{yAxisVar}</td>
+          <td>{xAxisVar.toFixed(xVarDecimals)}</td>
+          <td>{yAxisVar.toFixed(yVarDecimals)}</td>
         </tr>
       )}
     );
