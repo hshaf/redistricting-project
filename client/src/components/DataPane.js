@@ -1,9 +1,10 @@
-import { Container, Nav, NavDropdown, Navbar, Tab, Tabs } from "react-bootstrap";
+import { Button, Container, Nav, NavDropdown, Navbar, Tab, Tabs } from "react-bootstrap";
 import EnsembleOverview from "./EnsembleOverview";
 import ClusterAnalysis from "./ClusterAnalysis";
 import DistanceMeasures from "./DistanceMeasures";
 import React, { Component } from "react";
 import ensembleData from "../data/ensemble-data.json"
+import api from "../serverAPI";
 
 // Use these constants for checking the value of selectedTab state.
 const ENSEMBLE = 'ensemble';
@@ -66,6 +67,11 @@ class DataPane extends Component {
     // Reset tab back to ensemble info
     this.updateTab(ENSEMBLE);
   };
+
+  async handleCall() {
+    var response = await api.getHello();
+    console.log(response);
+  }
 
   render () {
     // Get strings for displaying selecte state and district plan
@@ -140,6 +146,7 @@ class DataPane extends Component {
       welcomePane = 
       <Container id="info-box">
           <div id="welcome-text">
+            <Button onClick={async () => {await this.handleCall();}}>Click for funny</Button>
             <h4>
               Welcome to Team Giants District Plan Site!
             </h4>
