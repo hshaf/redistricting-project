@@ -9,10 +9,13 @@ const api = axios.create(
 )
 
 export const getHello = () => api.get('/test/')
+export const getList = () => api.get('/test/list')
+export const getHash = () => api.get('test/hash')
+export const getHelloName = (name) => api.get('/test/${name}')
 
 
-const apis = {
-  getHello
-}
+// const apis = {
+//   getHello
+// }
 
-export default apis
+// export default apis

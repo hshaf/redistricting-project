@@ -3,6 +3,7 @@ package data.connector.RedistrictConnector.Controllers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,12 +17,17 @@ public class HelloController {
 
 	@GetMapping("")
 	public String defaultMessage() {
-		return "---------Default------------";
+		return "Default";
 	}
 
 	@GetMapping("/")
 	public String helloMessage() {
-		return "---------Hello------------";
+		return "Hello";
+	}
+
+	@GetMapping("/{name}")
+	public String helloNameMessage(@PathVariable String name){
+		return "Hello " + name;
 	}
 
 	@GetMapping("/g")
