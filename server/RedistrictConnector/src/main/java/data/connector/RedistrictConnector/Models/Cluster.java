@@ -31,6 +31,10 @@ public class Cluster {
   
   protected Cluster() {}
 
+  public Cluster(String temp){ //Temporary constructor 
+
+  }
+
 
   public Integer getId(){
     return this.id;
