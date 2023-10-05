@@ -80,7 +80,11 @@ class DataPane extends Component {
     let request = document.getElementById("name-request-field").value;
     // If name provided in field, call different endpoint
     let response;
-    if (request) {
+    if(request === "object"){
+      response = await api.getHash();
+      console.log(response.data)
+    }
+    else if (request) {
       response = await api.getHelloName(request);
     }
     else {
