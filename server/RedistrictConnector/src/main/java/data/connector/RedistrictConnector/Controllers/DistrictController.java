@@ -8,7 +8,7 @@ import data.connector.RedistrictConnector.Models.Ensemble;
 
 @RestController
 @RequestMapping("/district")
-public class DistrictController {
+public class DistrictController {//Each method will use a soon to be made District service
 
   // @GetMapping("/{id}")
   // public District getDistrictById() {

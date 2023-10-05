@@ -102,6 +102,36 @@ html, body {
   padding-bottom: 12px;
 }
 
+#request-data-box {
+  margin: 0 auto;
+  width: 85%;
+  padding-top: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+#response-display {
+  background-color: #f8f8f8;
+  resize: none;
+}
+
+#name-request-box {
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  display: flex;
+  flex-direction: row;
+}
+
+#name-request-field {
+  width: 67%;
+  resize: none;
+}
+
+#enter-name-label {
+  width: 33%;
+}
+
 #state-info-text {
   margin: 0 auto;
   width: 25%;

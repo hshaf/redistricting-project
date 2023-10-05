@@ -1,13 +1,17 @@
 # Spring Server
 
 Maven 3.5+
-Use Java 17.0.8
+
+Use Oracle Java 17.0.8
+
 Make environment variable JAVA_HOME to the path of your java 17 folder
 
 mvnw: The maven command for running the server
 
 mvnw install : Builds the server
+
 mvnw clean : Destroys current build of the server
+
 mvnw spring-boot:run : Runs and builds the server on localhost:8080
 
 ## Controllers

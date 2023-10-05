@@ -1,9 +1,10 @@
-import { Container, Nav, NavDropdown, Navbar, Tab, Tabs } from "react-bootstrap";
+import { Button, Container, Nav, NavDropdown, Navbar, Tab, Tabs } from "react-bootstrap";
 import EnsembleOverview from "./EnsembleOverview";
 import ClusterAnalysis from "./ClusterAnalysis";
 import DistanceMeasures from "./DistanceMeasures";
 import React, { Component } from "react";
 import ensembleData from "../data/ensemble-data.json"
+import api from "../serverAPI";
 
 // Use these constants for checking the value of selectedTab state.
 const ENSEMBLE = 'ensemble';
@@ -14,8 +15,16 @@ class DataPane extends Component {
   constructor () {
     super();
     this.state = {
-      selectedTab: ENSEMBLE
+      selectedTab: ENSEMBLE,
+      requestdatatext: ""
     };
+  }
+
+  updateRequestDataText = (text) => {
+    // Update textarea value for requesting data from backend
+    this.setState({
+      requestdatatext: text
+    });
   }
 
   updateTab = (tab) => {
@@ -66,6 +75,27 @@ class DataPane extends Component {
     // Reset tab back to ensemble info
     this.updateTab(ENSEMBLE);
   };
+
+  async handleCall() {
+    let request = document.getElementById("name-request-field").value;
+    // If name provided in field, call different endpoint
+    let response;
+    if(request === "object"){
+      response = await api.getHash();
+      console.log(response.data)
+    }
+    else if (request) {
+      response = await api.getHelloName(request);
+    }
+    else {
+      response = await api.getHello();
+    }
+
+    // Display HTTP response in console
+    console.log(response);
+    // Update display text area with contents of HTTP response
+    this.updateRequestDataText(response['data']);
+  }
 
   render () {
     // Get strings for displaying selecte state and district plan
@@ -147,6 +177,15 @@ class DataPane extends Component {
           <div id="getting-started-text">
             To get started, choose a state either by using the 'Select State' dropdown menu or by 
             clicking on a state highlighted in blue on the map.
+          </div>
+          <div id="request-data-box">
+            <h5>Response:</h5>
+            <textarea name="postContent" id="response-display" rows={6} cols={40} readOnly={true} value={this.state.requestdatatext} onChange={(e) => this.updateRequestDataText(e.target.value)} />
+            <div id="name-request-box">
+              <h5 id="enter-name-label">Enter your name (optional):</h5>
+              <textarea id="name-request-field" rows={1} cols={40} />
+            </div>
+            <Button onClick={async () => {await this.handleCall();}}>Send Request</Button>
           </div>
           {/* <div id="state-info-text">
             <h4>
