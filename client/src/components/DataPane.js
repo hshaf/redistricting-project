@@ -15,8 +15,16 @@ class DataPane extends Component {
   constructor () {
     super();
     this.state = {
-      selectedTab: ENSEMBLE
+      selectedTab: ENSEMBLE,
+      requestdatatext: ""
     };
+  }
+
+  updateRequestDataText = (text) => {
+    // Update textarea value for requesting data from backend
+    this.setState({
+      requestdatatext: text
+    });
   }
 
   updateTab = (tab) => {
@@ -69,8 +77,20 @@ class DataPane extends Component {
   };
 
   async handleCall() {
-    var response = await api.getHello();
+    let request = document.getElementById("name-request-field").value;
+    // If name provided in field, call different endpoint
+    let response;
+    if (request) {
+      response = await api.getHelloName(request);
+    }
+    else {
+      response = await api.getHello();
+    }
+
+    // Display HTTP response in console
     console.log(response);
+    // Update display text area with contents of HTTP response
+    this.updateRequestDataText(response['data']);
   }
 
   render () {
@@ -146,7 +166,6 @@ class DataPane extends Component {
       welcomePane = 
       <Container id="info-box">
           <div id="welcome-text">
-            <Button onClick={async () => {await this.handleCall();}}>Click for funny</Button>
             <h4>
               Welcome to Team Giants District Plan Site!
             </h4>
@@ -154,6 +173,15 @@ class DataPane extends Component {
           <div id="getting-started-text">
             To get started, choose a state either by using the 'Select State' dropdown menu or by 
             clicking on a state highlighted in blue on the map.
+          </div>
+          <div id="request-data-box">
+            <h5>Response:</h5>
+            <textarea name="postContent" id="response-display" rows={6} cols={40} readOnly={true} value={this.state.requestdatatext} onChange={(e) => this.updateRequestDataText(e.target.value)} />
+            <div id="name-request-box">
+              <h5 id="enter-name-label">Enter your name (optional):</h5>
+              <textarea id="name-request-field" rows={1} cols={40} />
+            </div>
+            <Button onClick={async () => {await this.handleCall();}}>Send Request</Button>
           </div>
           {/* <div id="state-info-text">
             <h4>

@@ -22,12 +22,12 @@ public class HelloController {
 
 	@GetMapping("/")
 	public String helloMessage() {
-		return "Hello";
+		return "Hello! Response from endpoint #1.";
 	}
 
 	@GetMapping("/{name}")
 	public String helloNameMessage(@PathVariable String name){
-		return "Hello " + name;
+		return "Hello, " + name + "! Response from endpoint #2.";
 	}
 
 	@GetMapping("/g")
