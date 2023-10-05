@@ -14,8 +14,11 @@ export const getHash = () => api.get('test/hash')
 export const getHelloName = (name) => api.get('/test/${name}')
 
 
-// const apis = {
-//   getHello
-// }
+const apis = {
+  getHello,
+  getList,
+  getHash,
+  getHelloName
+}
 
-// export default apis
+export default apis
