@@ -28,8 +28,8 @@ public class DistrictController {
         return "Hello from DistrictController";
     }
 
-    @PostMapping("/add")
-    public String createDistrict(@RequestBody District district) {
-        return districtService.create(district);
+    @PostMapping("/add/{clusterId}")
+    public String createDistrict(@RequestBody District district, @PathVariable String clusterId) {
+        return districtService.create(district, clusterId);
     }
 }

@@ -1,12 +1,15 @@
 package data.connector.RedistrictConnector.Services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import data.connector.RedistrictConnector.ResourceNotFoundException;
+import data.connector.RedistrictConnector.Models.Cluster;
 import data.connector.RedistrictConnector.Models.District;
+import data.connector.RedistrictConnector.Repositories.ClusterRepository;
 import data.connector.RedistrictConnector.Repositories.DistrictRepository;
 
 @Service
@@ -14,6 +17,9 @@ public class DistrictService {
     
     @Autowired
     private DistrictRepository districtRepository;
+
+    @Autowired
+    private ClusterRepository clusterRepository;
 
     public District findById(String id) {
         Optional<District> district = districtRepository.findById(id);
@@ -26,9 +32,23 @@ public class DistrictService {
         }
     }
 
-    public String create(District district) {
+    public String create(District district, String clusterId) {
         try {
-            districtRepository.save(new District(district.getPolsbyPopper(), district.getMajMin(), district.getPartisanLean()));
+            District newDistrict = new District(district.getPolsbyPopper(), district.getMajMin(), district.getPartisanLean());
+            districtRepository.save(newDistrict);
+            
+            Optional<Cluster> cluster = clusterRepository.findById(clusterId);
+            if (cluster.isPresent()) {
+                Cluster clusterUpdate = cluster.get();
+                List<District> districts = clusterUpdate.getDistricts();
+                districts.add(newDistrict);
+                clusterUpdate.setDistricts(districts);
+                clusterRepository.save(clusterUpdate);
+            }
+            else {
+                throw new ResourceNotFoundException("Failed to add district to cluster with id : " + cluster);
+            }
+
             return "Added district successfully";
         }
         catch (Exception e) {

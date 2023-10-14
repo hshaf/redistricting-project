@@ -1,42 +1,63 @@
 package data.connector.RedistrictConnector.Models;
 
-
-
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
 public class Cluster {
-  
 
-  private Integer id;
+    @Id
+    private String id;
 
-  private List<String> tags = new ArrayList<String>();
+    private Integer districtCount;
 
-  private List<District>  districts = new ArrayList<District>();
+    @DBRef
+    private List<District> districts;
 
-  private Ensemble ensemble;
-  
-  protected Cluster() {}
+    private Double polsbyPopper;
+    private Double majMin;
+    private Double partisanLean;
+    private Distances distances;
 
-  public Cluster(String temp){ //Temporary constructor 
+    // private Boundary boundary;
 
-  }
+    public Cluster() {};
 
+    public Cluster(Integer districtCount, List<District> districts, Double polsbyPopper, Double majMin, Double partisanLean, Distances distances) {
+        this.districtCount = districtCount;
+        this.districts = districts;
+        this.polsbyPopper = polsbyPopper;
+        this.majMin = majMin;
+        this.partisanLean = partisanLean;
+        this.distances = distances;
+    }
 
-  public Integer getId(){
-    return this.id;
-  }
-  public Ensemble getEnsemble(){
-    return this.ensemble;
-  }
+    public Integer getDistrictCount() {
+        return districtCount;
+    }
 
-  public List<String> getTags(){
-    return this.tags;
-  }
+    public List<District> getDistricts() {
+        return districts;
+    }
 
-  public List<District> getDistricts(){
-    return this.districts;
-  }
+    public void setDistricts(List<District> districts) {
+        this.districts = districts;
+    }
 
+    public Double getPolsbyPopper() {
+        return polsbyPopper;
+    }
 
+    public Double getMajMin() {
+        return majMin;
+    }
+
+    public Double getPartisanLean() {
+        return partisanLean;
+    }
+
+    public Distances getDistances() {
+        return distances;
+    }
 }
