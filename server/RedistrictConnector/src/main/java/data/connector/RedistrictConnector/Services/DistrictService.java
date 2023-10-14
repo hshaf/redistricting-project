@@ -22,7 +22,17 @@ public class DistrictService {
             return district.get();
         }
         else {
-            throw new ResourceNotFoundException("Record not found with id : " + id);
+            throw new ResourceNotFoundException("District not found with id : " + id);
+        }
+    }
+
+    public String create(District district) {
+        try {
+            districtRepository.save(new District(district.getPolsbyPopper(), district.getMajMin(), district.getPartisanLean()));
+            return "Added district successfully";
+        }
+        catch (Exception e) {
+            return "Adding district failed";
         }
     }
 

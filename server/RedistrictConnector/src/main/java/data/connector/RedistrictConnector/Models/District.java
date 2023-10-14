@@ -13,6 +13,14 @@ public class District {
 
     // private Boundary boundary;
 
+    public District() {}
+
+    public District(Double polsbyPopper, Integer majMin, Integer partisanLean) {
+        this.polsbyPopper = polsbyPopper;
+        this.majMin = majMin;
+        this.partisanLean = partisanLean;
+    }
+
     public Double getPolsbyPopper() {
         return polsbyPopper;
     }
