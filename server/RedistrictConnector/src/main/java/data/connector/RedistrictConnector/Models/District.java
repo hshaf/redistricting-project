@@ -1,27 +1,27 @@
 package data.connector.RedistrictConnector.Models;
 
-import java.util.List;
-
+import org.springframework.data.annotation.Id;
 
 public class District {
+
+    @Id
+    private String id;
   
-  private Integer id;
-  
-  private Ensemble ensemble;
+    private Double polsbyPopper;
+    private Integer majMin;
+    private Integer partisanLean;
 
-  private Cluster cluster;
+    // private Boundary boundary;
 
-  protected District() {}
+    public Double getPolsbyPopper() {
+        return polsbyPopper;
+    }
 
-  public Integer getId(){
-    return this.id;
-  }
+    public Integer getMajMin() {
+        return majMin;
+    }
 
-  public Ensemble getEnsemble(){
-    return this.ensemble;
-  }
-
-  public Cluster getCluster(){
-    return this.cluster;
-  }
+    public Integer getPartisanLean() {
+        return partisanLean;
+    }
 }
