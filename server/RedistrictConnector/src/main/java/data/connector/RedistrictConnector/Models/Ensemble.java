@@ -1,48 +1,43 @@
 package data.connector.RedistrictConnector.Models;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-//javaee chapter 26
 public class Ensemble {
   
+    @Id
+    private String id;
 
-  private Integer id;
+    private String name;
+    private Integer totalDistrictCount;
 
-  private String state;
+    @DBRef
+    List<Cluster> clusters;
 
-  private List<Cluster> clusters = new ArrayList<Cluster>(); //Is this right?
+    public Ensemble() {}
 
-  private List<District> districts = new ArrayList<District>();
+    public Ensemble(String name, Integer totalDistrictCount, List<Cluster> clusters) {
+        this.name = name;
+        this.totalDistrictCount = totalDistrictCount;
+        this.clusters = clusters;
+    }
 
-  
-  protected Ensemble() {}
+    public String getName() {
+        return name;
+    }
 
-  public Ensemble(String state){
-    this.state = state;
-  }
+    public Integer getTotalDistrictCount() {
+        return totalDistrictCount;
+    }
 
-  public String getState(){
-    return this.state;
-  }
+    public List<Cluster> getClusters() {
+        return clusters;
+    }
 
-  public Integer getId(){
-    return this.id;
-  }
-
-  public List<Cluster> getClusters(){ //Maybe fix this
-    // if(this.clusters == null){
-    //   this.clusters = new ArrayList<Cluster>();
-    // }
-    return this.clusters;
-  }
-
-  public List<District> getDistricts(){ //Maybe fix this
-    // if(this.districts == null){
-    //   this.districts = new ArrayList<District>();
-    // }
-    return this.districts;
-  }
+    public void setClusters(List<Cluster> clusters) {
+        this.clusters = clusters;
+    }
 
 }

@@ -29,9 +29,9 @@ public class ClusterController {
         return "Hello from ClusterController";
     }
 
-    @PostMapping("/add")
-    public String createCluster(@RequestBody Cluster cluster) {
-        return clusterService.create(cluster);
+    @PostMapping("/add/{ensembleId}")
+    public String createCluster(@RequestBody Cluster cluster, @PathVariable String ensembleId) {
+        return clusterService.create(cluster, ensembleId);
     }
 
     @PostMapping("/update/{id}")
