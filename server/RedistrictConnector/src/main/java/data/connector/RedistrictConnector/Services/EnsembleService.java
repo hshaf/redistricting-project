@@ -46,15 +46,15 @@ public class EnsembleService {
                 ensembles.add(newEnsemble.getId());
                 stateUpdate.setEnsembles(ensembles);
                 stateRepository.save(stateUpdate);
+                return(newEnsemble.getId());
             }
             else {
-                throw new ResourceNotFoundException("Failed to add ensemble to state with name : " + state);
-            }
-            return "Added ensemble successfully";            
+                throw new ResourceNotFoundException("Failed to find state \'" + state + "\' to add ensemble to");
+            }           
         }
         catch (Exception e) {
             System.out.println(e);
-            return "Adding ensemble failed";
+            return "Failed to add ensemble to state with name : " + state;
         }
     }
 

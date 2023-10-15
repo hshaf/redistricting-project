@@ -37,6 +37,10 @@ public class Cluster {
         this.distances = distances;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }

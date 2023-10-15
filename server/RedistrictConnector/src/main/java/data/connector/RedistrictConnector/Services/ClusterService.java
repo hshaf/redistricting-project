@@ -45,16 +45,16 @@ public class ClusterService {
                 List<Cluster> clusters = ensembleUpdate.getClusters();
                 clusters.add(newCluster);
                 ensembleUpdate.setClusters(clusters);
-                ensembleRepository.save(ensembleUpdate); 
+                ensembleRepository.save(ensembleUpdate);
+                return newCluster.getId();
             }
             else {
-                throw new ResourceNotFoundException("Failed to add cluster to ensemble with id : " + ensembleId);
+                throw new ResourceNotFoundException("Failed to find ensemble ObjectId(\'" + ensembleId + "\') to add cluster to");
             }
-            return "Added cluster successfully";
         }
         catch (Exception e) {
             System.out.println(e);
-            return "Adding cluster failed";
+            return "Failed to add cluster to ensemble with ObjectId : " + ensembleId;
         }
     }
 

@@ -21,6 +21,10 @@ public class District {
         this.partisanLean = partisanLean;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public Double getPolsbyPopper() {
         return polsbyPopper;
     }
