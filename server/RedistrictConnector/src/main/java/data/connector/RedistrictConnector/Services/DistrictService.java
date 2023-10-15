@@ -33,12 +33,12 @@ public class DistrictService {
     }
 
     public String create(District district, String clusterId) {
-        try {
-            District newDistrict = new District(district.getPolsbyPopper(), district.getMajMin(), district.getPartisanLean());
-            districtRepository.save(newDistrict);
-            
+        try {            
             Optional<Cluster> cluster = clusterRepository.findById(clusterId);
             if (cluster.isPresent()) {
+                District newDistrict = new District(district.getPolsbyPopper(), district.getMajMin(), district.getPartisanLean());
+                districtRepository.save(newDistrict);
+
                 Cluster clusterUpdate = cluster.get();
                 List<District> districts = clusterUpdate.getDistricts();
                 districts.add(newDistrict);

@@ -34,4 +34,9 @@ public class ClusterController {
         return clusterService.create(cluster);
     }
 
+    @PostMapping("/update/{id}")
+    public String updateCluster(@RequestBody Cluster cluster, @PathVariable String id) {
+        return clusterService.update(cluster, id);
+    }
+
 }
