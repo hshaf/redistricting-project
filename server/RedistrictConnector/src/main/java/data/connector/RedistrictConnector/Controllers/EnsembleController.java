@@ -28,9 +28,9 @@ public class EnsembleController {
         return "Hello from EnsembleController";
     }
 
-    @PostMapping("/add")
-    public String createEnsemble(@RequestBody Ensemble ensemble) {
-        return ensembleService.create(ensemble);
+    @PostMapping("/add/{state}")
+    public String createEnsemble(@RequestBody Ensemble ensemble, @PathVariable String state) {
+        return ensembleService.create(ensemble, state);
     }
 	
 }

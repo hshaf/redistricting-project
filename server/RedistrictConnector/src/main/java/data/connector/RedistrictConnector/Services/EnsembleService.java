@@ -1,6 +1,7 @@
 package data.connector.RedistrictConnector.Services;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +10,18 @@ import org.springframework.stereotype.Service;
 import data.connector.RedistrictConnector.ResourceNotFoundException;
 import data.connector.RedistrictConnector.Models.Cluster;
 import data.connector.RedistrictConnector.Models.Ensemble;
+import data.connector.RedistrictConnector.Models.State;
 import data.connector.RedistrictConnector.Repositories.EnsembleRepository;
+import data.connector.RedistrictConnector.Repositories.StateRepository;
 
 @Service
 public class EnsembleService {
     
     @Autowired
     EnsembleRepository ensembleRepository;
+
+    @Autowired
+    StateRepository stateRepository;
 
     public Ensemble findById(String id) {
         Optional<Ensemble> ensemble = ensembleRepository.findById(id);
@@ -28,12 +34,26 @@ public class EnsembleService {
         }
     }
 
-    public String create(Ensemble ensemble) {
+    public String create(Ensemble ensemble, String state) {
         try {
-            ensembleRepository.save(new Ensemble(ensemble.getName(), ensemble.getTotalDistrictCount(), new ArrayList<Cluster>()));
-            return "Added ensemble successfully";
+            Optional<State> stateObj = stateRepository.findByName(state);
+            if (stateObj.isPresent()) {
+                Ensemble newEnsemble = new Ensemble(ensemble.getName(), ensemble.getTotalDistrictCount(), new ArrayList<Cluster>());
+                ensembleRepository.save(newEnsemble);
+
+                State stateUpdate = stateObj.get();
+                List<String> ensembles = stateUpdate.getEnsembles();
+                ensembles.add(newEnsemble.getId());
+                stateUpdate.setEnsembles(ensembles);
+                stateRepository.save(stateUpdate);
+            }
+            else {
+                throw new ResourceNotFoundException("Failed to add ensemble to state with name : " + state);
+            }
+            return "Added ensemble successfully";            
         }
         catch (Exception e) {
+            System.out.println(e);
             return "Adding ensemble failed";
         }
     }

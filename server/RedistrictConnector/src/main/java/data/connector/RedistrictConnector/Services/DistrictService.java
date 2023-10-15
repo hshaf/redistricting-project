@@ -46,12 +46,13 @@ public class DistrictService {
                 clusterRepository.save(clusterUpdate);
             }
             else {
-                throw new ResourceNotFoundException("Failed to add district to cluster with id : " + cluster);
+                throw new ResourceNotFoundException("Failed to add district to cluster with id : " + clusterId);
             }
 
             return "Added district successfully";
         }
         catch (Exception e) {
+            System.out.println(e);
             return "Adding district failed";
         }
     }

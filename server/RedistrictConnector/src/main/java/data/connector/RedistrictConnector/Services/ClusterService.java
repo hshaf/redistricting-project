@@ -50,10 +50,11 @@ public class ClusterService {
             else {
                 throw new ResourceNotFoundException("Failed to add cluster to ensemble with id : " + ensembleId);
             }
-            return "Added ensemble successfully";
+            return "Added cluster successfully";
         }
         catch (Exception e) {
-            return "Adding ensemble failed";
+            System.out.println(e);
+            return "Adding cluster failed";
         }
     }
 

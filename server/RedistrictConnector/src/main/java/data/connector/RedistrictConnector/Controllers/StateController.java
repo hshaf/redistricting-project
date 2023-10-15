@@ -1,31 +1,38 @@
 package data.connector.RedistrictConnector.Controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import data.connector.RedistrictConnector.Models.Ensemble;
+
+import data.connector.RedistrictConnector.Models.State;
 import data.connector.RedistrictConnector.Services.StateService;
 
 @RestController
 @RequestMapping("/state")
 public class StateController {
     
+    @Autowired
     private StateService stateService;
-
-    public StateController (StateService stateService) {
-        this.stateService = stateService;
-    }
 
     @GetMapping("/{name}")
     public List<String> getEnsemblesByState(@PathVariable String name) {
-        return stateService.findByName(name);
+        return stateService.getEnsemblesByState(name);
     }
 
     @GetMapping("/")
     public String testEndpoint() {
-        return "hi :)";
+        return "Hello from StateController";
     }
+
+    @PostMapping("/add")
+    public String createState(@RequestBody State state) {
+        return stateService.create(state);
+    }
+
 }
