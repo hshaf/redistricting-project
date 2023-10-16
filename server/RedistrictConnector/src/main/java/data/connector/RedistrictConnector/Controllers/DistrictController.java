@@ -30,11 +30,6 @@ public class DistrictController {
         return "Hello from DistrictController";
     }
 
-    @PutMapping("/upsert")
-    public ResponseEntity<District> updateDistrict(@RequestBody District district){
-        return districtService.upsert(district);
-    }
-
     @PostMapping("/add/{clusterId}")
     public String createDistrict(@RequestBody District district, @PathVariable String clusterId) {
         return districtService.create(district, clusterId);

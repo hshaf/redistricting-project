@@ -57,12 +57,6 @@ public class DistrictService {
         }
     }
 
-    public ResponseEntity<District> upsert(District newDistrict) {
-        try {
-            return ResponseEntity.ok(districtRepository.save(newDistrict));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
+    
 
 }
