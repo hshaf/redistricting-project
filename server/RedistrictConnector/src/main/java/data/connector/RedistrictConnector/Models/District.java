@@ -1,5 +1,7 @@
 package data.connector.RedistrictConnector.Models;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 
 public class District {
@@ -11,7 +13,7 @@ public class District {
     private Integer majMin;
     private Integer partisanLean;
 
-    // private Boundary boundary;
+    private String boundary;
 
     public District() {}
 
@@ -35,5 +37,13 @@ public class District {
 
     public Integer getPartisanLean() {
         return partisanLean;
+    }
+
+    public String getBoundary(){
+        return boundary;
+    }
+
+    public void setBoundary(String id){
+        this.boundary = id;
     }
 }

@@ -21,7 +21,7 @@ mvnw spring-boot:run : Runs and builds the server on localhost:8080
 # MongoDB Server
 
 Open MongoDB Compass, connect to mongodb://localhost:27017, create a new database named "redistricting" with collections
-named "state", "ensemble", "cluster", and "district". Download updated "ensemble-data.json", place it in `../scripts`,
+named "state", "ensemble", "cluster", "boundary", and "district". Download updated "ensemble-data.json", place it in `../scripts`,
 and run `python import-ensemble-data.py`.
 
 
