@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import data.connector.RedistrictConnector.ResourceNotFoundException;
@@ -23,14 +24,15 @@ public class ClusterService {
     @Autowired
     EnsembleRepository ensembleRepository;
 
-    public Cluster findById(String id) {
+    public ResponseEntity<Cluster> findById(String id) {
         Optional<Cluster> cluster = clusterRepository.findById(id);
 
         if (cluster.isPresent()) {
-            return cluster.get();
+            return ResponseEntity.ok(cluster.get());
         }
         else {
-            throw new ResourceNotFoundException("Cluster not found with id : " + id);
+            return ResponseEntity.notFound().build();
+            //throw new ResourceNotFoundException("Cluster not found with id : " + id);
         }
     }
 
@@ -58,7 +60,7 @@ public class ClusterService {
         }
     }
 
-    public String update(Cluster cluster, String id) {
+    public ResponseEntity<Cluster> update(Cluster cluster, String id) {
         try {           
             Optional<Cluster> oldCluster = clusterRepository.findById(id);
             if (oldCluster.isPresent()) {
@@ -71,10 +73,10 @@ public class ClusterService {
                 throw new ResourceNotFoundException("Failed update cluster with id : " + cluster);
             }
 
-            return "Updated district successfully";
+            return ResponseEntity.ok(cluster);
         }
         catch (Exception e) {
-            return "Updating district failed";
+            return ResponseEntity.internalServerError().build();
         }
     }
 

@@ -1,6 +1,7 @@
 package data.connector.RedistrictConnector.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import data.connector.RedistrictConnector.Repositories.StateRepository;
 import data.connector.RedistrictConnector.ResourceNotFoundException;
@@ -16,14 +17,15 @@ public class StateService {
     @Autowired
     private StateRepository stateRepository;
 
-    public List<String> getEnsemblesByState(String name) {
+    public ResponseEntity<List<String>> getEnsemblesByState(String name) {
         Optional<State> state = stateRepository.findByName(name);
 
         if (state.isPresent()) {
-            return state.get().getEnsembles();
+            return ResponseEntity.ok(state.get().getEnsembles());
         }
         else {
-            throw new ResourceNotFoundException("State not found with name : " + name);
+            return ResponseEntity.notFound().build();
+            //throw new ResourceNotFoundException("State not found with name : " + name);
         }
     }
 

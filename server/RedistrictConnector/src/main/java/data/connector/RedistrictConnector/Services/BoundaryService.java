@@ -3,6 +3,7 @@ package data.connector.RedistrictConnector.Services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import data.connector.RedistrictConnector.ResourceNotFoundException;
@@ -20,13 +21,14 @@ public class BoundaryService {
   @Autowired
   DistrictRepository districtRepository;
 
-  public Boundary findById(String id) {
+  public ResponseEntity<Boundary> findById(String id) {
     Optional<Boundary> boundary = boundaryRepository.findById(id);
 
     if (boundary.isPresent()) {
-      return boundary.get();
+      return ResponseEntity.ok(boundary.get());
     } else {
-      throw new ResourceNotFoundException("Boundary not found with id : " + id);
+      return ResponseEntity.notFound().build();
+      //throw new ResourceNotFoundException("Boundary not found with id : " + id);
     }
   }
 
@@ -48,6 +50,30 @@ public class BoundaryService {
     } catch (Exception e) {
       System.out.println(e);
       return "Failed to add boundary to district with id : " + districtId;
+    }
+  }
+
+  public ResponseEntity<Boundary> findByDistrictId(String districtId) {
+    try {
+      Optional<District> district = districtRepository.findById(districtId);
+      if (district.isPresent()) {
+
+        Optional<Boundary> boundary = boundaryRepository.findById(district.get().getBoundary());
+        if (boundary.isPresent()) {
+          return ResponseEntity.ok(boundary.get());
+
+        } else {
+          return ResponseEntity.noContent().build();
+          //throw new ResourceNotFoundException("District \'" + districtId + "\' does not contain boundary data");
+        }
+      } else {
+        return ResponseEntity.notFound().build();
+        //throw new ResourceNotFoundException("Failed to find district \'" + districtId + "\' to retrieve boundary from");
+      }
+
+    } catch (Exception e) {
+      System.out.println(e);
+      return ResponseEntity.notFound().build();
     }
   }
 }

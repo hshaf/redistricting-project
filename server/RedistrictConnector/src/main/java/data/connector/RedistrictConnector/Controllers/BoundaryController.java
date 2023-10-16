@@ -1,6 +1,7 @@
 package data.connector.RedistrictConnector.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,22 +15,28 @@ import data.connector.RedistrictConnector.Services.BoundaryService;
 @RestController
 @RequestMapping("/boundary")
 public class BoundaryController {
-  
+
   @Autowired
   BoundaryService boundaryService;
 
   @GetMapping("/{id}")
-  public Boundary getEnsembleById(@PathVariable String id) {
-        return boundaryService.findById(id);
-    }
+  public ResponseEntity<Boundary> getEnsembleById(@PathVariable String id) {
+    return boundaryService.findById(id);
+  }
 
-    @GetMapping("/")
-    public String testEndpoint() {
-        return "Hello from BoundaryController";
-    }
+  @GetMapping("/district/{id}")
+  public ResponseEntity<Boundary> getEnsembleByDistrictId(@PathVariable String id) {
+    return boundaryService.findByDistrictId(id);
+  }
 
-    @PostMapping("/add/{districtId}")
-    public String createEnsemble(@RequestBody Object data, @PathVariable String districtId) {
-        return boundaryService.create(data, districtId);
-    }
+  @GetMapping("/")
+  public String testEndpoint() {
+    return "Hello from BoundaryController";
+  }
+
+  @PostMapping("/add/{districtId}")
+  public String createEnsemble(@RequestBody Object data, @PathVariable String districtId) {
+    return boundaryService.create(data, districtId);
+  }
+
 }

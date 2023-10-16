@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import data.connector.RedistrictConnector.ResourceNotFoundException;
@@ -21,14 +22,15 @@ public class DistrictService {
     @Autowired
     private ClusterRepository clusterRepository;
 
-    public District findById(String id) {
+    public ResponseEntity<District> findById(String id) {
         Optional<District> district = districtRepository.findById(id);
 
         if (district.isPresent()) {
-            return district.get();
+            return ResponseEntity.ok(district.get());
         }
         else {
-            throw new ResourceNotFoundException("District not found with id : " + id);
+            return ResponseEntity.notFound().build();
+            //throw new ResourceNotFoundException("District not found with id : " + id);
         }
     }
 

@@ -1,6 +1,7 @@
 package data.connector.RedistrictConnector.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,7 @@ public class DistrictController {
     DistrictService districtService;
 
     @GetMapping("/{id}")
-    public District getDistrictById(@PathVariable String id) {
+    public ResponseEntity<District> getDistrictById(@PathVariable String id) {
         return districtService.findById(id);
     }
 
