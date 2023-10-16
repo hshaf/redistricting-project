@@ -15,7 +15,7 @@ import data.connector.RedistrictConnector.Repositories.DistrictRepository;
 
 @Service
 public class DistrictService {
-    
+
     @Autowired
     private DistrictRepository districtRepository;
 
@@ -27,18 +27,18 @@ public class DistrictService {
 
         if (district.isPresent()) {
             return ResponseEntity.ok(district.get());
-        }
-        else {
+        } else {
             return ResponseEntity.notFound().build();
-            //throw new ResourceNotFoundException("District not found with id : " + id);
+            // throw new ResourceNotFoundException("District not found with id : " + id);
         }
     }
 
     public String create(District district, String clusterId) {
-        try {            
+        try {
             Optional<Cluster> cluster = clusterRepository.findById(clusterId);
             if (cluster.isPresent()) {
-                District newDistrict = new District(district.getPolsbyPopper(), district.getMajMin(), district.getPartisanLean());
+                District newDistrict = new District(district.getPolsbyPopper(), district.getMajMin(),
+                        district.getPartisanLean());
                 districtRepository.save(newDistrict);
 
                 Cluster clusterUpdate = cluster.get();
@@ -47,14 +47,21 @@ public class DistrictService {
                 clusterUpdate.setDistricts(districts);
                 clusterRepository.save(clusterUpdate);
                 return newDistrict.getId();
+            } else {
+                throw new ResourceNotFoundException(
+                        "Failed to find cluster ObjectId(\'" + clusterId + "\') to add district to");
             }
-            else {
-                throw new ResourceNotFoundException("Failed to find cluster ObjectId(\'" + clusterId + "\') to add district to");
-            }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
             return "Failed to add district to cluster with ObjectId : " + clusterId;
+        }
+    }
+
+    public ResponseEntity<District> upsert(District newDistrict) {
+        try {
+            return ResponseEntity.ok(districtRepository.save(newDistrict));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 

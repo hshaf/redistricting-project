@@ -16,27 +16,27 @@ import data.connector.RedistrictConnector.Services.BoundaryService;
 @RequestMapping("/boundary")
 public class BoundaryController {
 
-  @Autowired
-  BoundaryService boundaryService;
+    @Autowired
+    BoundaryService boundaryService;
 
-  @GetMapping("/{id}")
-  public ResponseEntity<Boundary> getEnsembleById(@PathVariable String id) {
-    return boundaryService.findById(id);
-  }
+    @GetMapping("/{id}")
+    public ResponseEntity<Boundary> getBoundaryById(@PathVariable String id) {
+        return boundaryService.findById(id);
+    }
 
-  @GetMapping("/district/{id}")
-  public ResponseEntity<Boundary> getEnsembleByDistrictId(@PathVariable String id) {
-    return boundaryService.findByDistrictId(id);
-  }
+    @GetMapping("/district/{id}")
+    public ResponseEntity<Boundary> getBoundaryByDistrictId(@PathVariable String id) {
+        return boundaryService.findByDistrictId(id);
+    }
 
-  @GetMapping("/")
-  public String testEndpoint() {
-    return "Hello from BoundaryController";
-  }
+    @GetMapping("/")
+    public String testEndpoint() {
+        return "Hello from BoundaryController";
+    }
 
-  @PostMapping("/add/{districtId}")
-  public String createEnsemble(@RequestBody Object data, @PathVariable String districtId) {
-    return boundaryService.create(data, districtId);
-  }
+    @PostMapping("/add/{id}")
+    public String createBoundary(@RequestBody Object data, @PathVariable String id) {
+        return boundaryService.create(data, id);
+    }
 
 }

@@ -3,23 +3,24 @@ package data.connector.RedistrictConnector.Models;
 import org.springframework.data.annotation.Id;
 
 public class Boundary {
-  
-  @Id
-  private String id;
 
-  private Object data;
+    @Id
+    private String id;
 
-  public Boundary(){}
+    private Object data;
 
-  public Boundary(Object data){
-    this.data = data;
-  }
+    public Boundary() {
+    }
 
-  public String getId(){
-    return id;
-  }
+    public Boundary(Object data) {
+        this.data = data;
+    }
 
-  public Object getData(){
-    return data;
-  }
+    public String getId() {
+        return id;
+    }
+
+    public Object getData() {
+        return data;
+    }
 }

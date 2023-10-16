@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import data.connector.RedistrictConnector.Models.Cluster;
 import data.connector.RedistrictConnector.Services.ClusterService;
 
-
 @RestController
 @RequestMapping("/cluster")
 public class ClusterController {

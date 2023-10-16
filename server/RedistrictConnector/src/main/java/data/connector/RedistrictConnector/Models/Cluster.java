@@ -22,7 +22,7 @@ public class Cluster {
     private Double partisanLean;
     private Distances distances;
 
-    // private Boundary boundary;
+    private String boundary;
 
     public Cluster() {};
 
@@ -83,5 +83,13 @@ public class Cluster {
 
     public Distances getDistances() {
         return distances;
+    }
+
+    public String getBoundary(){
+        return boundary;
+    }
+
+    public void setBoundary(String boundaryId){
+        this.boundary = boundaryId;
     }
 }
