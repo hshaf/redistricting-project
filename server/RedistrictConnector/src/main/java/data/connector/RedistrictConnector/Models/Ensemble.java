@@ -12,15 +12,17 @@ public class Ensemble {
 
     private String name;
     private Integer totalDistrictCount;
+    private Integer totalClusterCount;
 
     @DBRef
     List<Cluster> clusters;
 
     public Ensemble() {}
 
-    public Ensemble(String name, Integer totalDistrictCount, List<Cluster> clusters) {
+    public Ensemble(String name, Integer totalDistrictCount,  Integer totalClusterCount, List<Cluster> clusters) {
         this.name = name;
         this.totalDistrictCount = totalDistrictCount;
+        this.totalClusterCount = totalClusterCount;
         this.clusters = clusters;
     }
 
@@ -44,8 +46,8 @@ public class Ensemble {
         this.clusters = clusters;
     }
 
-    public int getNumClusters(){
-        return this.clusters.size();
+    public Integer getTotalClusterCount(){
+        return totalClusterCount;
     }
 
 }

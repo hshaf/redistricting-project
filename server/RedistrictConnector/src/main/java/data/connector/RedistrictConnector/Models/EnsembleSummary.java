@@ -4,23 +4,23 @@ import java.util.List;
 
 public class EnsembleSummary {
     
-    private int districtCount;
-    private int clusterCount;
+    private Integer districtCount;
+    private Integer clusterCount;
     private String name;
     private String ensembleId;
     // List<String> tagsPresent;
 
-    public EnsembleSummary(int districtCount, int clusterCount, String name, String ensembleId){
+    public EnsembleSummary(Integer districtCount, Integer clusterCount, String name, String ensembleId){
         this.districtCount = districtCount;
         this.clusterCount = clusterCount;
         this.name = name;
         this.ensembleId = ensembleId;
     }
-    public int getDistrictCount(){
+    public Integer getDistrictCount(){
         return districtCount;
     }
 
-    public int getClusterCount(){
+    public Integer getClusterCount(){
         return clusterCount;
     }
 

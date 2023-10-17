@@ -14,7 +14,7 @@ for state in df:
     print(x.text)
 
     for ensemble in state['ensembles']:
-        object = {'name': ensemble['name'], 'totalDistrictCount': ensemble['totalDistrictCount']}
+        object = {'name': ensemble['name'], 'totalDistrictCount': ensemble['totalDistrictCount'], 'totalClusterCount':ensemble['totalClusterCount']}
         ensembleId = requests.post(url+'/ensemble/add/'+stateName, json=object).text
         print("Created ensemble with ObjectId : ", ensembleId)
 
