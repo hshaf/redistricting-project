@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import data.connector.RedistrictConnector.Repositories.StateRepository;
 import data.connector.RedistrictConnector.ResourceNotFoundException;
+import data.connector.RedistrictConnector.Models.EnsembleSummary;
 import data.connector.RedistrictConnector.Models.State;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class StateService {
     @Autowired
     private StateRepository stateRepository;
 
-    public ResponseEntity<List<String>> getEnsemblesByState(String name) {
+    public ResponseEntity<List<EnsembleSummary>> getEnsemblesByState(String name) {
         Optional<State> state = stateRepository.findByName(name);
 
         if (state.isPresent()) {
@@ -31,7 +32,7 @@ public class StateService {
 
     public String create(State state) {
         try {
-            stateRepository.save(new State(state.getName(), new ArrayList<String>()));
+            stateRepository.save(new State(state.getName(), new ArrayList<EnsembleSummary>()));
             return "Added state " + state.getName() + " successfully";
         }
         catch (Exception e) {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import data.connector.RedistrictConnector.ResourceNotFoundException;
 import data.connector.RedistrictConnector.Models.Cluster;
 import data.connector.RedistrictConnector.Models.Ensemble;
+import data.connector.RedistrictConnector.Models.EnsembleSummary;
 import data.connector.RedistrictConnector.Models.State;
 import data.connector.RedistrictConnector.Repositories.EnsembleRepository;
 import data.connector.RedistrictConnector.Repositories.StateRepository;
@@ -44,8 +45,12 @@ public class EnsembleService {
                 ensembleRepository.save(newEnsemble);
 
                 State stateUpdate = stateObj.get();
-                List<String> ensembles = stateUpdate.getEnsembles();
-                ensembles.add(newEnsemble.getId());
+                List<EnsembleSummary> ensembles = stateUpdate.getEnsembles();
+                ensembles.add( new EnsembleSummary(
+                        newEnsemble.getTotalDistrictCount(), 
+                        newEnsemble.getNumClusters(), 
+                        newEnsemble.getName(), 
+                        newEnsemble.getId()));
                 stateUpdate.setEnsembles(ensembles);
                 stateRepository.save(stateUpdate);
                 return(newEnsemble.getId());

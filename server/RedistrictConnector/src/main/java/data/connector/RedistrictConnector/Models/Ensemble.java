@@ -44,4 +44,8 @@ public class Ensemble {
         this.clusters = clusters;
     }
 
+    public int getNumClusters(){
+        return this.clusters.size();
+    }
+
 }
