@@ -3,25 +3,17 @@ package data.connector.RedistrictConnector.Models;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+
 //javaee chapter 26
-@Entity
 public class Ensemble {
   
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+
   private Integer id;
 
   private String state;
 
-  @OneToMany(mappedBy = "ensemble")
   private List<Cluster> clusters = new ArrayList<Cluster>(); //Is this right?
 
-  @OneToMany(mappedBy = "ensemble")
   private List<District> districts = new ArrayList<District>();
 
   
