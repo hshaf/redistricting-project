@@ -1,9 +1,10 @@
 import json
 import requests
+from constants import *
 
 url = 'http://localhost:8080'
 
-with open('ensemble-data.json') as fh:
+with open(ENSEMBLE_DATA_JSON) as fh:
     df = json.load(fh)
 
 for state in df:
