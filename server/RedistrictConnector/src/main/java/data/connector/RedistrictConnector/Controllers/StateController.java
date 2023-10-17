@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import data.connector.RedistrictConnector.Models.EnsembleSummary;
 import data.connector.RedistrictConnector.Models.State;
 import data.connector.RedistrictConnector.Services.StateService;
 
@@ -22,7 +23,7 @@ public class StateController {
     private StateService stateService;
 
     @GetMapping("/{name}")
-    public ResponseEntity<List<String>> getEnsemblesByState(@PathVariable String name) {
+    public ResponseEntity<List<EnsembleSummary>> getEnsemblesByState(@PathVariable String name) {
         return stateService.getEnsemblesByState(name);
     }
 
