@@ -1,48 +1,53 @@
 package data.connector.RedistrictConnector.Models;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-//javaee chapter 26
 public class Ensemble {
   
+    @Id
+    private String id;
 
-  private Integer id;
+    private String name;
+    private Integer totalDistrictCount;
+    private Integer totalClusterCount;
 
-  private String state;
+    @DBRef
+    List<Cluster> clusters;
 
-  private List<Cluster> clusters = new ArrayList<Cluster>(); //Is this right?
+    public Ensemble() {}
 
-  private List<District> districts = new ArrayList<District>();
+    public Ensemble(String name, Integer totalDistrictCount,  Integer totalClusterCount, List<Cluster> clusters) {
+        this.name = name;
+        this.totalDistrictCount = totalDistrictCount;
+        this.totalClusterCount = totalClusterCount;
+        this.clusters = clusters;
+    }
 
-  
-  protected Ensemble() {}
+    public String getId() {
+        return id;
+    }
 
-  public Ensemble(String state){
-    this.state = state;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public String getState(){
-    return this.state;
-  }
+    public Integer getTotalDistrictCount() {
+        return totalDistrictCount;
+    }
 
-  public Integer getId(){
-    return this.id;
-  }
+    public List<Cluster> getClusters() {
+        return clusters;
+    }
 
-  public List<Cluster> getClusters(){ //Maybe fix this
-    // if(this.clusters == null){
-    //   this.clusters = new ArrayList<Cluster>();
-    // }
-    return this.clusters;
-  }
+    public void setClusters(List<Cluster> clusters) {
+        this.clusters = clusters;
+    }
 
-  public List<District> getDistricts(){ //Maybe fix this
-    // if(this.districts == null){
-    //   this.districts = new ArrayList<District>();
-    // }
-    return this.districts;
-  }
+    public Integer getTotalClusterCount(){
+        return totalClusterCount;
+    }
 
 }

@@ -1,42 +1,43 @@
 package data.connector.RedistrictConnector.Controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import data.connector.RedistrictConnector.Models.Cluster;
-import data.connector.RedistrictConnector.Models.District;
-
+import data.connector.RedistrictConnector.Services.ClusterService;
 
 @RestController
 @RequestMapping("/cluster")
-public class ClusterController {//Each method will use a soon to be made Cluster service
+public class ClusterController {
 
-	@GetMapping("/{id}")
-  public Cluster getClusterById() {
-    return new Cluster("temp"); // Temporary
-  }
+    @Autowired
+    ClusterService clusterService;
 
-  @GetMapping("/summary/{id}")
-  public Cluster getClusterSummary() { //Likely to become hashmap
-    return new Cluster("temp"); // Temporary
-  }
+    @GetMapping("/{id}")
+    public ResponseEntity<Cluster> getClusterById(@PathVariable String id) {
+        return clusterService.findById(id);
+    }
 
-  @GetMapping("/districts/{id}")
-  public List<District> getClusterDistricts(@PathVariable Integer id ){
-    return new ArrayList<District>();
-  }
+    @GetMapping("/")
+    public String testEndpoint() {
+        return "Hello from ClusterController";
+    }
 
-  @PutMapping("/addTag/{id}")
-  public ResponseEntity<Cluster> putClusterTag(@RequestBody Cluster cluster, @PathVariable Integer id){
+    @PostMapping("/add/{ensembleId}")
+    public String createCluster(@RequestBody Cluster cluster, @PathVariable String ensembleId) {
+        return clusterService.create(cluster, ensembleId);
+    }
 
-    return ResponseEntity.ok(new Cluster("null"));
-  }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Cluster> updateCluster(@RequestBody Cluster cluster, @PathVariable String id) {
+        return clusterService.update(cluster, id);
+    }
+
 }
