@@ -13,4 +13,4 @@ WI_SENATE_DISTRICTS_PATH = "../client/src/data/wi_sldu_adopted_2022.zip"
 WI_DEMOGRAPHIC_PATH = "../client/src/data/wi_pl2020_vtd.zip"
 WI_ELECTION_PATH = "../client/src/data/wi_vest_20.zip"
 
-ENSEMBLE_DATA_JSON = "./updated-ensemble-data.json"
+ENSEMBLE_DATA_JSON = "../client/src/data/updated-ensemble-data.json"
