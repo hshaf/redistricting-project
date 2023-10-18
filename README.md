@@ -17,6 +17,8 @@ This repository contains the client and server implementation of our web applica
 4. Node.js and npm
 5. Java Development Kit 17.0.8
 6. Maven
+7. MongoDB Community Server 7.0.2
+8. MongoDB Compass 1.40.3
 ## Run Web App
 1. Under `client/`, install required packages
 
@@ -35,6 +37,11 @@ This repository contains the client and server implementation of our web applica
 2. Run server on `localhost:8080`
 
    `./mvnw spring-boot:run`
+
+3. In MongoDB Compass, connect to `mongodb://localhost:27017`
+4. Populate database by running import script in `scripts/`
+
+   `python import-ensemble-data.py`
    
 ## Data Sources
 Create `data/` under `client/src/` and add data from the following sources,
