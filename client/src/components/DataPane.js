@@ -15,16 +15,8 @@ class DataPane extends Component {
   constructor () {
     super();
     this.state = {
-      selectedTab: ENSEMBLE,
-      requestdatatext: ""
+      selectedTab: ENSEMBLE
     };
-  }
-
-  updateRequestDataText = (text) => {
-    // Update textarea value for requesting data from backend
-    this.setState({
-      requestdatatext: text
-    });
   }
 
   updateTab = (tab) => {
@@ -75,27 +67,6 @@ class DataPane extends Component {
     // Reset tab back to ensemble info
     this.updateTab(ENSEMBLE);
   };
-
-  async handleCall() {
-    let request = document.getElementById("name-request-field").value;
-    // If name provided in field, call different endpoint
-    let response;
-    if(request === "object"){
-      response = await api.getHash();
-      console.log(response.data)
-    }
-    else if (request) {
-      response = await api.getHelloName(request);
-    }
-    else {
-      response = await api.getHello();
-    }
-
-    // Display HTTP response in console
-    console.log(response);
-    // Update display text area with contents of HTTP response
-    this.updateRequestDataText(response['data']);
-  }
 
   render () {
     // Get strings for displaying selecte state and district plan
@@ -169,44 +140,16 @@ class DataPane extends Component {
     else {
       welcomePane = 
       <Container id="info-box">
-          <div id="welcome-text">
-            <h4>
-              Welcome to Team Giants District Plan Site!
-            </h4>
-          </div>
-          <div id="getting-started-text">
-            To get started, choose a state either by using the 'Select State' dropdown menu or by 
-            clicking on a state highlighted in blue on the map.
-          </div>
-          <div id="request-data-box">
-            <h5>Response:</h5>
-            <textarea name="postContent" id="response-display" rows={6} cols={40} readOnly={true} value={this.state.requestdatatext} onChange={(e) => this.updateRequestDataText(e.target.value)} />
-            <div id="name-request-box">
-              <h5 id="enter-name-label">Enter your name (optional):</h5>
-              <textarea id="name-request-field" rows={1} cols={40} />
-            </div>
-            <Button onClick={async () => {await this.handleCall();}}>Send Request</Button>
-          </div>
-          {/* <div id="state-info-text">
-            <h4>
-              State Information
-            </h4>
-          </div>
-          <div id="selected-state-text">
-            Selected state: {selectedState}
-          </div>
-          <div id="district-plan-text">
-            District plan: {districtPlan}
-          </div>
-          <div id="political-results-header">
-            <h4>
-              Political Results
-            </h4>
-          </div>
-          <div id="political-results-text">
-            Estimated using data from 2020 Presidential Election at the precinct level.
-          </div> */}
-        </Container>
+        <div id="welcome-text">
+          <h4>
+            Welcome to Team Giants District Plan Site!
+          </h4>
+        </div>
+        <div id="getting-started-text">
+          To get started, choose a state either by using the 'Select State' dropdown menu or by 
+          clicking on a state highlighted in blue on the map.
+        </div>
+      </Container>
     }
 
     // If no state is selected, disable ensemble dropdown in navbar
