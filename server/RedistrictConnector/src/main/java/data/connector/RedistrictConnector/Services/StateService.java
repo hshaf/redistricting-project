@@ -18,11 +18,11 @@ public class StateService {
     @Autowired
     private StateRepository stateRepository;
 
-    public ResponseEntity<List<EnsembleSummary>> getEnsemblesByState(String name) {
+    public ResponseEntity<State> getStateByName(String name) {
         Optional<State> state = stateRepository.findByName(name);
 
         if (state.isPresent()) {
-            return ResponseEntity.ok(state.get().getEnsembles());
+            return ResponseEntity.ok(state.get());
         }
         else {
             return ResponseEntity.notFound().build();

@@ -23,8 +23,8 @@ public class StateController {
     private StateService stateService;
 
     @GetMapping("/{name}")
-    public ResponseEntity<List<EnsembleSummary>> getEnsemblesByState(@PathVariable String name) {
-        return stateService.getEnsemblesByState(name);
+    public ResponseEntity<State> getStateByName(@PathVariable String name) {
+        return stateService.getStateByName(name);
     }
 
     @GetMapping("/")
