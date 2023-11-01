@@ -1,31 +1,27 @@
-import DataPane from "./DataPane";
+import React from "react";
 import CustomMap from './CustomMap';
-import React, { Component } from "react";
+import DataPane from "./DataPane";
 
-class DisplayPane extends Component {
-  render () {
-    return (
-      <div id="display-pane">
-        <div id="visual-pane">
-          <DataPane
-            selectedState={this.props.selectedState}
-            updateSelectedState={this.props.updateSelectedState}
-            selectedClusterID={this.props.selectedClusterID}
-            updateSelectedClusterID={this.props.updateSelectedClusterID}
-            selectedEnsembleID={this.props.selectedEnsembleID}
-            updateSelectedEnsembleID={this.props.updateSelectedEnsembleID}
-          />
-        </div>
-        
-        <div id="map-pane">
-          <CustomMap
-            selectedState={this.props.selectedState}
-            updateSelectedState={this.props.updateSelectedState}
-          />
-        </div>
+export default function DisplayPane(props) {
+  return (
+    <div id="display-pane">
+      <div id="visual-pane">
+        <DataPane
+          selectedState={props.selectedState}
+          updateSelectedState={props.updateSelectedState}
+          selectedClusterID={props.selectedClusterID}
+          updateSelectedClusterID={props.updateSelectedClusterID}
+          selectedEnsembleID={props.selectedEnsembleID}
+          updateSelectedEnsembleID={props.updateSelectedEnsembleID}
+        />
       </div>
-    );
-  }
+      
+      <div id="map-pane">
+        <CustomMap
+          selectedState={props.selectedState}
+          updateSelectedState={props.updateSelectedState}
+        />
+      </div>
+    </div>
+  );
 }
-
-export default DisplayPane;

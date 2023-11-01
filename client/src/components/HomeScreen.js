@@ -1,21 +1,17 @@
+import React from "react";
 import DisplayPane from "./DisplayPane";
-import React, { Component } from "react";
 
-class HomeScreen extends Component {
-  render() {
-    return (
-      <div id="homescreen">
-        <DisplayPane
-        selectedState={this.props.selectedState}
-        updateSelectedState={this.props.updateSelectedState}
-        selectedClusterID={this.props.selectedClusterID}
-        updateSelectedClusterID={this.props.updateSelectedClusterID}
-        selectedEnsembleID={this.props.selectedEnsembleID}
-        updateSelectedEnsembleID={this.props.updateSelectedEnsembleID}
+export default function HomeScreen(props) {
+  return (
+    <div id="homescreen">
+      <DisplayPane
+        selectedState={props.selectedState}
+        updateSelectedState={props.updateSelectedState}
+        selectedClusterID={props.selectedClusterID}
+        updateSelectedClusterID={props.updateSelectedClusterID}
+        selectedEnsembleID={props.selectedEnsembleID}
+        updateSelectedEnsembleID={props.updateSelectedEnsembleID}
         />
-      </div>
-    );
-  }
+    </div>
+  );
 }
-
-export default HomeScreen;
