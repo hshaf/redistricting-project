@@ -80,6 +80,8 @@ export default function DataPane(props) {
     selectedState = "Wisconsin";
     districtPlan = "State Senate";
   }
+  
+  // Render DataPane
 
   // If no state is selected, we hide the tabs and show
   // the welcome information pane.

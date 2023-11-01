@@ -64,6 +64,7 @@ export default function App() {
     });
   }
 
+  // Render App
   return (
     <HomeScreen 
       selectedState={state.selectedState}

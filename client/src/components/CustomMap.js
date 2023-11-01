@@ -68,6 +68,7 @@ export default function CustomMap(props) {
     wiBoundariesData = WIStateBoundaries;
   }
 
+  // Render CustomMap
   return (
     <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom={true}>
       <ChangeView center={mapCenter} zoom={mapZoom} />
