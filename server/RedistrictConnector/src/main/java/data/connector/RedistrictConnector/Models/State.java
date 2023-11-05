@@ -8,25 +8,25 @@ public class State {
 
     @Id
     private String name;
-    private List<EnsembleSummary> ensembles;
+    private List<String> ensembleIds;
 
     public State() {}
 
-    public State(String name, List<EnsembleSummary> ensembles) {
+    public State(String name, List<String> ensembleIds) {
         this.name = name;
-        this.ensembles = ensembles;
+        this.ensembleIds = ensembleIds;
     }
 
     public String getName() {
         return name;
     }
 
-    public List<EnsembleSummary> getEnsembles() {
-        return ensembles;
+    public List<String> getEnsembles() {
+        return ensembleIds;
     }
 
-    public void setEnsembles(List<EnsembleSummary> ensembles) {
-        this.ensembles = ensembles;
+    public void setEnsembles(List<String> ensembleIds) {
+        this.ensembleIds = ensembleIds;
     }
 
 }

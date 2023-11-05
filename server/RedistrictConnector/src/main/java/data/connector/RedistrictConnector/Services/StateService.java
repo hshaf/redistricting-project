@@ -32,7 +32,7 @@ public class StateService {
 
     public String create(State state) {
         try {
-            stateRepository.save(new State(state.getName(), new ArrayList<EnsembleSummary>()));
+            stateRepository.save(new State(state.getName(), new ArrayList<String>()));
             return "Added state " + state.getName() + " successfully";
         }
         catch (Exception e) {

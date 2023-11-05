@@ -14,8 +14,8 @@ public class Cluster {
     private List<String> tags;
     private Integer districtCount;
 
-    @DBRef
-    private List<District> districts;
+    
+    private List<String> districtIds;
 
     private Double polsbyPopper;
     private Double majMin;
@@ -26,11 +26,11 @@ public class Cluster {
 
     public Cluster() {};
 
-    public Cluster(String name, List<String> tags, Integer districtCount, List<District> districts, Double polsbyPopper, Double majMin, Double partisanLean, Distances distances) {
+    public Cluster(String name, List<String> tags, Integer districtCount, List<String> districtIds, Double polsbyPopper, Double majMin, Double partisanLean, Distances distances) {
         this.name = name;
         this.tags = tags;
         this.districtCount = districtCount;
-        this.districts = districts;
+        this.districtIds = districtIds;
         this.polsbyPopper = polsbyPopper;
         this.majMin = majMin;
         this.partisanLean = partisanLean;
@@ -61,12 +61,12 @@ public class Cluster {
         return districtCount;
     }
 
-    public List<District> getDistricts() {
-        return districts;
+    public List<String> getDistricts() {
+        return districtIds;
     }
 
-    public void setDistricts(List<District> districts) {
-        this.districts = districts;
+    public void setDistricts(List<String> districtIds) {
+        this.districtIds = districtIds;
     }
 
     public Double getPolsbyPopper() {

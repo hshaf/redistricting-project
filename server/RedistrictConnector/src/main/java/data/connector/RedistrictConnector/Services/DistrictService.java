@@ -42,8 +42,8 @@ public class DistrictService {
                 districtRepository.save(newDistrict);
 
                 Cluster clusterUpdate = cluster.get();
-                List<District> districts = clusterUpdate.getDistricts();
-                districts.add(newDistrict);
+                List<String> districts = clusterUpdate.getDistricts();
+                districts.add(newDistrict.getId());
                 clusterUpdate.setDistricts(districts);
                 clusterRepository.save(clusterUpdate);
                 return newDistrict.getId();

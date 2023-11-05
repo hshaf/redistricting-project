@@ -41,16 +41,12 @@ public class EnsembleService {
         try {
             Optional<State> stateObj = stateRepository.findByName(state);
             if (stateObj.isPresent()) {
-                Ensemble newEnsemble = new Ensemble(ensemble.getName(), ensemble.getTotalDistrictCount(),  ensemble.getTotalClusterCount(), new ArrayList<Cluster>());
+                Ensemble newEnsemble = new Ensemble(ensemble.getName(), ensemble.getTotalDistrictCount(),  ensemble.getTotalClusterCount(), new ArrayList<String>());
                 ensembleRepository.save(newEnsemble);
 
                 State stateUpdate = stateObj.get();
-                List<EnsembleSummary> ensembles = stateUpdate.getEnsembles();
-                ensembles.add( new EnsembleSummary(
-                        newEnsemble.getTotalDistrictCount(), 
-                        newEnsemble.getTotalClusterCount(), 
-                        newEnsemble.getName(), 
-                        newEnsemble.getId()));
+                List<String> ensembles = stateUpdate.getEnsembles();
+                ensembles.add(newEnsemble.getId());
                 stateUpdate.setEnsembles(ensembles);
                 stateRepository.save(stateUpdate);
                 return(newEnsemble.getId());
