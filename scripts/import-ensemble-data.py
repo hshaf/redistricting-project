@@ -8,8 +8,8 @@ with open(ENSEMBLE_DATA_JSON) as fh:
     df = json.load(fh)
 
 for state in df:
-    stateName = state['name']
-    object = {'name': stateName}
+    stateName = state['initials']
+    object = {'initials': stateName, 'name': state['name'], 'districtType': state['districtType']}
     x = requests.post(url+'/state/add', json = object)
     print(x.text)
 

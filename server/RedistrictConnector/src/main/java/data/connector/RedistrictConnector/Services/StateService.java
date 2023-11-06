@@ -9,6 +9,7 @@ import data.connector.RedistrictConnector.Models.EnsembleSummary;
 import data.connector.RedistrictConnector.Models.State;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,8 +19,8 @@ public class StateService {
     @Autowired
     private StateRepository stateRepository;
 
-    public ResponseEntity<State> getStateByName(String name) {
-        Optional<State> state = stateRepository.findByName(name);
+    public ResponseEntity<State> getStateByInitials(String initials) {
+        Optional<State> state = stateRepository.findByInitials(initials);
 
         if (state.isPresent()) {
             return ResponseEntity.ok(state.get());
@@ -30,9 +31,18 @@ public class StateService {
         }
     }
 
+    public ResponseEntity<HashMap<String,String>> getStateInfo(){
+        List<State> states = stateRepository.findAll();
+        HashMap<String,String> ret = new HashMap<String,String>();
+        for (State state : states) {
+            ret.put(state.getName(), state.getInitials());
+        }
+        return ResponseEntity.ok(ret);
+    }
+
     public String create(State state) {
         try {
-            stateRepository.save(new State(state.getName(), new ArrayList<String>()));
+            stateRepository.save(new State(state.getInitials(), state.getName(), state.getDistrictType(), new ArrayList<String>()));
             return "Added state " + state.getName() + " successfully";
         }
         catch (Exception e) {

@@ -23,14 +23,14 @@ public class StateController {
     @Autowired
     private StateService stateService;
 
-    @GetMapping("/{name}")
-    public ResponseEntity<State> getStateByName(@PathVariable String name) {
-        return stateService.getStateByName(name);
+    @GetMapping("/{initials}")
+    public ResponseEntity<State> getStateByInitials(@PathVariable String initials) {
+        return stateService.getStateByInitials(initials);
     }
 
     @GetMapping("/getNames") //Give mapping of Initials to statename and maybe also type of district plan?
-    public ResponseEntity<HashMap<String,String>> getStateNames(){
-        return ResponseEntity.ok(new HashMap<String,String>());
+    public ResponseEntity<HashMap<String,String>> getAllStateInfo(){
+        return stateService.getStateInfo();
     }
 
     @GetMapping("/")
