@@ -18,6 +18,7 @@ export default function DataPane(props) {
 
   let updateTab = (tab) => {
     setState({
+      ...state,
       selectedTab: tab
     });
   }

@@ -17,13 +17,13 @@ export default function ClusterAnalysis(props) {
 
   let setXAxisVar = (axisOption) => {
     setState({
-      xAxisVar: axisOption,
-      yAxisVar: state.yAxisVar
+      ...state,
+      xAxisVar: axisOption
     })
   }
   let setYAxisVar = (axisOption) => {
     setState({
-      xAxisVar: state.xAxisVar,
+      ...state,
       yAxisVar: axisOption
     })
   }

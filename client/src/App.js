@@ -31,6 +31,7 @@ export default function App() {
     if (stateName === state.selectedState) return;
 
     setState({
+      ...state,
       selectedState: stateName,
       selectedEnsembleID: "1",
       selectedClusterID: ""
@@ -45,9 +46,8 @@ export default function App() {
      */
 
     setState({
-      selectedState: state.selectedState,
-      selectedClusterID: clusterID,
-      selectedEnsembleID: state.selectedEnsembleID
+      ...state,
+      selectedClusterID: clusterID
     });
   }
 
@@ -58,7 +58,7 @@ export default function App() {
      * @param {String}  ensembleID   ID of selected ensemble.
      */
     setState({
-      selectedState: state.selectedState,
+      ...state,
       selectedClusterID: "",
       selectedEnsembleID: ensembleID
     });
