@@ -1,5 +1,7 @@
 package data.connector.RedistrictConnector.Controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,11 @@ public class ClusterController {
     @GetMapping("/{id}")
     public ResponseEntity<Cluster> getClusterById(@PathVariable String id) {
         return clusterService.findById(id);
+    }
+
+    @GetMapping("/ensemble/{id}")
+    public ResponseEntity<List<Cluster>> getClustersByEnsemble(@PathVariable String id) {
+        return clusterService.getByEnsembleId(id);
     }
 
     @GetMapping("/")

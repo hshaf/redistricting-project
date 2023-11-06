@@ -36,6 +36,22 @@ public class ClusterService {
         }
     }
 
+    public ResponseEntity<List<Cluster>> getByEnsembleId(String ensembleId){
+        Optional<Ensemble> ensemble = ensembleRepository.findById(ensembleId);
+        if(ensemble.isPresent()){
+            if(!ensemble.get().getClusters().isEmpty()){
+                List<Cluster> clusters = clusterRepository.findAllById(ensemble.get().getClusters());
+                return ResponseEntity.ok(clusters);
+            }
+            else{
+                return ResponseEntity.notFound().build();
+            }
+        }
+        else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     public String create(Cluster cluster, String ensembleId) {
         try {
             Optional<Ensemble> ensemble = ensembleRepository.findById(ensembleId);

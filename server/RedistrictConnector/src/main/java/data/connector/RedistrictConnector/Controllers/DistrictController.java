@@ -1,5 +1,7 @@
 package data.connector.RedistrictConnector.Controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,11 @@ public class DistrictController {
     @GetMapping("/{id}")
     public ResponseEntity<District> getDistrictById(@PathVariable String id) {
         return districtService.findById(id);
+    }
+
+    @GetMapping("/cluster/{id}")
+    public ResponseEntity<List<District>> getDistrictsByClusterId(@PathVariable String id) {
+        return districtService.getByClusterId(id);
     }
 
     @GetMapping("/")

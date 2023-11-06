@@ -9,13 +9,21 @@ const api = axios.create(
 )
 
 //State Endpoints
-export const getStateByName = (name) => api.get(`/state/${name}`)
+export const getStateByInitials = (initials) => api.get(`/state/${initials}`)
+
+export const getStateNames = () => api.get(`/state/getNames`)
 
 //Ensemble Endpoints
 export const getEnsembleById = (id) => api.get(`/ensemble/${id}`)
 
+export const getAllEnsembles = () => api.get(`/ensemble/getAll`)
+
+export const getEnsemblesByStateInitials = (initials) => api.get(`/ensemble/state/${initials}`)
+
 //Cluster Endpoints
 export const getClusterById = (id) => api.get(`/cluster/${id}`)
+
+export const getClustersByEnsembleId = (id) => api.get(`/cluster/ensemble/${id}`)
 
 export const updateClusterById = (cluster, id) => {
   return api.put(`/cluster/update/${id}`, {cluster:cluster})
@@ -23,6 +31,8 @@ export const updateClusterById = (cluster, id) => {
 
 //District Endpoints
 export const getDistrictById = (id) => api.get(`/district/${id}`)
+
+export const getDistrictsByClusterId = (id) => api.get(`/district/cluster/${id}`)
 
 //Boundary Endpoints
 export const getBoundaryById = (id) => api.get(`/boundary/${id}`)
@@ -37,11 +47,16 @@ export const getHelloName = (name) => api.get(`/test/${name}`)
 
 
 const apis = {
-  getStateByName,
+  getStateByInitials,
+  getStateNames,
   getEnsembleById,
+  getAllEnsembles,
+  getEnsemblesByStateInitials,
   getClusterById,
+  getClustersByEnsembleId,
   updateClusterById,
   getDistrictById,
+  getDistrictsByClusterId,
   getBoundaryById,
   getBoundaryByDistrictId,
   getHello,

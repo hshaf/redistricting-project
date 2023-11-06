@@ -33,6 +33,22 @@ public class DistrictService {
         }
     }
 
+    public ResponseEntity<List<District>> getByClusterId(String id){
+        Optional<Cluster> cluster = clusterRepository.findById(id);
+        if(cluster.isPresent()){
+            if(!cluster.get().getDistricts().isEmpty()){
+                List<District> districts = districtRepository.findAllById(cluster.get().getDistricts());
+                return ResponseEntity.ok(districts);
+            }
+            else{
+                return ResponseEntity.notFound().build();
+            }
+        }
+        else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     public String create(District district, String clusterId) {
         try {
             Optional<Cluster> cluster = clusterRepository.findById(clusterId);

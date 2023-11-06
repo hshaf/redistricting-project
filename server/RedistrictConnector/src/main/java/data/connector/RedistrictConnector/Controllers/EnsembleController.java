@@ -26,6 +26,11 @@ public class EnsembleController {
         return ensembleService.findById(id);
     }
 
+    @GetMapping("/state/{initial}")
+    public ResponseEntity<List<Ensemble>> getEnsemblesByState(@PathVariable String initial) {
+        return ensembleService.getEnsembleList(initial);
+    }
+
     @GetMapping("/getAll")
     public ResponseEntity<List<Ensemble>> getAllEnsembles() {
         return ensembleService.getEnsembleList();
