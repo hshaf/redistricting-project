@@ -1,5 +1,5 @@
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import React, { Component } from "react";
+import { useState, useRef } from "react";
 import VAStateBoundaries from '../data/va-state-boundary.json';
 import AZStateBoundaries from '../data/az-state-boundary.json';
 import WIStateBoundaries from '../data/wi-state-boundary.json';
@@ -20,9 +20,10 @@ export default function CustomMap(props) {
   let azBoundariesData = AZStateBoundaries;
   let wiBoundariesData = WIStateBoundaries;
   /* To change the overlay on an existing GeoJSON object, we can
-  change the key value to force the object to rerender */
-  // Changed to use props.selectedState value to force re-render
-  // let keyCount = 0;
+  change the key value to force the object to re-render.
+  It is saved with useRef so it is persistent. */
+  let keyCount = useRef(0);
+  keyCount.current = keyCount.current + 1;
 
   if (props.selectedState === "VA") {
     // Update map center over Virginia
@@ -79,7 +80,7 @@ export default function CustomMap(props) {
       <GeoJSON 
         weight={1} 
         color='blue' 
-        key={'Virginia' + (props.selectedState === "VA")} 
+        key={'Virginia' + keyCount.current} 
         data={vaBoundariesData} 
         eventHandlers={{
           click: () => {
@@ -90,7 +91,7 @@ export default function CustomMap(props) {
       <GeoJSON 
         weight={1} 
         color='blue' 
-        key={'Arizona' + (props.selectedState === "AZ")} 
+        key={'Arizona' + keyCount.current} 
         data={azBoundariesData}
         eventHandlers={{
           click: () => {
@@ -101,7 +102,7 @@ export default function CustomMap(props) {
       <GeoJSON 
         weight={1} 
         color='blue' 
-        key={'Wisconsin' + (props.selectedState === "WI")} 
+        key={'Wisconsin' + keyCount.current} 
         data={wiBoundariesData} 
         eventHandlers={{
           click: () => {
