@@ -7,7 +7,7 @@ from constants import *
 OUTPUT_PATH = "../va_districts.html"
 
 def visualize_districts():
-	va_cd = geopandas.read_file(VA_DISTRICTS_PATH)
+	va_cd = geopandas.read_file(VA_DEMOGRAPHIC_PATH)
 	m = va_cd.explore()
 	m.save(OUTPUT_PATH)
 
