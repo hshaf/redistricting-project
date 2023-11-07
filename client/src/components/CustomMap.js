@@ -1,5 +1,5 @@
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import VAStateBoundaries from '../data/va-state-boundary.json';
 import AZStateBoundaries from '../data/az-state-boundary.json';
 import WIStateBoundaries from '../data/wi-state-boundary.json';
@@ -7,8 +7,12 @@ import VADistricts from '../data/va-districts.json';
 import AZDistricts from '../data/az-districts.json';
 import WIDistricts from '../data/wi-districts.json';
 import ChangeView from './ChangeView';
+import { AppStateContext, AppStateDispatch } from '../context/AppStateContext';
 
 export default function CustomMap(props) {
+  const appState = useContext(AppStateContext);
+  const dispatch = useContext(AppStateDispatch);
+
   // Center of map coordinates
   let mapCenter = [38.86438706880524, -95.47162384288428];
   // Current zoom level
@@ -25,7 +29,7 @@ export default function CustomMap(props) {
   let keyCount = useRef(0);
   keyCount.current = keyCount.current + 1;
 
-  if (props.selectedState === "VA") {
+  if (appState.selectedState === "VA") {
     // Update map center over Virginia
     mapCenter = [37.47812615585515, -78.88801623378961];
     // Update zoom level
@@ -36,7 +40,7 @@ export default function CustomMap(props) {
     wiBoundariesData = WIStateBoundaries;
   }
 
-  else if (props.selectedState === "AZ") {
+  else if (appState.selectedState === "AZ") {
     // Update map center over Arizona
     mapCenter = [34.35920229576733, -111.82765189051278];
     // Update zoom level
@@ -47,7 +51,7 @@ export default function CustomMap(props) {
     wiBoundariesData = WIStateBoundaries;
   }
 
-  else if (props.selectedState === "WI") {
+  else if (appState.selectedState === "WI") {
     // Update map center over Wisconsin
     mapCenter = [44.61389658316453, -89.67045816895208];
     // Update zoom level
@@ -84,7 +88,11 @@ export default function CustomMap(props) {
         data={vaBoundariesData} 
         eventHandlers={{
           click: () => {
-            props.updateSelectedState("VA");
+            //props.updateSelectedState("VA");
+            dispatch({
+              type: "setSelectedState",
+              payload: "VA"
+            })
           }
         }} 
       />
@@ -95,7 +103,11 @@ export default function CustomMap(props) {
         data={azBoundariesData}
         eventHandlers={{
           click: () => {
-            props.updateSelectedState("AZ");
+            //props.updateSelectedState("AZ");
+            dispatch({
+              type: "setSelectedState",
+              payload: "AZ"
+            })
           }
         }}
       />
@@ -106,7 +118,11 @@ export default function CustomMap(props) {
         data={wiBoundariesData} 
         eventHandlers={{
           click: () => {
-            props.updateSelectedState("WI");
+            //props.updateSelectedState("WI");
+            dispatch({
+              type: "setSelectedState",
+              payload: "WI"
+            })
           }
         }}  
       />

@@ -2,9 +2,10 @@ import { Button, Container, Nav, NavDropdown, Navbar, Tab, Tabs } from "react-bo
 import EnsembleOverview from "./EnsembleOverview";
 import ClusterAnalysis from "./ClusterAnalysis";
 import DistanceMeasures from "./DistanceMeasures";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ensembleData from "../data/ensemble-data.json"
 import api from "../serverAPI";
+import { AppStateContext, AppStateDispatch } from "../context/AppStateContext";
 
 // Use these constants for checking the value of selectedTab state.
 const ENSEMBLE = 'ensemble';
@@ -12,6 +13,8 @@ const CLUSTER = 'cluster';
 const DISTANCE = 'distance';
 
 export default function DataPane(props) {
+  const appState = useContext(AppStateContext);
+  const dispatch = useContext(AppStateDispatch);
   const [state, setState] = useState({
     selectedTab: ENSEMBLE
   })
@@ -30,17 +33,29 @@ export default function DataPane(props) {
   let handleStateSelection = (event) => {
     if (event === 'az') {
       // Arizona selected
-      props.updateSelectedState("AZ");
+      //props.updateSelectedState("AZ");
+      dispatch({
+        type: "setSelectedState",
+        payload: "AZ"
+      });
     }
 
     if (event === 'va') {
       // Virginia selected
-      props.updateSelectedState("VA");
+      //props.updateSelectedState("VA");
+      dispatch({
+        type: "setSelectedState",
+        payload: "VA"
+      });
     }
 
     if (event === 'wi') {
       // Wisconsin selected
-      props.updateSelectedState("WI");
+      //props.updateSelectedState("WI");
+      dispatch({
+        type: "setSelectedState",
+        payload: "WI"
+      });
     }
 
     // Reset tab back to ensemble info
@@ -48,7 +63,11 @@ export default function DataPane(props) {
   }
 
   let handleEnsembleSelection = (event) => {
-    props.updateSelectedEnsembleID(event);
+    //props.updateSelectedEnsembleID(event);
+    dispatch({
+      type: "setSelectedEnsemble",
+      payload: event
+    });
 
     // Reset tab back to ensemble info
     updateTab(ENSEMBLE);
@@ -60,7 +79,11 @@ export default function DataPane(props) {
 
   let handleReset = () => {
     // Deselect current state
-    props.updateSelectedState("");
+    //props.updateSelectedState("");
+    dispatch({
+      type: "setSelectedState",
+      payload: ""
+    });
 
     // Reset tab back to ensemble info
     updateTab(ENSEMBLE);
@@ -69,15 +92,15 @@ export default function DataPane(props) {
   // Get strings for displaying selected state and district plan
   let selectedState = ""
   let districtPlan = ""
-  if (props.selectedState === "VA") {
+  if (appState.selectedState === "VA") {
     selectedState = "Virginia";
     districtPlan = "State Assembly";
   }
-  else if (props.selectedState === "AZ") {
+  else if (appState.selectedState === "AZ") {
     selectedState = "Arizona";
     districtPlan = "State Assembly";
   }
-  else if (props.selectedState === "WI") {
+  else if (appState.selectedState === "WI") {
     selectedState = "Wisconsin";
     districtPlan = "State Senate";
   }
@@ -91,11 +114,14 @@ export default function DataPane(props) {
 
   // If cluster not selected, disable cluster analysis tab
   let disableClusterTab = false;
-  if (props.selectedClusterID === "") {
+  if (appState.selectedClusterID === "") {
     disableClusterTab = true;
   }
 
-  if (props.selectedState) {
+  console.log(appState);
+  console.log(props);
+
+  if (appState.selectedState) {
     dataTabs =
     <Tabs
       id="DataPaneTabs"
@@ -106,9 +132,9 @@ export default function DataPane(props) {
       >
         <Tab eventKey="ensemble" title="Ensemble Info" >
           <EnsembleOverview 
-          selectedState={props.selectedState}
-          selectedEnsembleID={props.selectedEnsembleID}
-          selectedClusterID={props.selectedClusterID}
+          selectedState={appState.selectedState}
+          selectedEnsembleID={appState.selectedEnsembleID}
+          selectedClusterID={appState.selectedClusterID}
           updateSelectedClusterID={props.updateSelectedClusterID}
           selectedTab={state.selectedTab}
           updateTab={updateTab}
@@ -117,18 +143,18 @@ export default function DataPane(props) {
         </Tab>
         <Tab eventKey="cluster" title="Cluster Analysis" disabled={disableClusterTab} >
           <ClusterAnalysis 
-          selectedState={props.selectedState} 
-          selectedEnsembleID={props.selectedEnsembleID}
-          selectedClusterID={props.selectedClusterID}
+          selectedState={appState.selectedState} 
+          selectedEnsembleID={appState.selectedEnsembleID}
+          selectedClusterID={appState.selectedClusterID}
           updateSelectedClusterID={props.updateSelectedClusterID}
           ensembleData={ensembleData}
           />
         </Tab>
         <Tab eventKey="distance" title="Distance Measures" >
           <DistanceMeasures 
-          selectedState={props.selectedState} 
-          selectedEnsembleID={props.selectedEnsembleID}
-          selectedClusterID={props.selectedClusterID}
+          selectedState={appState.selectedState} 
+          selectedEnsembleID={appState.selectedEnsembleID}
+          selectedClusterID={appState.selectedClusterID}
           updateSelectedClusterID={props.updateSelectedClusterID}
           ensembleData={ensembleData}
           />
@@ -154,12 +180,12 @@ export default function DataPane(props) {
   // If no state is selected, disable ensemble dropdown in navbar
   let ensembleDropDisable = false;
   let ensembleDropdownItems = <div></div>;
-  if (!props.selectedState) {
+  if (!appState.selectedState) {
     ensembleDropDisable = true;
   }
   // Otherwise, populate dropdown
   else {
-    ensembleDropdownItems = Object.values(ensembleData[props.selectedState]).map((entry) => {
+    ensembleDropdownItems = Object.values(ensembleData[appState.selectedState]).map((entry) => {
       const entryKey = entry["ensembleNum"];
       const entryLabel = entry["name"];
       return (
