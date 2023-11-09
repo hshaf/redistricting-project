@@ -6,6 +6,7 @@ import { useContext, useState } from "react";
 import ensembleData from "../data/ensemble-data.json"
 import api from "../serverAPI";
 import { AppStateContext, AppStateDispatch, AppStateActionType } from "../context/AppStateContext";
+import { AppDataContext } from "../context/AppDataContext";
 
 // Use these constants for checking the value of selectedTab state.
 const ENSEMBLE = 'ensemble';
@@ -15,6 +16,7 @@ const DISTANCE = 'distance';
 export default function DataPane(props) {
   const appState = useContext(AppStateContext);
   const appStateDispatch = useContext(AppStateDispatch);
+  const appData = useContext(AppDataContext);
   const [state, setState] = useState({
     selectedTab: ENSEMBLE
   })
@@ -71,17 +73,9 @@ export default function DataPane(props) {
   // Get strings for displaying selected state and district plan
   let selectedState = ""
   let districtPlan = ""
-  if (appState.selectedState === "VA") {
-    selectedState = "Virginia";
-    districtPlan = "State Assembly";
-  }
-  else if (appState.selectedState === "AZ") {
-    selectedState = "Arizona";
-    districtPlan = "State Assembly";
-  }
-  else if (appState.selectedState === "WI") {
-    selectedState = "Wisconsin";
-    districtPlan = "State Senate";
+  if (appState.selectedState !== "") {
+    selectedState = appData.stateData.get(appState.selectedState).name;
+    districtPlan = appData.stateData.get(appState.selectedState).districtType;
   }
   
   // Render DataPane
@@ -143,6 +137,15 @@ export default function DataPane(props) {
       </div>
     </Container>
   }
+  // Generate state dopdown
+  let stateDropdownItems = [];
+  for (const s of appData.stateData.values()) {
+    stateDropdownItems.push(
+      <NavDropdown.Item key={`state-dropdown-${s.initials}`} eventKey={s.initials}>
+        {s.name}
+      </NavDropdown.Item>
+    );
+  }
 
   // If no state is selected, disable ensemble dropdown in navbar
   let ensembleDropDisable = false;
@@ -180,15 +183,7 @@ export default function DataPane(props) {
               id="state-nav-dropdown" 
               onSelect={handleStateSelection}
               >
-                <NavDropdown.Item eventKey={'AZ'}>
-                  Arizona
-                </NavDropdown.Item>
-                <NavDropdown.Item eventKey={'VA'}>
-                  Virginia
-                </NavDropdown.Item>
-                <NavDropdown.Item eventKey={'WI'}>
-                  Wisconsin
-                </NavDropdown.Item> 
+                {stateDropdownItems}
               </NavDropdown>
 
               <NavDropdown 

@@ -5,14 +5,16 @@ export const AppDataContext = createContext(null);
 export const AppDataDispatch = createContext(null);
 
 export function AppDataProvider({ children }) {
-  const [appData, dispatch] = useReducer(appDataReducer, initialDataState);
+  const [appData, dispatch] = useReducer(appDataReducer, initialAppData);
 
   // Load state and ensemble summary data on startup
   async function initializeData() {
     let stateListResponse = await serverAPI.getStateNames();
     let stateData = new Map();
+    let ensembleSummaryData = new Map();
     if (stateListResponse.status === 200) {
       for (const s of Object.values(stateListResponse.data)) {
+        // Retrieve data for state
         let stateDataResponse = await serverAPI.getStateByInitials(s);
         if (stateDataResponse.status === 200) {
           stateData.set(s, stateDataResponse.data);
@@ -20,6 +22,15 @@ export function AppDataProvider({ children }) {
         else {
           console.log("Error in retrieving stateDataResponse");
           console.log(stateDataResponse);
+        }
+        // Retrieve summary data for ensembles in state
+        let ensembleDataResponse = await serverAPI.getEnsemblesByStateInitials(s);
+        if (ensembleDataResponse.status === 200) {
+          ensembleSummaryData.set(s, ensembleDataResponse.data);
+        }
+        else {
+          console.log("Error in retrieving ensembleDataResponse");
+          console.log(ensembleDataResponse);
         }
       }
     }
@@ -31,7 +42,7 @@ export function AppDataProvider({ children }) {
       type: AppDataActionType.INIT,
       payload: {
         stateData: stateData,
-        ensembleSummaryData: null
+        ensembleSummaryData: ensembleSummaryData
       }
     });
     console.log(stateData); // Remove this when debugging is done
@@ -47,16 +58,16 @@ export function AppDataProvider({ children }) {
         {children}
       </AppDataDispatch.Provider>
     </AppDataContext.Provider>
-  )
+  );
 }
 
 export const AppDataActionType = {
   INIT: "INIT"
 }
 
-const initialDataState = {
+const initialAppData = {
   stateData: new Map(),
-  ensembleSummaryData: null,
+  ensembleSummaryData: new Map(),
   ensembleObj: null
 }
 
