@@ -7,11 +7,11 @@ import VADistricts from '../data/va-districts.json';
 import AZDistricts from '../data/az-districts.json';
 import WIDistricts from '../data/wi-districts.json';
 import ChangeView from './ChangeView';
-import { AppStateContext, AppStateDispatch } from '../context/AppStateContext';
+import { AppStateContext, AppStateDispatch, AppStateActionType } from '../context/AppStateContext';
 
 export default function CustomMap(props) {
   const appState = useContext(AppStateContext);
-  const dispatch = useContext(AppStateDispatch);
+  const appStateDispatch = useContext(AppStateDispatch);
 
   // Center of map coordinates
   let mapCenter = [38.86438706880524, -95.47162384288428];
@@ -89,8 +89,8 @@ export default function CustomMap(props) {
         eventHandlers={{
           click: () => {
             //props.updateSelectedState("VA");
-            dispatch({
-              type: "setSelectedState",
+            appStateDispatch({
+              type: AppStateActionType.SET_SELECTED_STATE,
               payload: "VA"
             })
           }
@@ -104,8 +104,8 @@ export default function CustomMap(props) {
         eventHandlers={{
           click: () => {
             //props.updateSelectedState("AZ");
-            dispatch({
-              type: "setSelectedState",
+            appStateDispatch({
+              type: AppStateActionType.SET_SELECTED_STATE,
               payload: "AZ"
             })
           }
@@ -119,8 +119,8 @@ export default function CustomMap(props) {
         eventHandlers={{
           click: () => {
             //props.updateSelectedState("WI");
-            dispatch({
-              type: "setSelectedState",
+            appStateDispatch({
+              type: AppStateActionType.SET_SELECTED_STATE,
               payload: "WI"
             })
           }
