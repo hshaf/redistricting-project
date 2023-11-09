@@ -5,7 +5,7 @@ import DistanceMeasures from "./DistanceMeasures";
 import { useContext, useState } from "react";
 import ensembleData from "../data/ensemble-data.json"
 import api from "../serverAPI";
-import { AppStateContext, AppStateDispatch } from "../context/AppStateContext";
+import { AppStateContext, AppStateDispatch, AppStateActionType } from "../context/AppStateContext";
 
 // Use these constants for checking the value of selectedTab state.
 const ENSEMBLE = 'ensemble';
@@ -14,7 +14,7 @@ const DISTANCE = 'distance';
 
 export default function DataPane(props) {
   const appState = useContext(AppStateContext);
-  const dispatch = useContext(AppStateDispatch);
+  const appStateDispatch = useContext(AppStateDispatch);
   const [state, setState] = useState({
     selectedTab: ENSEMBLE
   })
@@ -34,8 +34,8 @@ export default function DataPane(props) {
     if (event === 'az') {
       // Arizona selected
       //props.updateSelectedState("AZ");
-      dispatch({
-        type: "setSelectedState",
+      appStateDispatch({
+        type: AppStateActionType.SET_SELECTED_STATE,
         payload: "AZ"
       });
     }
@@ -43,8 +43,8 @@ export default function DataPane(props) {
     if (event === 'va') {
       // Virginia selected
       //props.updateSelectedState("VA");
-      dispatch({
-        type: "setSelectedState",
+      appStateDispatch({
+        type: AppStateActionType.SET_SELECTED_STATE,
         payload: "VA"
       });
     }
@@ -52,8 +52,8 @@ export default function DataPane(props) {
     if (event === 'wi') {
       // Wisconsin selected
       //props.updateSelectedState("WI");
-      dispatch({
-        type: "setSelectedState",
+      appStateDispatch({
+        type: AppStateActionType.SET_SELECTED_STATE,
         payload: "WI"
       });
     }
@@ -64,8 +64,8 @@ export default function DataPane(props) {
 
   let handleEnsembleSelection = (event) => {
     //props.updateSelectedEnsembleID(event);
-    dispatch({
-      type: "setSelectedEnsemble",
+    appStateDispatch({
+      type: AppStateActionType.SET_SELECTED_ENSEMBLE,
       payload: event
     });
 
@@ -80,8 +80,8 @@ export default function DataPane(props) {
   let handleReset = () => {
     // Deselect current state
     //props.updateSelectedState("");
-    dispatch({
-      type: "setSelectedState",
+    appStateDispatch({
+      type: AppStateActionType.SET_SELECTED_STATE,
       payload: ""
     });
 

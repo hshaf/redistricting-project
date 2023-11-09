@@ -22,9 +22,15 @@ Actions take on the following format:
     payload: provides the parameter(s) for the action
 }
 */
+export const AppStateActionType = {
+    SET_SELECTED_STATE: "SET_SELECTED_STATE",
+    SET_SELECTED_ENSEMBLE: "SET_SELECTED_ENSEMBLE",
+    SET_SELECTED_CLUSTER: "SET_SELECTED_CLUSTER",
+    SET_SELECTED_DISTRICT_PLAN: "SET_SELECTED_DISTRICT_PLAN"
+}
 function appStateReducer(appState, action) {
     switch(action.type) {
-        case "setSelectedState": {
+        case AppStateActionType.SET_SELECTED_STATE: {
             return {
                 ...appState,
                 selectedState: action.payload,
@@ -33,7 +39,7 @@ function appStateReducer(appState, action) {
                 selectedDistrictPlanID: ""
             }
         }
-        case "setEnsemble": {
+        case AppStateActionType.SET_SELECTED_ENSEMBLE: {
             return {
                 ...appState,
                 selectedEnsembleID: action.payload,
@@ -41,21 +47,21 @@ function appStateReducer(appState, action) {
                 selectedDistrictPlanID: ""
             }
         }
-        case "setSelectedCluster": {
+        case AppStateActionType.SET_SELECTED_CLUSTER: {
             return {
                 ...appState,
                 selectedClusterID: action.payload,
                 selectedDistrictPlanID: ""
             }
         }
-        case "setSelectedDistrictPlan": {
+        case AppStateActionType.SET_SELECTED_DISTRICT_PLAN: {
             return {
                 ...appState,
                 selectedDistrictPlanID: action.payload
             }
         }
         default: {
-            throw Error("Unknown action: " + action.typ);
+            throw Error("Unknown action: " + action.type);
         }
     }
 }
