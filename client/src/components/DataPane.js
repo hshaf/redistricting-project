@@ -110,31 +110,19 @@ export default function DataPane(props) {
       activeKey={state.selectedTab}
       >
         <Tab eventKey="ensemble" title="Ensemble Info" >
-          <EnsembleOverview 
-          selectedState={appState.selectedState}
-          selectedEnsembleID={appState.selectedEnsembleID}
-          selectedClusterID={appState.selectedClusterID}
-          updateSelectedClusterID={props.updateSelectedClusterID}
+          <EnsembleOverview
           selectedTab={state.selectedTab}
           updateTab={updateTab}
           ensembleData={ensembleData}
           />
         </Tab>
         <Tab eventKey="cluster" title="Cluster Analysis" disabled={disableClusterTab} >
-          <ClusterAnalysis 
-          selectedState={appState.selectedState} 
-          selectedEnsembleID={appState.selectedEnsembleID}
-          selectedClusterID={appState.selectedClusterID}
-          updateSelectedClusterID={props.updateSelectedClusterID}
+          <ClusterAnalysis
           ensembleData={ensembleData}
           />
         </Tab>
         <Tab eventKey="distance" title="Distance Measures" >
-          <DistanceMeasures 
-          selectedState={appState.selectedState} 
-          selectedEnsembleID={appState.selectedEnsembleID}
-          selectedClusterID={appState.selectedClusterID}
-          updateSelectedClusterID={props.updateSelectedClusterID}
+          <DistanceMeasures
           ensembleData={ensembleData}
           />
         </Tab>
