@@ -31,32 +31,11 @@ export default function DataPane(props) {
   };
 
   let handleStateSelection = (event) => {
-    if (event === 'az') {
-      // Arizona selected
-      //props.updateSelectedState("AZ");
-      appStateDispatch({
-        type: AppStateActionType.SET_SELECTED_STATE,
-        payload: "AZ"
-      });
-    }
-
-    if (event === 'va') {
-      // Virginia selected
-      //props.updateSelectedState("VA");
-      appStateDispatch({
-        type: AppStateActionType.SET_SELECTED_STATE,
-        payload: "VA"
-      });
-    }
-
-    if (event === 'wi') {
-      // Wisconsin selected
-      //props.updateSelectedState("WI");
-      appStateDispatch({
-        type: AppStateActionType.SET_SELECTED_STATE,
-        payload: "WI"
-      });
-    }
+    // Set state based on provided abbreviation
+    appStateDispatch({
+      type: AppStateActionType.SET_SELECTED_STATE,
+      payload: event
+    });
 
     // Reset tab back to ensemble info
     updateTab(ENSEMBLE);
@@ -213,13 +192,13 @@ export default function DataPane(props) {
               id="state-nav-dropdown" 
               onSelect={handleStateSelection}
               >
-                <NavDropdown.Item eventKey={'az'}>
+                <NavDropdown.Item eventKey={'AZ'}>
                   Arizona
                 </NavDropdown.Item>
-                <NavDropdown.Item eventKey={'va'}>
+                <NavDropdown.Item eventKey={'VA'}>
                   Virginia
                 </NavDropdown.Item>
-                <NavDropdown.Item eventKey={'wi'}>
+                <NavDropdown.Item eventKey={'WI'}>
                   Wisconsin
                 </NavDropdown.Item> 
               </NavDropdown>

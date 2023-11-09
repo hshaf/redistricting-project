@@ -1,6 +1,7 @@
 import { Button, Container, Nav, NavDropdown, Navbar, Table } from "react-bootstrap";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Dot } from 'recharts';
+import { AppStateContext, AppStateDispatch } from "../context/AppStateContext";
 
 const districtDotColor = "#0d6efd";
 const axisLabels = {
@@ -10,6 +11,8 @@ const axisLabels = {
 }
 
 export default function ClusterAnalysis(props) {
+  const appState = useContext(AppStateContext);
+
   const [state, setState] = useState({
     xAxisVar: "polsbyPopper",
     yAxisVar: "majMin",
@@ -47,21 +50,21 @@ export default function ClusterAnalysis(props) {
   
   // Render nothing if no state is selected
   // Component should not be accessible in this state
-  if (!props.selectedState || props.selectedClusterID === "") {
+  if (!appState.selectedState || appState.selectedClusterID === "") {
     return (
       <div></div>
     );
   }
 
   // Get name of selected ensemble
-  let selectedEnsemble = props.ensembleData[props.selectedState][props.selectedEnsembleID].name;
+  let selectedEnsemble = props.ensembleData[appState.selectedState][appState.selectedEnsembleID].name;
 
   const selectedDistrict = 1;
-  var clusterData = props.ensembleData[props.selectedState][props.selectedEnsembleID].clusters[props.selectedClusterID] // Change this to get data from request
+  var clusterData = props.ensembleData[appState.selectedState][appState.selectedEnsembleID].clusters[appState.selectedClusterID] // Change this to get data from request
   var districtData = Object.values(clusterData.plans)
   
   // Fix cluster table values to 3 decimal places if variable is a float
-  const clusterName = "Cluster #" + props.selectedClusterID + " Overview";
+  const clusterName = "Cluster #" + appState.selectedClusterID + " Overview";
   const clusterNumMaps = clusterData["count"];
   const clusterPolsbyPopper = clusterData["polsbyPopper"].toFixed(3);
   const clusterMajMin = clusterData["majMin"].toFixed(3);
@@ -126,7 +129,7 @@ export default function ClusterAnalysis(props) {
               <Nav.Link>Ensemble: {selectedEnsemble}</Nav.Link>
             </Nav.Item>
             <Nav.Item className="ms-auto">
-              <Nav.Link>Cluster ID: {props.selectedClusterID}</Nav.Link>
+              <Nav.Link>Cluster ID: {appState.selectedClusterID}</Nav.Link>
             </Nav.Item>
           </Nav>
           </Navbar.Collapse>

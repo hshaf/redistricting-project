@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Table, Container } from "react-bootstrap";
+import { AppStateContext } from "../context/AppStateContext";
 
 export default function DistanceMeasures(props) {
+  const appState = useContext(AppStateContext);
+
   // Render nothing if no state is selected
   // Component should not be accessible in this state
-  if (!props.selectedState) {
+  if (!appState.selectedState) {
     return (
       <div></div>
     );
   }
 
   // Generate distance measures table
-  var clusterData = Object.values(props.ensembleData[props.selectedState][props.selectedEnsembleID].clusters) // Change this to get data from request
+  var clusterData = Object.values(props.ensembleData[appState.selectedState][appState.selectedEnsembleID].clusters) // Change this to get data from request
   const distanceTableEntries = clusterData.map((cluster) => {
     const clusterNum = cluster["clusterNum"]
     const clusterSize = cluster["count"]

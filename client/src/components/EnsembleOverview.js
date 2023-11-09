@@ -1,6 +1,7 @@
 import { Button, Container, Nav, NavDropdown, Navbar, Table } from "react-bootstrap";
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Dot } from 'recharts';
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AppStateActionType, AppStateContext, AppStateDispatch } from "../context/AppStateContext";
 
 const clusterDotColor = "#0d6efd";
 const axisLabels = {
@@ -10,6 +11,8 @@ const axisLabels = {
 }
 
 export default function EnsembleOverview(props) {
+  const appState = useContext(AppStateContext)
+  const appStateDispatch = useContext(AppStateDispatch)
   const [state, setState] = useState({
     xAxisVar: "polsbyPopper",
     yAxisVar: "majMin",
@@ -28,7 +31,11 @@ export default function EnsembleOverview(props) {
     })
   }
   let setSelectedCluster = (clusterNum) => {
-    props.updateSelectedClusterID(clusterNum);
+    appStateDispatch({
+      type: AppStateActionType.SET_SELECTED_CLUSTER,
+      payload: clusterNum
+    })
+    //props.updateSelectedClusterID(clusterNum);
     // Switch to cluster analysis tab
     props.updateTab("cluster");
   }
@@ -54,14 +61,14 @@ export default function EnsembleOverview(props) {
 
   // Render nothing if no state is selected
   // Component should not be accessible in this state
-  if (!props.selectedState) {
+  if (!appState.selectedState) {
     return (
       <div></div>
     );
   }
   
   // Generate cluster table
-  var clusterData = Object.values(props.ensembleData[props.selectedState][props.selectedEnsembleID].clusters) // Change this to get data from request
+  var clusterData = Object.values(props.ensembleData[appState.selectedState][appState.selectedEnsembleID].clusters) // Change this to get data from request
   const clusterTableEntries = clusterData.map((cluster) => {
     const clusterNum = cluster["clusterNum"]
     const numMaps = cluster["count"];
@@ -78,7 +85,7 @@ export default function EnsembleOverview(props) {
   );
 
   // Get name of selected ensemble
-  let selectedEnsemble = props.ensembleData[props.selectedState][props.selectedEnsembleID].name;
+  let selectedEnsemble = props.ensembleData[appState.selectedState][appState.selectedEnsembleID].name;
 
   // Render EnsembleOverview
   return (
