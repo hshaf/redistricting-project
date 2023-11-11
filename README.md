@@ -44,20 +44,20 @@ This repository contains the client and server implementation of our web applica
    `python import-ensemble-data.py`
    
 ## Data Sources
-Create `data/` and add data from the following sources,
+Create `data/` under base project directory and add data from the following sources,
 - [Current state and district plan boundaries](https://drive.google.com/drive/folders/1LyX8l24IqyiwDo5hlyrxD4R4se2BAPeN?usp=sharing)
 ### Arizona
 - [Arizona vtd PL 94-171 2020](https://redistrictingdatahub.org/dataset/arizona-vtd-pl-94171-2020/)
 - [Arizona 2020 General Election Results Disaggregated to the 2020 Block](https://redistrictingdatahub.org/dataset/arizona-2020-general-election-results-disaggregated-to-the-2020-block)
-- [2020 Census Adjacency Files for Arizona](https://redistrictingdatahub.org/dataset/2020-census-adjacency-files-for-arizona/) - extract `az_vtd_2020_rook_adjacency.csv`
+- [2020 Census Adjacency Files for Arizona](https://redistrictingdatahub.org/dataset/2020-census-adjacency-files-for-arizona/) (extract only `az_vtd_2020_rook_adjacency.csv`)
 - [2022 Arizona State Legislature Districts](https://redistrictingdatahub.org/dataset/2022-arizona-state-legislature-districts-approved-plan/)
 ### Virginia
 - [Virginia vtd PL 94-171 2020](https://redistrictingdatahub.org/dataset/virginia-vtd-pl-94171-2020/)
 - [Virginia 2020 General Election Results Disaggregated to the 2020 Block](https://redistrictingdatahub.org/dataset/virginia-2020-general-election-results-disaggregated-to-the-2020-block)
-- [2020 Census Adjacency Files for Virginia](https://redistrictingdatahub.org/dataset/2020-census-adjacency-files-for-virginia/) - extract `va_vtd_2020_rook_adjacency.csv`
+- [2020 Census Adjacency Files for Virginia](https://redistrictingdatahub.org/dataset/2020-census-adjacency-files-for-virginia/) (extract only `va_vtd_2020_rook_adjacency.csv`)
 - [2021 Virginia House of Delegates Districts](https://redistrictingdatahub.org/dataset/2021-virginia-house-of-delegates-districts-approved-plan/)
 ### Wisconsin
 - [Wisconsin vtd PL 94-171 2020](https://redistrictingdatahub.org/dataset/wisconsin-vtd-pl-94171-2020/)
 - [Wisconsin 2020 General Election Results Disaggregated to the 2020 Block](https://redistrictingdatahub.org/dataset/wisconsin-2020-general-election-results-disaggregated-to-the-2020-block)
-- [2020 Census Adjacency Files for Wisconsin](https://redistrictingdatahub.org/dataset/2020-census-adjacency-files-for-wisconsin/) - extract `wi_vtd_2020_rook_adjacency.csv`
+- [2020 Census Adjacency Files for Wisconsin](https://redistrictingdatahub.org/dataset/2020-census-adjacency-files-for-wisconsin/) (extract only `wi_vtd_2020_rook_adjacency.csv`)
 - [2022 Wisconsin Senate Districts](https://redistrictingdatahub.org/dataset/2022-wisconsin-senate-districts-approved-plan-2/)
