@@ -149,20 +149,19 @@ export default function DataPane(props) {
 
   // If no state is selected, disable ensemble dropdown in navbar
   let ensembleDropDisable = false;
-  let ensembleDropdownItems = <div></div>;
+  let ensembleDropdownItems = [];
   if (!appState.selectedState) {
     ensembleDropDisable = true;
   }
   // Otherwise, populate dropdown
   else {
-    ensembleDropdownItems = Object.values(ensembleData[appState.selectedState]).map((entry) => {
-      const entryKey = entry["ensembleNum"];
-      const entryLabel = entry["name"];
-      return (
-        <NavDropdown.Item key={`ensemble-${entryKey}`} eventKey={entryKey}>
-          {entryLabel}
-        </NavDropdown.Item>);
-    });
+    for (const e of appData.ensembleSummaryData.get(appState.selectedState)) {
+      ensembleDropdownItems.push(
+        <NavDropdown.Item key={`ensemble-${e.id}`} eventKey={e.id}>
+          {e.name}
+        </NavDropdown.Item>
+      );
+    }
   }
 
   return (

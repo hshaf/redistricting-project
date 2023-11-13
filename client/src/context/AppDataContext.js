@@ -68,16 +68,17 @@ export const AppDataActionType = {
 const initialAppData = {
   stateData: new Map(),
   ensembleSummaryData: new Map(),
-  ensembleObj: null
+  selectedEnsemble: null
 }
 
 function appDataReducer(appData, action) {
   switch(action.type) {
     case AppDataActionType.INIT: {
       return {
+        ...appData,
         stateData: action.payload.stateData,
         ensembleSummaryData: action.payload.ensembleSummaryData,
-        ensembleObj: null
+        selectedEnsemble: null
       }
     }
     default: {
