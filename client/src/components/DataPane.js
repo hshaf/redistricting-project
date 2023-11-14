@@ -6,7 +6,7 @@ import { useContext, useState } from "react";
 import ensembleData from "../data/ensemble-data.json"
 import api from "../serverAPI";
 import { AppStateContext, AppStateDispatch, AppStateActionType } from "../context/AppStateContext";
-import { AppDataContext } from "../context/AppDataContext";
+import { AppDataContext, AppDataDispatch } from "../context/AppDataContext";
 
 // Use these constants for checking the value of selectedTab state.
 const ENSEMBLE = 'ensemble';
@@ -16,7 +16,10 @@ const DISTANCE = 'distance';
 export default function DataPane(props) {
   const appState = useContext(AppStateContext);
   const appStateDispatch = useContext(AppStateDispatch);
+
   const appData = useContext(AppDataContext);
+  const dataAPI = useContext(AppDataDispatch);
+
   const [state, setState] = useState({
     selectedTab: ENSEMBLE
   })
@@ -38,6 +41,9 @@ export default function DataPane(props) {
       type: AppStateActionType.SET_SELECTED_STATE,
       payload: event
     });
+
+    // Retrieve data test
+    dataAPI.getEnsemblesForState(event);
 
     // Reset tab back to ensemble info
     updateTab(ENSEMBLE);

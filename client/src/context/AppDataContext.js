@@ -7,22 +7,27 @@ export const AppDataDispatch = createContext(null);
 export function AppDataProvider({ children }) {
   const [appData, dispatch] = useReducer(appDataReducer, initialAppData);
 
-  // Load state and ensemble summary data on startup
-  async function initializeData() {
-    let stateListResponse = await serverAPI.getStateNames();
+  // Load state and ensemble summary data
+  const initializeData = async () => {
+    let stateListResponse = await serverAPI.getStateNames()
+                                            .catch((err) => { 
+                                              console.log("Error in getStateNames:", err);
+                                              return null;
+                                            });
     let stateData = new Map();
     let ensembleSummaryData = new Map();
-    if (stateListResponse.status === 200) {
+    if (stateListResponse) {
       for (const s of Object.values(stateListResponse.data)) {
         // Retrieve data for state
-        let stateDataResponse = await serverAPI.getStateByInitials(s);
-        if (stateDataResponse.status === 200) {
+        let stateDataResponse = await serverAPI.getStateByInitials(s)
+                                                .catch((err) => { 
+                                                  console.log("Error in getStateByInitials:", err);
+                                                  return null;
+                                                });
+        if (stateDataResponse) {
           stateData.set(s, stateDataResponse.data);
         }
-        else {
-          console.log("Error in retrieving stateDataResponse");
-          console.log(stateDataResponse);
-        }
+        // Delete this later
         // Retrieve summary data for ensembles in state
         let ensembleDataResponse = await serverAPI.getEnsemblesByStateInitials(s);
         if (ensembleDataResponse.status === 200) {
@@ -34,10 +39,6 @@ export function AppDataProvider({ children }) {
         }
       }
     }
-    else {
-      console.log("Error in retrieving stateListResponse");
-      console.log(stateListResponse);
-    }
     dispatch({
       type: AppDataActionType.INIT,
       payload: {
@@ -48,13 +49,33 @@ export function AppDataProvider({ children }) {
     console.log(stateData); // Remove this when debugging is done
   }
 
+  const getEnsemblesForState = async (stateInitials) => {
+    let ensembleDataResponse = await serverAPI.getEnsemblesByStateInitials(stateInitials)
+                                              .catch((err) => { 
+                                                console.log("Error in getEnsemblesByStateInitials:", err);
+                                                return null;
+                                              });
+    if (ensembleDataResponse) {
+      dispatch({
+        type: AppDataActionType.TEST,
+        payload: ensembleDataResponse.data
+      });
+    }
+  }
+
+  // Retrieve state-level data upon application start
   useEffect(() => {
     initializeData();
   }, []);
 
+  // Provide API to allow data to be requested
+  const dataAPI = {
+    getEnsemblesForState: getEnsemblesForState
+  }
+
   return (
     <AppDataContext.Provider value={appData}>
-      <AppDataDispatch.Provider value={dispatch}>
+      <AppDataDispatch.Provider value={dataAPI}>
         {children}
       </AppDataDispatch.Provider>
     </AppDataContext.Provider>
@@ -62,7 +83,8 @@ export function AppDataProvider({ children }) {
 }
 
 export const AppDataActionType = {
-  INIT: "INIT"
+  INIT: "INIT",
+  TEST: "TEST"
 }
 
 const initialAppData = {
@@ -79,6 +101,12 @@ function appDataReducer(appData, action) {
         stateData: action.payload.stateData,
         ensembleSummaryData: action.payload.ensembleSummaryData,
         selectedEnsemble: null
+      }
+    }
+    case AppDataActionType.TEST: {
+      return {
+        ...appData,
+        selectedEnsemble: action.payload
       }
     }
     default: {
