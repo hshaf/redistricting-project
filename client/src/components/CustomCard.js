@@ -9,7 +9,7 @@ const customcardstyle = {
   maxWidth: customcardwidth
 };
 
-function CustomCard() {
+function CustomCard(props) {
   return (
     <Card 
     className="text-center" 
@@ -19,11 +19,11 @@ function CustomCard() {
     // border="primary"
     >
       <Card.Body>
-        <Card.Title>Ensemble Name</Card.Title>
+        <Card.Title>{props.ensembleName}</Card.Title>
       </Card.Body>
       <ListGroup className="list-group-flush">
-        <ListGroup.Item variant={listgroupvariant}>Cluster Count: 1</ListGroup.Item>
-        <ListGroup.Item variant={listgroupvariant}>District Count: 5</ListGroup.Item>
+        <ListGroup.Item variant={listgroupvariant}>Cluster Count: {props.clusterCount}</ListGroup.Item>
+        <ListGroup.Item variant={listgroupvariant}>District Count: {props.districtPlanCount}</ListGroup.Item>
       </ListGroup>
       <Card.Body>
         <Button variant="primary">Select</Button>

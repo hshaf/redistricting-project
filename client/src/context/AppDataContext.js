@@ -74,7 +74,8 @@ export const AppDataActionType = {
 const initialAppData = {
   stateData: new Map(),
   ensembleSummaryData: new Map(),
-  selectedEnsemble: null
+  selectedEnsemble: null,
+  selectedStateEnsembles: null
 }
 
 function appDataReducer(appData, action) {
@@ -90,7 +91,7 @@ function appDataReducer(appData, action) {
     case AppDataActionType.SET_ENSEMBLES_FOR_STATE: {
       return {
         ...appData,
-        selectedEnsemble: action.payload
+        selectedStateEnsembles: action.payload
       }
     }
     default: {
