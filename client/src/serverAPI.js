@@ -10,8 +10,16 @@ const api = axios.create(
 
 //State Endpoints
 export const getStateByInitials = (initials) => api.get(`/state/${initials}`)
+                                                .catch((error) => {
+                                                  printErrorMsg(error);
+                                                  return null;
+                                                })
 
 export const getStateNames = () => api.get(`/state/getNames`)
+                                    .catch((error) => {
+                                      printErrorMsg(error);
+                                      return null;
+                                    })
 
 //Ensemble Endpoints
 export const getEnsembleById = (id) => api.get(`/ensemble/${id}`)
@@ -19,6 +27,10 @@ export const getEnsembleById = (id) => api.get(`/ensemble/${id}`)
 export const getAllEnsembles = () => api.get(`/ensemble/getAll`)
 
 export const getEnsemblesByStateInitials = (initials) => api.get(`/ensemble/state/${initials}`)
+                                                          .catch((error) => {
+                                                            printErrorMsg(error);
+                                                            return null;
+                                                          })
 
 //Cluster Endpoints
 export const getClusterById = (id) => api.get(`/cluster/${id}`)
@@ -63,6 +75,28 @@ const apis = {
   getList,
   getHash,
   getHelloName
+}
+
+function printErrorMsg(error) {
+  /* Credit to axios documentation for this code snippet 
+  (https://axios-http.com/docs/handling_errors) */
+
+  if (error.response) {
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx
+    console.log(error.response.data);
+    console.log(error.response.status);
+    console.log(error.response.headers);
+  } else if (error.request) {
+    // The request was made but no response was received
+    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+    // http.ClientRequest in node.js
+    console.log(error.request);
+  } else {
+    // Something happened in setting up the request that triggered an Error
+    console.log('Error', error.message);
+  }
+  console.log(error.config);
 }
 
 export default apis

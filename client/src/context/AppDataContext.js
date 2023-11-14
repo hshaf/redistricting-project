@@ -9,33 +9,21 @@ export function AppDataProvider({ children }) {
 
   // Load state and ensemble summary data
   const initializeData = async () => {
-    let stateListResponse = await serverAPI.getStateNames()
-                                            .catch((err) => { 
-                                              console.log("Error in getStateNames:", err);
-                                              return null;
-                                            });
+    let stateListResponse = await serverAPI.getStateNames();
     let stateData = new Map();
     let ensembleSummaryData = new Map();
     if (stateListResponse) {
       for (const s of Object.values(stateListResponse.data)) {
         // Retrieve data for state
-        let stateDataResponse = await serverAPI.getStateByInitials(s)
-                                                .catch((err) => { 
-                                                  console.log("Error in getStateByInitials:", err);
-                                                  return null;
-                                                });
+        let stateDataResponse = await serverAPI.getStateByInitials(s);
         if (stateDataResponse) {
           stateData.set(s, stateDataResponse.data);
         }
         // Delete this later
         // Retrieve summary data for ensembles in state
         let ensembleDataResponse = await serverAPI.getEnsemblesByStateInitials(s);
-        if (ensembleDataResponse.status === 200) {
+        if (ensembleDataResponse) {
           ensembleSummaryData.set(s, ensembleDataResponse.data);
-        }
-        else {
-          console.log("Error in retrieving ensembleDataResponse");
-          console.log(ensembleDataResponse);
         }
       }
     }
@@ -50,14 +38,10 @@ export function AppDataProvider({ children }) {
   }
 
   const getEnsemblesForState = async (stateInitials) => {
-    let ensembleDataResponse = await serverAPI.getEnsemblesByStateInitials(stateInitials)
-                                              .catch((err) => { 
-                                                console.log("Error in getEnsemblesByStateInitials:", err);
-                                                return null;
-                                              });
+    let ensembleDataResponse = await serverAPI.getEnsemblesByStateInitials(stateInitials);
     if (ensembleDataResponse) {
       dispatch({
-        type: AppDataActionType.TEST,
+        type: AppDataActionType.SET_ENSEMBLES_FOR_STATE,
         payload: ensembleDataResponse.data
       });
     }
@@ -84,7 +68,7 @@ export function AppDataProvider({ children }) {
 
 export const AppDataActionType = {
   INIT: "INIT",
-  TEST: "TEST"
+  SET_ENSEMBLES_FOR_STATE: "SET_ENSEMBLES_FOR_STATE"
 }
 
 const initialAppData = {
@@ -103,7 +87,7 @@ function appDataReducer(appData, action) {
         selectedEnsemble: null
       }
     }
-    case AppDataActionType.TEST: {
+    case AppDataActionType.SET_ENSEMBLES_FOR_STATE: {
       return {
         ...appData,
         selectedEnsemble: action.payload
