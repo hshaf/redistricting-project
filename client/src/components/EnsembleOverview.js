@@ -2,6 +2,7 @@ import { Button, Container, Nav, NavDropdown, Navbar, Table } from "react-bootst
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Dot } from 'recharts';
 import { useContext, useState } from "react";
 import { AppStateActionType, AppStateContext, AppStateDispatch } from "../context/AppStateContext";
+import { DataPaneTabs } from "./DataPane";
 
 const clusterDotColor = "#0d6efd";
 const axisLabels = {
@@ -37,7 +38,7 @@ export default function EnsembleOverview(props) {
     })
     //props.updateSelectedClusterID(clusterNum);
     // Switch to cluster analysis tab
-    props.updateTab("cluster");
+    props.updateTab(DataPaneTabs.CLUSTER_ANALYSIS);
   }
   let renderScatterplotDot = (input) => {
     const cx = input.cx;

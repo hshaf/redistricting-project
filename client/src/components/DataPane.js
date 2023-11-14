@@ -7,11 +7,15 @@ import ensembleData from "../data/ensemble-data.json"
 import api from "../serverAPI";
 import { AppStateContext, AppStateDispatch, AppStateActionType } from "../context/AppStateContext";
 import { AppDataContext, AppDataDispatch } from "../context/AppDataContext";
+import EnsembleSelection from "./EnsembleSelection";
 
 // Use these constants for checking the value of selectedTab state.
-const ENSEMBLE = 'ensemble';
-const CLUSTER = 'cluster';
-const DISTANCE = 'distance';
+export const DataPaneTabs = {
+  ENSEMBLE_SELECTION: 'ENSEMBLE_SELECTION',
+  ENSEMBLE_INFO: 'ENSEMBLE_INFO',
+  CLUSTER_ANALYSIS: 'CLUSTER_ANALYSIS',
+  DISTANCE_MEASURES: 'DISTANCE_MEASURES'
+}
 
 export default function DataPane(props) {
   const appState = useContext(AppStateContext);
@@ -21,7 +25,7 @@ export default function DataPane(props) {
   const dataAPI = useContext(AppDataDispatch);
 
   const [state, setState] = useState({
-    selectedTab: ENSEMBLE
+    selectedTab: DataPaneTabs.ENSEMBLE_SELECTION
   })
 
   let updateTab = (tab) => {
@@ -45,8 +49,8 @@ export default function DataPane(props) {
     // Retrieve data test
     dataAPI.getEnsemblesForState(event);
 
-    // Reset tab back to ensemble info
-    updateTab(ENSEMBLE);
+    // Reset tab back to ensemble selection
+    updateTab(DataPaneTabs.ENSEMBLE_SELECTION);
   }
 
   let handleEnsembleSelection = (event) => {
@@ -57,7 +61,7 @@ export default function DataPane(props) {
     });
 
     // Reset tab back to ensemble info
-    updateTab(ENSEMBLE);
+    updateTab(DataPaneTabs.ENSEMBLE_INFO);
   };
 
   let handleEnsembleDropdown = (event) => {
@@ -72,8 +76,8 @@ export default function DataPane(props) {
       payload: ""
     });
 
-    // Reset tab back to ensemble info
-    updateTab(ENSEMBLE);
+    // Reset tab back to ensemble selection
+    updateTab(DataPaneTabs.ENSEMBLE_SELECTION);
   };
 
   // Get strings for displaying selected state and district plan
@@ -109,19 +113,24 @@ export default function DataPane(props) {
       onSelect={(tab) => updateTab(tab)}
       activeKey={state.selectedTab}
       >
-        <Tab eventKey="ensemble" title="Ensemble Info" >
+        <Tab eventKey={DataPaneTabs.ENSEMBLE_SELECTION} title="Ensemble Selection" >
+          <EnsembleSelection 
+          updateTab={updateTab}
+          />
+        </Tab>
+        <Tab eventKey={DataPaneTabs.ENSEMBLE_INFO} title="Ensemble Info" >
           <EnsembleOverview
           selectedTab={state.selectedTab}
           updateTab={updateTab}
           ensembleData={ensembleData}
           />
         </Tab>
-        <Tab eventKey="cluster" title="Cluster Analysis" disabled={disableClusterTab} >
+        <Tab eventKey={DataPaneTabs.CLUSTER_ANALYSIS} title="Cluster Analysis" disabled={disableClusterTab} >
           <ClusterAnalysis
           ensembleData={ensembleData}
           />
         </Tab>
-        <Tab eventKey="distance" title="Distance Measures" >
+        <Tab eventKey={DataPaneTabs.DISTANCE_MEASURES} title="Distance Measures" >
           <DistanceMeasures
           ensembleData={ensembleData}
           />
