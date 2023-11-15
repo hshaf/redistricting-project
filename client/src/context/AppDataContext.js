@@ -11,7 +11,6 @@ export function AppDataProvider({ children }) {
   const initializeData = async () => {
     let stateListResponse = await serverAPI.getStateNames();
     let stateData = new Map();
-    let ensembleSummaryData = new Map();
     if (stateListResponse) {
       for (const s of Object.values(stateListResponse.data)) {
         // Retrieve data for state
@@ -19,20 +18,11 @@ export function AppDataProvider({ children }) {
         if (stateDataResponse) {
           stateData.set(s, stateDataResponse.data);
         }
-        // Delete this later
-        // Retrieve summary data for ensembles in state
-        let ensembleDataResponse = await serverAPI.getEnsemblesByStateInitials(s);
-        if (ensembleDataResponse) {
-          ensembleSummaryData.set(s, ensembleDataResponse.data);
-        }
       }
     }
     dispatch({
       type: AppDataActionType.INIT,
-      payload: {
-        stateData: stateData,
-        ensembleSummaryData: ensembleSummaryData
-      }
+      payload: stateData
     });
     console.log(stateData); // Remove this when debugging is done
   }
@@ -91,7 +81,7 @@ export function AppDataProvider({ children }) {
   const dataAPI = {
     getEnsemblesForState: getEnsemblesForState,
     getClustersForEnsemble: getClustersForEnsemble,
-    appDataDispatch: appDataReducer,
+    appDataDispatch: dispatch,
     getDistrictPlansForCluster: getDistrictPlansForCluster
   }
 
@@ -114,7 +104,6 @@ export const AppDataActionType = {
 
 const initialAppData = {
   stateData: new Map(),
-  ensembleSummaryData: new Map(),
   selectedStateEnsembles: null,
   selectedEnsembleClusters: null,
   selectedClusterDistrictPlans: null
@@ -125,8 +114,7 @@ function appDataReducer(appData, action) {
     case AppDataActionType.INIT: {
       return {
         ...appData,
-        stateData: action.payload.stateData,
-        ensembleSummaryData: action.payload.ensembleSummaryData
+        stateData: action.payload,
       }
     }
     case AppDataActionType.SET_ENSEMBLES_FOR_STATE: {
