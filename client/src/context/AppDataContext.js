@@ -108,7 +108,8 @@ export const AppDataActionType = {
   INIT: "INIT",
   SET_ENSEMBLES_FOR_STATE: "SET_ENSEMBLES_FOR_STATE",
   SET_CLUSTERS_FOR_ENSEMBLE: "SET_CLUSTERS_FOR_ENSEMBLE",
-  SET_DISTRICT_PLANS_FOR_CLUSTER: "SET_DISTRICT_PLANS_FOR_CLUSTER"
+  SET_DISTRICT_PLANS_FOR_CLUSTER: "SET_DISTRICT_PLANS_FOR_CLUSTER",
+  RESET: "RESET"
 }
 
 const initialAppData = {
@@ -131,7 +132,9 @@ function appDataReducer(appData, action) {
     case AppDataActionType.SET_ENSEMBLES_FOR_STATE: {
       return {
         ...appData,
-        selectedStateEnsembles: action.payload
+        selectedStateEnsembles: action.payload,
+        selectedEnsembleClusters: null,
+        selectedClusterDistrictPlans: null
       }
     }
     case AppDataActionType.SET_CLUSTERS_FOR_ENSEMBLE: {
@@ -144,6 +147,14 @@ function appDataReducer(appData, action) {
       return {
         ...appData,
         selectedClusterDistrictPlans: action.payload
+      }
+    }
+    case AppDataActionType.RESET: {
+      return {
+        ...appData,
+        selectedStateEnsembles: null,
+        selectedEnsembleClusters: null,
+        selectedClusterDistrictPlans: null
       }
     }
     default: {

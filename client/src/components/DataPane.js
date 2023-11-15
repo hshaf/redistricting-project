@@ -8,6 +8,7 @@ import api from "../serverAPI";
 import { AppStateContext, AppStateDispatch, AppStateActionType } from "../context/AppStateContext";
 import { AppDataContext, AppDataDispatch } from "../context/AppDataContext";
 import EnsembleSelection from "./EnsembleSelection";
+import { AppDataActionType } from "../context/AppDataContext";
 
 // Use these constants for checking the value of selectedTab state.
 export const DataPaneTabs = {
@@ -53,17 +54,6 @@ export default function DataPane(props) {
     updateTab(DataPaneTabs.ENSEMBLE_SELECTION);
   }
 
-  let handleEnsembleSelection = (event) => {
-    //props.updateSelectedEnsembleID(event);
-    appStateDispatch({
-      type: AppStateActionType.SET_SELECTED_ENSEMBLE,
-      payload: event
-    });
-
-    // Reset tab back to ensemble info
-    updateTab(DataPaneTabs.ENSEMBLE_INFO);
-  };
-
   let handleEnsembleDropdown = (event) => {
     console.log(event);
   };
@@ -74,6 +64,10 @@ export default function DataPane(props) {
     appStateDispatch({
       type: AppStateActionType.SET_SELECTED_STATE,
       payload: ""
+    });
+
+    dataAPI.appDataDispatch({
+      type: AppDataActionType.RESET
     });
 
     // Reset tab back to ensemble selection
@@ -162,23 +156,6 @@ export default function DataPane(props) {
     );
   }
 
-  // If no state is selected, disable ensemble dropdown in navbar
-  let ensembleDropDisable = false;
-  let ensembleDropdownItems = [];
-  if (!appState.selectedState) {
-    ensembleDropDisable = true;
-  }
-  // Otherwise, populate dropdown
-  else {
-    for (const e of appData.ensembleSummaryData.get(appState.selectedState)) {
-      ensembleDropdownItems.push(
-        <NavDropdown.Item key={`ensemble-${e.id}`} eventKey={e.id}>
-          {e.name}
-        </NavDropdown.Item>
-      );
-    }
-  }
-
   return (
     <Container id="visual-box">
       <Navbar expand="lg" className="bg-body-tertiary">
@@ -200,14 +177,6 @@ export default function DataPane(props) {
                 {stateDropdownItems}
               </NavDropdown>
 
-              <NavDropdown 
-                title="Ensemble" 
-                id="ensemble-nav-dropdown" 
-                onSelect={handleEnsembleSelection}
-                disabled={ensembleDropDisable}
-              >
-                {ensembleDropdownItems}
-              </NavDropdown>
               <Nav.Item className="ms-auto">
                 <Nav.Link>Selected State: {selectedState}</Nav.Link>
               </Nav.Item>
