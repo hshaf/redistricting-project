@@ -1,9 +1,22 @@
 import React, { useContext } from "react";
 import { Table, Container } from "react-bootstrap";
 import { AppStateContext } from "../context/AppStateContext";
+import { AppDataContext } from "../context/AppDataContext";
 
 export default function DistanceMeasures(props) {
   const appState = useContext(AppStateContext);
+  const appData = useContext(AppDataContext);
+
+  let selectedEnsemble = null;
+  let clusters = null;
+
+  if (appState.selectedEnsembleID && appData.selectedStateEnsembles) {
+    selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
+  }
+
+  if (appData.selectedEnsembleClusters) {
+    clusters = appData.selectedEnsembleClusters;
+  }
 
   // Render nothing if no state is selected
   // Component should not be accessible in this state
@@ -14,16 +27,20 @@ export default function DistanceMeasures(props) {
   }
 
   // Generate distance measures table
-  var clusterData = Object.values(props.ensembleData[appState.selectedState][appState.selectedEnsembleID].clusters) // Change this to get data from request
-  const distanceTableEntries = clusterData.map((cluster) => {
-    const clusterNum = cluster["clusterNum"]
-    const clusterSize = cluster["count"]
+  var clusterData = [];
+
+  if (clusters) {
+    clusterData = clusters;
+  }
+
+  const distanceTableEntries = clusterData.map((cluster, idx) => {
+    const clusterSize = cluster["districtCount"]
     const optimalTransport = cluster["distances"]["optimalTransport"];
     const hamming = cluster["distances"]["hamming"];
     const totalVariation = cluster["distances"]["totalVariation"];
     return (
-      <tr key={`row-${clusterNum}`}>
-        <td>{clusterNum}</td>
+      <tr key={`row-${idx}`}>
+        <td>{(idx + 1)}</td>
         <td>{clusterSize}</td>
         <td>{optimalTransport.toFixed(3)}</td>
         <td>{hamming.toFixed(3)}</td>

@@ -20,9 +20,9 @@ const initialAppState = {
   If no state is selected, then value is "" */
   selectedState: "",
   /* Track ID of currently selected ensemble.
-  By default this value is "1" (first ensemble).
-  User can select an ID greater than "1" to view different ensemble. */
-  selectedEnsembleID: "1",
+  By default this value is "" (no ensemble selected).
+  Otherwise, value is a string of alphanumeric characters. */
+  selectedEnsembleID: "",
   /* Track ID of currently selected cluster.
   If no state or cluster is chosen, then value is "" */
   selectedClusterID: "",
@@ -58,7 +58,7 @@ function appStateReducer(appState, action) {
       return {
         ...appState,
         selectedState: action.payload,
-        selectedEnsembleID: "1",
+        selectedEnsembleID: "",
         selectedClusterID: "",
         selectedDistrictPlanID: ""
       }

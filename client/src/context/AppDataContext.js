@@ -44,6 +44,41 @@ export function AppDataProvider({ children }) {
         type: AppDataActionType.SET_ENSEMBLES_FOR_STATE,
         payload: ensembleDataResponse.data
       });
+    } else {
+      dispatch({
+        type: AppDataActionType.SET_ENSEMBLES_FOR_STATE,
+        payload: null
+      });
+    }
+  }
+
+  const getClustersForEnsemble = async (ensembleId) => {
+    let clusterDataResponse = await serverAPI.getClustersByEnsembleId(ensembleId);
+    if (clusterDataResponse) {
+      dispatch({
+        type: AppDataActionType.SET_CLUSTERS_FOR_ENSEMBLE,
+        payload: clusterDataResponse.data
+      });
+    } else {
+      dispatch({
+        type: AppDataActionType.SET_CLUSTERS_FOR_ENSEMBLE,
+        payload: null
+      });
+    }
+  }
+
+  const getDistrictPlansForCluster = async (clusterId) => {
+    let districtPlanDataResponse = await serverAPI.getDistrictsByClusterId(clusterId);
+    if (districtPlanDataResponse) {
+      dispatch({
+        type: AppDataActionType.SET_DISTRICT_PLANS_FOR_CLUSTER,
+        payload: districtPlanDataResponse.data
+      });
+    } else {
+      dispatch({
+        type: AppDataActionType.SET_DISTRICT_PLANS_FOR_CLUSTER,
+        payload: null
+      });
     }
   }
 
@@ -54,7 +89,10 @@ export function AppDataProvider({ children }) {
 
   // Provide API to allow data to be requested
   const dataAPI = {
-    getEnsemblesForState: getEnsemblesForState
+    getEnsemblesForState: getEnsemblesForState,
+    getClustersForEnsemble: getClustersForEnsemble,
+    appDataDispatch: appDataReducer,
+    getDistrictPlansForCluster: getDistrictPlansForCluster
   }
 
   return (
@@ -68,14 +106,17 @@ export function AppDataProvider({ children }) {
 
 export const AppDataActionType = {
   INIT: "INIT",
-  SET_ENSEMBLES_FOR_STATE: "SET_ENSEMBLES_FOR_STATE"
+  SET_ENSEMBLES_FOR_STATE: "SET_ENSEMBLES_FOR_STATE",
+  SET_CLUSTERS_FOR_ENSEMBLE: "SET_CLUSTERS_FOR_ENSEMBLE",
+  SET_DISTRICT_PLANS_FOR_CLUSTER: "SET_DISTRICT_PLANS_FOR_CLUSTER"
 }
 
 const initialAppData = {
   stateData: new Map(),
   ensembleSummaryData: new Map(),
-  selectedEnsemble: null,
-  selectedStateEnsembles: null
+  selectedStateEnsembles: null,
+  selectedEnsembleClusters: null,
+  selectedClusterDistrictPlans: null
 }
 
 function appDataReducer(appData, action) {
@@ -84,14 +125,25 @@ function appDataReducer(appData, action) {
       return {
         ...appData,
         stateData: action.payload.stateData,
-        ensembleSummaryData: action.payload.ensembleSummaryData,
-        selectedEnsemble: null
+        ensembleSummaryData: action.payload.ensembleSummaryData
       }
     }
     case AppDataActionType.SET_ENSEMBLES_FOR_STATE: {
       return {
         ...appData,
         selectedStateEnsembles: action.payload
+      }
+    }
+    case AppDataActionType.SET_CLUSTERS_FOR_ENSEMBLE: {
+      return {
+        ...appData,
+        selectedEnsembleClusters: action.payload
+      }
+    }
+    case AppDataActionType.SET_DISTRICT_PLANS_FOR_CLUSTER: {
+      return {
+        ...appData,
+        selectedClusterDistrictPlans: action.payload
       }
     }
     default: {

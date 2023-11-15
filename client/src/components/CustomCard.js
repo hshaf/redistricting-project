@@ -1,22 +1,42 @@
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Button } from 'react-bootstrap';
+import { DataPaneTabs } from './DataPane';
+import { useContext } from 'react';
+import { AppStateDispatch } from '../context/AppStateContext';
+import { AppStateActionType } from '../context/AppStateContext';
+import { AppDataDispatch } from '../context/AppDataContext';
 
-const listgroupvariant = "primary";
+const listgroupvariant = "light";
 export const customcardwidth = '15rem';
 
 const customcardstyle = {
-  maxWidth: customcardwidth
+  maxWidth: customcardwidth,
+  backgroundColor:'#45a7ed'
 };
 
 function CustomCard(props) {
+  const appStateDispatch = useContext(AppStateDispatch);
+  const dataAPI = useContext(AppDataDispatch);
+
+  let handleBtnOnClick = () => {
+    // Update selected ensemble ID in AppStateContext
+    appStateDispatch({
+      type: AppStateActionType.SET_SELECTED_ENSEMBLE,
+      payload: props.ensemblesArrayIdx
+    });
+
+    dataAPI.getClustersForEnsemble(props.ensembleId);
+
+    props.updateTab(DataPaneTabs.ENSEMBLE_INFO);
+  }
+
   return (
     <Card 
     className="text-center" 
     style={customcardstyle}
-    bg="secondary"
     text="light"
-    // border="primary"
+    border="dark"
     >
       <Card.Body>
         <Card.Title>{props.ensembleName}</Card.Title>
@@ -26,7 +46,7 @@ function CustomCard(props) {
         <ListGroup.Item variant={listgroupvariant}>District Count: {props.districtPlanCount}</ListGroup.Item>
       </ListGroup>
       <Card.Body>
-        <Button variant="primary">Select</Button>
+        <Button onClick={handleBtnOnClick} variant="light">Select</Button>
       </Card.Body>
     </Card>
   );

@@ -2,6 +2,7 @@ import { Button, Container, Nav, NavDropdown, Navbar, Table } from "react-bootst
 import { useContext, useState } from "react";
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Dot } from 'recharts';
 import { AppStateContext, AppStateDispatch } from "../context/AppStateContext";
+import { AppDataContext } from "../context/AppDataContext";
 
 const districtDotColor = "#0d6efd";
 const axisLabels = {
@@ -12,6 +13,23 @@ const axisLabels = {
 
 export default function ClusterAnalysis(props) {
   const appState = useContext(AppStateContext);
+  const appData = useContext(AppDataContext);
+
+  let selectedEnsemble = null;
+  let selectedCluster = null;
+  let districtPlans = null;
+
+  if (appState.selectedEnsembleID && appData.selectedStateEnsembles) {
+    selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
+  }
+
+  if (appState.selectedClusterID && appData.selectedEnsembleClusters) {
+    selectedCluster = appData.selectedEnsembleClusters[appState.selectedClusterID];
+  }
+
+  if (appData.selectedClusterDistrictPlans) {
+    districtPlans = appData.selectedClusterDistrictPlans;
+  }
 
   const [state, setState] = useState({
     xAxisVar: "polsbyPopper",
@@ -36,6 +54,7 @@ export default function ClusterAnalysis(props) {
   let renderScatterplotDot = (input) => {
     const cx = input.cx;
     const cy = input.cy;
+    const dotKey = districtPlans.indexOf(input.payload).toString();
     return (
       <Dot
         cx={cx} cy={cy}
@@ -43,36 +62,39 @@ export default function ClusterAnalysis(props) {
         stroke="black"
         strokeWidth={1}
         fill={districtDotColor}
-        onClick={() => setSelectedPlan(input.payload["planNum"])}
+        onClick={() => setSelectedPlan(dotKey)}
         />
     );
   }
   
   // Render nothing if no state is selected
   // Component should not be accessible in this state
-  if (!appState.selectedState || appState.selectedClusterID === "") {
+  if (!appState.selectedState || appState.selectedClusterID === "" || !appData.selectedClusterDistrictPlans) {
     return (
       <div></div>
     );
   }
 
-  // Get name of selected ensemble
-  let selectedEnsemble = props.ensembleData[appState.selectedState][appState.selectedEnsembleID].name;
+  // Get name of selected ensemble 
+  let selectedEnsembleName = "";
+  
+  if (selectedEnsemble) {
+    selectedEnsembleName = selectedEnsemble['name'];
+  }
 
   const selectedDistrict = 1;
-  var clusterData = props.ensembleData[appState.selectedState][appState.selectedEnsembleID].clusters[appState.selectedClusterID] // Change this to get data from request
-  var districtData = Object.values(clusterData.plans)
+  var clusterData = selectedCluster;
+  var districtData = districtPlans;
   
   // Fix cluster table values to 3 decimal places if variable is a float
-  const clusterName = "Cluster #" + appState.selectedClusterID + " Overview";
-  const clusterNumMaps = clusterData["count"];
+  const clusterName = "Cluster #" + (Number(appState.selectedClusterID) + 1) + " Overview";
+  const clusterNumMaps = clusterData["districtCount"];
   const clusterPolsbyPopper = clusterData["polsbyPopper"].toFixed(3);
   const clusterMajMin = clusterData["majMin"].toFixed(3);
   const clusterPartisanLean = clusterData["partisanLean"].toFixed(3);
 
   // Generate table for district plan statistics
-  const districtPlanEntries = districtData.map((districtPlan) => {
-    const districtPlanNum = districtPlan["planNum"]
+  const districtPlanEntries = districtData.map((districtPlan, idx) => {
     const xAxisVar = districtPlan[state.xAxisVar];
     const yAxisVar = districtPlan[state.yAxisVar];
     
@@ -81,8 +103,8 @@ export default function ClusterAnalysis(props) {
     const xVarDecimals = (integerVars.indexOf(state.xAxisVar) === -1 ? 3 : 0)
     const yVarDecimals = (integerVars.indexOf(state.yAxisVar) === -1 ? 3 : 0)
     return (
-      <tr key={`row-${districtPlanNum}`}>
-        <td>{districtPlanNum}</td>
+      <tr key={`row-${idx}`}>
+        <td>{idx + 1}</td>
         <td>{xAxisVar.toFixed(xVarDecimals)}</td>
         <td>{yAxisVar.toFixed(yVarDecimals)}</td>
       </tr>
@@ -126,10 +148,10 @@ export default function ClusterAnalysis(props) {
               </NavDropdown.Item>
             </NavDropdown>
             <Nav.Item className="ms-auto">
-              <Nav.Link>Ensemble: {selectedEnsemble}</Nav.Link>
+              <Nav.Link>Ensemble: {selectedEnsembleName}</Nav.Link>
             </Nav.Item>
             <Nav.Item className="ms-auto">
-              <Nav.Link>Cluster ID: {appState.selectedClusterID}</Nav.Link>
+              <Nav.Link>Cluster ID: {Number(appState.selectedClusterID) + 1}</Nav.Link>
             </Nav.Item>
           </Nav>
           </Navbar.Collapse>

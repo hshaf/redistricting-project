@@ -27,9 +27,12 @@ export default function EnsembleSelection(props) {
           {Array.from(ensembles).map((_, idx) => (
             <Col style={customcolstyle} key={idx}>
               <CustomCard 
+              ensemblesArrayIdx={idx.toString()}
+              ensembleId={ensembles[idx]['id']}
               ensembleName={ensembles[idx]['name']}
               clusterCount={ensembles[idx]['totalClusterCount']}
               districtPlanCount={ensembles[idx]['totalDistrictCount']}
+              updateTab={props.updateTab}
               />
             </Col>
           ))}

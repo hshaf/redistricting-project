@@ -36,6 +36,10 @@ export const getEnsemblesByStateInitials = (initials) => api.get(`/ensemble/stat
 export const getClusterById = (id) => api.get(`/cluster/${id}`)
 
 export const getClustersByEnsembleId = (id) => api.get(`/cluster/ensemble/${id}`)
+                                                .catch((error) => {
+                                                  printErrorMsg(error);
+                                                  return null;
+                                                })
 
 export const updateClusterById = (cluster, id) => {
   return api.put(`/cluster/update/${id}`, {cluster:cluster})
@@ -45,6 +49,10 @@ export const updateClusterById = (cluster, id) => {
 export const getDistrictById = (id) => api.get(`/district/${id}`)
 
 export const getDistrictsByClusterId = (id) => api.get(`/district/cluster/${id}`)
+                                                .catch((error) => {
+                                                  printErrorMsg(error);
+                                                  return null;
+                                                })
 
 //Boundary Endpoints
 export const getBoundaryById = (id) => api.get(`/boundary/${id}`)

@@ -3,6 +3,8 @@ import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Leg
 import { useContext, useState } from "react";
 import { AppStateActionType, AppStateContext, AppStateDispatch } from "../context/AppStateContext";
 import { DataPaneTabs } from "./DataPane";
+import { AppDataContext } from "../context/AppDataContext";
+import { AppDataDispatch } from "../context/AppDataContext";
 
 const clusterDotColor = "#0d6efd";
 const axisLabels = {
@@ -12,8 +14,22 @@ const axisLabels = {
 }
 
 export default function EnsembleOverview(props) {
-  const appState = useContext(AppStateContext)
-  const appStateDispatch = useContext(AppStateDispatch)
+  const appState = useContext(AppStateContext);
+  const appStateDispatch = useContext(AppStateDispatch);
+  const appData = useContext(AppDataContext);
+  const dataAPI = useContext(AppDataDispatch);
+
+  let selectedEnsemble = null;
+  let clusters = null;
+
+  if (appState.selectedEnsembleID && appData.selectedStateEnsembles) {
+    selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
+  }
+
+  if (appData.selectedEnsembleClusters) {
+    clusters = appData.selectedEnsembleClusters;
+  }
+
   const [state, setState] = useState({
     xAxisVar: "polsbyPopper",
     yAxisVar: "majMin",
@@ -32,21 +48,25 @@ export default function EnsembleOverview(props) {
     })
   }
   let setSelectedCluster = (clusterNum) => {
+    console.log('selected cluster id=' + clusterNum);
     appStateDispatch({
       type: AppStateActionType.SET_SELECTED_CLUSTER,
       payload: clusterNum
     })
-    //props.updateSelectedClusterID(clusterNum);
+    
+    dataAPI.getDistrictPlansForCluster(clusters[clusterNum]['id']);
+
     // Switch to cluster analysis tab
     props.updateTab(DataPaneTabs.CLUSTER_ANALYSIS);
   }
   let renderScatterplotDot = (input) => {
     const cx = input.cx;
     const cy = input.cy;
-    const isCurrent = (input.payload["count"] === 0)
+    const isCurrent = (input.payload["districtCount"] === 0)
+    const dotKey = clusters.indexOf(input.payload).toString();
     var rad = 5;
     if (!isCurrent) {
-      rad = 2 * Math.sqrt(input.payload["count"]);
+      rad = 2 * Math.sqrt(input.payload["districtCount"]);
     }
     return (
       <Dot style={{ opacity: 0.6 }}
@@ -55,7 +75,7 @@ export default function EnsembleOverview(props) {
         stroke="black"
         strokeWidth={1}
         fill={clusterDotColor}
-        onClick={() => setSelectedCluster(input.payload["clusterNum"])} 
+        onClick={() => setSelectedCluster(dotKey)} 
         />
     );
   }
@@ -69,15 +89,19 @@ export default function EnsembleOverview(props) {
   }
   
   // Generate cluster table
-  var clusterData = Object.values(props.ensembleData[appState.selectedState][appState.selectedEnsembleID].clusters) // Change this to get data from request
-  const clusterTableEntries = clusterData.map((cluster) => {
-    const clusterNum = cluster["clusterNum"]
-    const numMaps = cluster["count"];
+  var clusterData = [];
+
+  if (clusters) {
+    clusterData = clusters;
+  }
+  
+  const clusterTableEntries = clusterData.map((cluster, idx) => {
+    const numMaps = cluster["districtCount"];
     const xAxisVar = cluster[state.xAxisVar];
     const yAxisVar = cluster[state.yAxisVar];
     return (
-      <tr key={`row-${clusterNum}`}>
-        <td><Button variant="link" onClick={() => setSelectedCluster(clusterNum)}>{clusterNum}</Button></td>
+      <tr key={`row-${idx}`}>
+        <td><Button variant="link" onClick={() => setSelectedCluster(idx.toString())}>{(idx + 1)}</Button></td>
         <td>{numMaps}</td>
         <td>{xAxisVar.toFixed(3)}</td>
         <td>{yAxisVar.toFixed(3)}</td>
@@ -85,8 +109,12 @@ export default function EnsembleOverview(props) {
     )}
   );
 
-  // Get name of selected ensemble
-  let selectedEnsemble = props.ensembleData[appState.selectedState][appState.selectedEnsembleID].name;
+  // Get name of selected ensemble 
+  let selectedEnsembleName = "";
+  
+  if (selectedEnsemble) {
+    selectedEnsembleName = selectedEnsemble['name'];
+  }
 
   // Render EnsembleOverview
   return (
@@ -125,7 +153,7 @@ export default function EnsembleOverview(props) {
               </NavDropdown.Item>
             </NavDropdown>
             <Nav.Item className="ms-auto">
-              <Nav.Link>Ensemble: {selectedEnsemble}</Nav.Link>
+              <Nav.Link>Ensemble: {selectedEnsembleName}</Nav.Link>
             </Nav.Item>
           </Nav>
           </Navbar.Collapse>
