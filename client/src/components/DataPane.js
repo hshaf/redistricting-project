@@ -3,7 +3,6 @@ import EnsembleOverview from "./EnsembleOverview";
 import ClusterAnalysis from "./ClusterAnalysis";
 import DistanceMeasures from "./DistanceMeasures";
 import { useContext, useState } from "react";
-import ensembleData from "../data/ensemble-data.json"
 import api from "../serverAPI";
 import { AppStateContext, AppStateDispatch, AppStateActionType } from "../context/AppStateContext";
 import { AppDataContext, AppDataDispatch } from "../context/AppDataContext";
@@ -116,18 +115,13 @@ export default function DataPane(props) {
           <EnsembleOverview
           selectedTab={state.selectedTab}
           updateTab={updateTab}
-          ensembleData={ensembleData}
           />
         </Tab>
         <Tab eventKey={DataPaneTabs.CLUSTER_ANALYSIS} title="Cluster Analysis" disabled={disableClusterTab} >
-          <ClusterAnalysis
-          ensembleData={ensembleData}
-          />
+          <ClusterAnalysis />
         </Tab>
         <Tab eventKey={DataPaneTabs.DISTANCE_MEASURES} title="Distance Measures" >
-          <DistanceMeasures
-          ensembleData={ensembleData}
-          />
+          <DistanceMeasures />
         </Tab>
       </Tabs>
   }
