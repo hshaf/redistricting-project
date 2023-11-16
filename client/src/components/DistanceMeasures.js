@@ -4,6 +4,7 @@ import { AppStateContext } from "../context/AppStateContext";
 import { AppDataContext } from "../context/AppDataContext";
 
 export default function DistanceMeasures(props) {
+  // Context
   const appState = useContext(AppStateContext);
   const appData = useContext(AppDataContext);
 
@@ -18,22 +19,14 @@ export default function DistanceMeasures(props) {
     clusters = appData.selectedEnsembleClusters;
   }
 
-  // Render nothing if no state is selected
-  // Component should not be accessible in this state
+  // Render nothing if no state or ensemble is selected
   if (!appState.selectedState || appState.selectedEnsembleID === "" || !selectedEnsemble || !clusters) {
     return (
       <div></div>
     );
   }
 
-  // Generate distance measures table
-  var clusterData = [];
-
-  if (clusters) {
-    clusterData = clusters;
-  }
-
-  const distanceTableEntries = clusterData.map((cluster, idx) => {
+  const distanceTableEntries = clusters.map((cluster, idx) => {
     const clusterSize = cluster["districtCount"]
     const optimalTransport = cluster["distances"]["optimalTransport"];
     const hamming = cluster["distances"]["hamming"];

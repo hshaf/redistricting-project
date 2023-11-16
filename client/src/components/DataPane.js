@@ -1,9 +1,8 @@
-import { Button, Container, Nav, NavDropdown, Navbar, Tab, Tabs } from "react-bootstrap";
+import { Container, Nav, NavDropdown, Navbar, Tab, Tabs } from "react-bootstrap";
 import EnsembleOverview from "./EnsembleOverview";
 import ClusterAnalysis from "./ClusterAnalysis";
 import DistanceMeasures from "./DistanceMeasures";
 import { useContext, useState } from "react";
-import api from "../serverAPI";
 import { AppStateContext, AppStateDispatch, AppStateActionType } from "../context/AppStateContext";
 import { AppDataContext, AppDataDispatch } from "../context/AppDataContext";
 import EnsembleSelection from "./EnsembleSelection";
@@ -18,6 +17,7 @@ export const DataPaneTabs = {
 }
 
 export default function DataPane(props) {
+  // Contexts
   const appState = useContext(AppStateContext);
   const appStateDispatch = useContext(AppStateDispatch);
 
@@ -28,6 +28,11 @@ export default function DataPane(props) {
     selectedTab: DataPaneTabs.ENSEMBLE_SELECTION
   })
 
+  /**
+   * Update selectedTab state to switch to different tab.
+   * 
+   * @param {string} tab   Name of tab to switch to.
+   */
   let updateTab = (tab) => {
     setState({
       ...state,
@@ -35,31 +40,29 @@ export default function DataPane(props) {
     });
   }
 
-  let handleStateDropdown = (event) => {
-    console.log(event);
-  };
-
+  /** 
+   * Update the current selected state. Selected state will update if
+   * user clicks an item under the "select state" dropdown.
+   * 
+   * @param {String}  event     Abbreviated name of selected state.
+   */
   let handleStateSelection = (event) => {
-    // Set state based on provided abbreviation
     appStateDispatch({
       type: AppStateActionType.SET_SELECTED_STATE,
       payload: event
     });
 
-    // Retrieve data test
     dataAPI.getEnsemblesForState(event);
 
     // Reset tab back to ensemble selection
     updateTab(DataPaneTabs.ENSEMBLE_SELECTION);
   }
 
-  let handleEnsembleDropdown = (event) => {
-    console.log(event);
-  };
-
+  /**
+   * Handle when "reset" button is clicked by user.
+   */
   let handleReset = () => {
     // Deselect current state
-    //props.updateSelectedState("");
     appStateDispatch({
       type: AppStateActionType.SET_SELECTED_STATE,
       payload: ""
@@ -106,9 +109,6 @@ export default function DataPane(props) {
     disableDistanceMeasuresTab = true;
   }
 
-  console.log(appState);
-  console.log(props);
-
   if (appState.selectedState) {
     dataTabs =
     <Tabs
@@ -152,6 +152,7 @@ export default function DataPane(props) {
       </div>
     </Container>
   }
+  
   // Generate state dopdown
   let stateDropdownItems = [];
   for (const s of appData.stateData.values()) {

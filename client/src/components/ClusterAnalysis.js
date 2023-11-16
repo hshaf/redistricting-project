@@ -1,7 +1,7 @@
-import { Button, Container, Nav, NavDropdown, Navbar, Table } from "react-bootstrap";
+import { Container, Nav, NavDropdown, Navbar, Table } from "react-bootstrap";
 import { useContext, useState } from "react";
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Dot } from 'recharts';
-import { AppStateContext, AppStateDispatch } from "../context/AppStateContext";
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Dot } from 'recharts';
+import { AppStateContext } from "../context/AppStateContext";
 import { AppDataContext } from "../context/AppDataContext";
 
 const districtDotColor = "#0d6efd";
@@ -12,6 +12,7 @@ const axisLabels = {
 }
 
 export default function ClusterAnalysis(props) {
+  // Context
   const appState = useContext(AppStateContext);
   const appData = useContext(AppDataContext);
 
@@ -36,21 +37,45 @@ export default function ClusterAnalysis(props) {
     yAxisVar: "majMin",
   });
 
+  /**
+   * Set x-axis for scatterplot.
+   * 
+   * @param {String} axisOption 
+   */
   let setXAxisVar = (axisOption) => {
     setState({
       ...state,
       xAxisVar: axisOption
     })
   }
+
+  /**
+   * Set y-axis for scatterplot.
+   * 
+   * @param {String} axisOption 
+   */
   let setYAxisVar = (axisOption) => {
     setState({
       ...state,
       yAxisVar: axisOption
     })
   }
+
+  /** 
+   * Update the current selected district plan ID.
+   * 
+   * @param {String}  planNum     ID of selected district plan.
+   */
   let setSelectedPlan = (planNum) => {
     console.log("Select plan " + planNum);
   }
+
+  /**
+   * Populate district plan scatterplot with dot.
+   * 
+   * @param {object}    input  District plan data.
+   * @returns {object}         Dot object.
+   */
   let renderScatterplotDot = (input) => {
     const cx = input.cx;
     const cy = input.cy;
@@ -67,9 +92,8 @@ export default function ClusterAnalysis(props) {
     );
   }
   
-  // Render nothing if no state is selected
-  // Component should not be accessible in this state
-  if (!appState.selectedState || appState.selectedClusterID === "" || !selectedEnsemble || !selectedCluster || !districtPlans) {
+  // Render nothing if no state, ensemble, or cluster is selected
+  if (!appState.selectedState || !appState.selectedEnsembleID || !appState.selectedClusterID || !selectedEnsemble || !selectedCluster || !districtPlans) {
     return (
       <div></div>
     );
@@ -81,20 +105,16 @@ export default function ClusterAnalysis(props) {
   if (selectedEnsemble) {
     selectedEnsembleName = selectedEnsemble['name'];
   }
-
-  const selectedDistrict = 1;
-  var clusterData = selectedCluster;
-  var districtData = districtPlans;
   
   // Fix cluster table values to 3 decimal places if variable is a float
   const clusterName = "Cluster #" + (Number(appState.selectedClusterID) + 1) + " Overview";
-  const clusterNumMaps = clusterData["districtCount"];
-  const clusterPolsbyPopper = clusterData["polsbyPopper"].toFixed(3);
-  const clusterMajMin = clusterData["majMin"].toFixed(3);
-  const clusterPartisanLean = clusterData["partisanLean"].toFixed(3);
+  const clusterNumMaps = selectedCluster["districtCount"];
+  const clusterPolsbyPopper = selectedCluster["polsbyPopper"].toFixed(3);
+  const clusterMajMin = selectedCluster["majMin"].toFixed(3);
+  const clusterPartisanLean = selectedCluster["partisanLean"].toFixed(3);
 
   // Generate table for district plan statistics
-  const districtPlanEntries = districtData.map((districtPlan, idx) => {
+  const districtPlanEntries = districtPlans.map((districtPlan, idx) => {
     const xAxisVar = districtPlan[state.xAxisVar];
     const yAxisVar = districtPlan[state.yAxisVar];
     
@@ -177,7 +197,7 @@ export default function ClusterAnalysis(props) {
             name={axisLabels[state.yAxisVar]}
             label={{ value: axisLabels[state.yAxisVar], offset: -2, angle: -90, position: 'insideBottomLeft' }} />
           <Legend />
-          <Scatter name="District Plans" fill={districtDotColor} data={districtData} shape={renderScatterplotDot} />
+          <Scatter name="District Plans" fill={districtDotColor} data={districtPlans} shape={renderScatterplotDot} />
         </ScatterChart>
       </ResponsiveContainer>
       <h4>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import './App.css';
 import HomeScreen from './components/HomeScreen';
 import { AppStateProvider } from "./context/AppStateContext";

@@ -7,7 +7,9 @@ export const AppDataDispatch = createContext(null);
 export function AppDataProvider({ children }) {
   const [appData, dispatch] = useReducer(appDataReducer, initialAppData);
 
-  // Load state and ensemble summary data
+  /**
+   * Initialize AppDataContext with data needed during the start of the app.
+   */
   const initializeData = async () => {
     let stateListResponse = await serverAPI.getStateNames();
     let stateData = new Map();
@@ -24,9 +26,13 @@ export function AppDataProvider({ children }) {
       type: AppDataActionType.INIT,
       payload: stateData
     });
-    console.log(stateData); // Remove this when debugging is done
   }
 
+  /**
+   * Update AppDataContext with a list of ensembles from the selected state.
+   * 
+   * @param {String} stateInitials  Abbreviated state name.
+   */
   const getEnsemblesForState = async (stateInitials) => {
     let ensembleDataResponse = await serverAPI.getEnsemblesByStateInitials(stateInitials);
     if (ensembleDataResponse) {
@@ -42,6 +48,11 @@ export function AppDataProvider({ children }) {
     }
   }
 
+  /**
+   * Update AppDataContext with a list of clusters from the selected ensemble.
+   * 
+   * @param {String} ensembleId  Ensemble ID.
+   */
   const getClustersForEnsemble = async (ensembleId) => {
     let clusterDataResponse = await serverAPI.getClustersByEnsembleId(ensembleId);
     if (clusterDataResponse) {
@@ -57,6 +68,11 @@ export function AppDataProvider({ children }) {
     }
   }
 
+  /**
+   * Update AppDataContext with a list of district plans from the selected cluster.
+   * 
+   * @param {String} clusterId  Cluster ID.
+   */
   const getDistrictPlansForCluster = async (clusterId) => {
     let districtPlanDataResponse = await serverAPI.getDistrictsByClusterId(clusterId);
     if (districtPlanDataResponse) {
@@ -103,9 +119,17 @@ export const AppDataActionType = {
 }
 
 const initialAppData = {
+  /* Map containing state objects.
+  Key is the abbreviated state name, value is the corresponding state object */
   stateData: new Map(),
+  /* Array of all the ensemble objects within the selected state.
+  Value can be null if no state is selected. */
   selectedStateEnsembles: null,
+  /* Array of all the cluster objects within the selected ensemble.
+  Value can be null if no ensemble is selected. */
   selectedEnsembleClusters: null,
+  /* Array of all the district plan objects within the selected cluster.
+  Value can be null if no cluster is selected. */
   selectedClusterDistrictPlans: null
 }
 
