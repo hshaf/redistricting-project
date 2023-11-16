@@ -1,5 +1,5 @@
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import { useState, useRef, useContext } from "react";
+import { useRef, useContext } from "react";
 import VAStateBoundaries from '../data/va-state-boundary.json';
 import AZStateBoundaries from '../data/az-state-boundary.json';
 import WIStateBoundaries from '../data/wi-state-boundary.json';
@@ -10,6 +10,7 @@ import ChangeView from './ChangeView';
 import { AppStateContext, AppStateDispatch, AppStateActionType } from '../context/AppStateContext';
 
 export default function CustomMap(props) {
+  // Context
   const appState = useContext(AppStateContext);
   const appStateDispatch = useContext(AppStateDispatch);
 
@@ -88,7 +89,6 @@ export default function CustomMap(props) {
         data={vaBoundariesData} 
         eventHandlers={{
           click: () => {
-            //props.updateSelectedState("VA");
             appStateDispatch({
               type: AppStateActionType.SET_SELECTED_STATE,
               payload: "VA"
@@ -103,7 +103,6 @@ export default function CustomMap(props) {
         data={azBoundariesData}
         eventHandlers={{
           click: () => {
-            //props.updateSelectedState("AZ");
             appStateDispatch({
               type: AppStateActionType.SET_SELECTED_STATE,
               payload: "AZ"
@@ -118,7 +117,6 @@ export default function CustomMap(props) {
         data={wiBoundariesData} 
         eventHandlers={{
           click: () => {
-            //props.updateSelectedState("WI");
             appStateDispatch({
               type: AppStateActionType.SET_SELECTED_STATE,
               payload: "WI"
