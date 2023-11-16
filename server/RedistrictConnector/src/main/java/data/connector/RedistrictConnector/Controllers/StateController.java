@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 
 import data.connector.RedistrictConnector.Models.EnsembleSummary;
@@ -22,9 +23,14 @@ public class StateController {
     @Autowired
     private StateService stateService;
 
-    @GetMapping("/{name}")
-    public ResponseEntity<List<EnsembleSummary>> getEnsemblesByState(@PathVariable String name) {
-        return stateService.getEnsemblesByState(name);
+    @GetMapping("/{initials}")
+    public ResponseEntity<State> getStateByInitials(@PathVariable String initials) {
+        return stateService.getStateByInitials(initials);
+    }
+
+    @GetMapping("/getNames") //Give mapping of Initials to statename and maybe also type of district plan?
+    public ResponseEntity<HashMap<String,String>> getAllStateInfo(){
+        return stateService.getStateInfo();
     }
 
     @GetMapping("/")

@@ -1,5 +1,7 @@
 package data.connector.RedistrictConnector.Controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,16 @@ public class EnsembleController {
     @GetMapping("/{id}")
     public ResponseEntity<Ensemble> getEnsembleById(@PathVariable String id) {
         return ensembleService.findById(id);
+    }
+
+    @GetMapping("/state/{initial}")
+    public ResponseEntity<List<Ensemble>> getEnsemblesByState(@PathVariable String initial) {
+        return ensembleService.getEnsembleList(initial);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<Ensemble>> getAllEnsembles() {
+        return ensembleService.getEnsembleList();
     }
 
     @GetMapping("/")

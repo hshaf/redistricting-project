@@ -7,26 +7,39 @@ import org.springframework.data.annotation.Id;
 public class State {
 
     @Id
+    private String initials;
+
     private String name;
-    private List<EnsembleSummary> ensembles;
+    private String districtType;
+    private List<String> ensembleIds;
 
     public State() {}
 
-    public State(String name, List<EnsembleSummary> ensembles) {
+    public State(String initials, String name, String districtType, List<String> ensembleIds) {
+        this.initials = initials;
         this.name = name;
-        this.ensembles = ensembles;
+        this.districtType = districtType;
+        this.ensembleIds = ensembleIds;
+    }
+
+    public String getInitials() {
+        return initials;
     }
 
     public String getName() {
         return name;
     }
 
-    public List<EnsembleSummary> getEnsembles() {
-        return ensembles;
+    public String getDistrictType(){
+        return districtType;
     }
 
-    public void setEnsembles(List<EnsembleSummary> ensembles) {
-        this.ensembles = ensembles;
+    public List<String> getEnsembles() {
+        return ensembleIds;
+    }
+
+    public void setEnsembles(List<String> ensembleIds) {
+        this.ensembleIds = ensembleIds;
     }
 
 }

@@ -2,285 +2,201 @@ import { Button, Container, Nav, NavDropdown, Navbar, Tab, Tabs } from "react-bo
 import EnsembleOverview from "./EnsembleOverview";
 import ClusterAnalysis from "./ClusterAnalysis";
 import DistanceMeasures from "./DistanceMeasures";
-import React, { Component } from "react";
-import ensembleData from "../data/ensemble-data.json"
+import { useContext, useState } from "react";
 import api from "../serverAPI";
+import { AppStateContext, AppStateDispatch, AppStateActionType } from "../context/AppStateContext";
+import { AppDataContext, AppDataDispatch } from "../context/AppDataContext";
+import EnsembleSelection from "./EnsembleSelection";
+import { AppDataActionType } from "../context/AppDataContext";
 
 // Use these constants for checking the value of selectedTab state.
-const ENSEMBLE = 'ensemble';
-const CLUSTER = 'cluster';
-const DISTANCE = 'distance';
+export const DataPaneTabs = {
+  ENSEMBLE_SELECTION: 'ENSEMBLE_SELECTION',
+  ENSEMBLE_INFO: 'ENSEMBLE_INFO',
+  CLUSTER_ANALYSIS: 'CLUSTER_ANALYSIS',
+  DISTANCE_MEASURES: 'DISTANCE_MEASURES'
+}
 
-class DataPane extends Component {
-  constructor () {
-    super();
-    this.state = {
-      selectedTab: ENSEMBLE,
-      requestdatatext: ""
-    };
-  }
+export default function DataPane(props) {
+  const appState = useContext(AppStateContext);
+  const appStateDispatch = useContext(AppStateDispatch);
 
-  updateRequestDataText = (text) => {
-    // Update textarea value for requesting data from backend
-    this.setState({
-      requestdatatext: text
-    });
-  }
+  const appData = useContext(AppDataContext);
+  const dataAPI = useContext(AppDataDispatch);
 
-  updateTab = (tab) => {
-    this.setState({
+  const [state, setState] = useState({
+    selectedTab: DataPaneTabs.ENSEMBLE_SELECTION
+  })
+
+  let updateTab = (tab) => {
+    setState({
+      ...state,
       selectedTab: tab
     });
   }
 
-  handleStateDropdown = (event) => {
+  let handleStateDropdown = (event) => {
     console.log(event);
   };
 
-  handleStateSelection = (event) => {
-    if (event == 'az') {
-      // Arizona selected
-      this.props.updateSelectedState("AZ");
-    }
+  let handleStateSelection = (event) => {
+    // Set state based on provided abbreviation
+    appStateDispatch({
+      type: AppStateActionType.SET_SELECTED_STATE,
+      payload: event
+    });
 
-    if (event == 'va') {
-      // Virginia selected
-      this.props.updateSelectedState("VA");
-    }
+    // Retrieve data test
+    dataAPI.getEnsemblesForState(event);
 
-    if (event == 'wi') {
-      // Wisconsin selected
-      this.props.updateSelectedState("WI");
-    }
-
-    // Reset tab back to ensemble info
-    this.updateTab(ENSEMBLE);
+    // Reset tab back to ensemble selection
+    updateTab(DataPaneTabs.ENSEMBLE_SELECTION);
   }
 
-  handleEnsembleSelection = (event) => {
-    this.props.updateSelectedEnsembleID(event);
-
-    // Reset tab back to ensemble info
-    this.updateTab(ENSEMBLE);
-  };
-
-  handleEnsembleDropdown = (event) => {
+  let handleEnsembleDropdown = (event) => {
     console.log(event);
   };
 
-  handleReset = () => {
+  let handleReset = () => {
     // Deselect current state
-    this.props.updateSelectedState("");
+    //props.updateSelectedState("");
+    appStateDispatch({
+      type: AppStateActionType.SET_SELECTED_STATE,
+      payload: ""
+    });
 
-    // Reset tab back to ensemble info
-    this.updateTab(ENSEMBLE);
+    dataAPI.appDataDispatch({
+      type: AppDataActionType.RESET
+    });
+
+    // Reset tab back to ensemble selection
+    updateTab(DataPaneTabs.ENSEMBLE_SELECTION);
   };
 
-  async handleCall() {
-    let request = document.getElementById("name-request-field").value;
-    // If name provided in field, call different endpoint
-    let response;
-    if(request === "object"){
-      response = await api.getHash();
-      console.log(response.data)
-    }
-    else if (request) {
-      response = await api.getHelloName(request);
-    }
-    else {
-      response = await api.getHello();
-    }
+  // Get strings for displaying selected state and district plan
+  let selectedState = ""
+  let districtPlan = ""
+  if (appState.selectedState !== "") {
+    selectedState = appData.stateData.get(appState.selectedState).name;
+    districtPlan = appData.stateData.get(appState.selectedState).districtType;
+  }
+  
+  // Render DataPane
 
-    // Display HTTP response in console
-    console.log(response);
-    // Update display text area with contents of HTTP response
-    this.updateRequestDataText(response['data']);
+  // If no state is selected, we hide the tabs and show
+  // the welcome information pane.
+  let dataTabs = <div></div>
+  let welcomePane = <div></div>
+
+  // If ensemble not selected, disable ensemble info tab
+  let disableEnsembleInfoTab = false;
+  if (appState.selectedEnsembleID === "") {
+    disableEnsembleInfoTab = true;
   }
 
-  render () {
-    // Get strings for displaying selecte state and district plan
-    let selectedState = ""
-    let districtPlan = ""
-    if (this.props.selectedState == "VA") {
-      selectedState = "Virginia"
-      districtPlan = "State Assembly"
-    }
-    else if (this.props.selectedState == "AZ") {
-      selectedState = "Arizona"
-      districtPlan = "State Assembly"
-    }
-    else if (this.props.selectedState == "WI") {
-      selectedState = "Wisconsin"
-      districtPlan = "State Senate"
-    }
+  // If cluster not selected, disable cluster analysis tab
+  let disableClusterTab = false;
+  if (appState.selectedClusterID === "") {
+    disableClusterTab = true;
+  }
 
-    // If no state is selected, we hide the tabs and show
-    // the welcome information pane.
-    let dataTabs = <div></div>
-    let welcomePane = <div></div>
+  // If ensemble not selected, disable distance measures tab
+  let disableDistanceMeasuresTab = false;
+  if (appState.selectedEnsembleID === "") {
+    disableDistanceMeasuresTab = true;
+  }
 
-    // If cluster not selected, disable cluster analysis tab
-    let disableClusterTab = false;
-    if (this.props.selectedClusterID === "") {
-      disableClusterTab = true;
-    }
+  console.log(appState);
+  console.log(props);
 
-    if (this.props.selectedState) {
-      dataTabs =
-      <Tabs
-        id="DataPaneTabs"
-        className="mb-3"
-        fill
-        onSelect={(tab) => this.updateTab(tab)}
-        activeKey={this.state.selectedTab}
-        >
-          <Tab eventKey="ensemble" title="Ensemble Info" >
-            <EnsembleOverview 
-            selectedState={this.props.selectedState}
-            selectedEnsembleID={this.props.selectedEnsembleID}
-            selectedClusterID={this.props.selectedClusterID}
-            updateSelectedClusterID={this.props.updateSelectedClusterID}
-            selectedTab={this.state.selectedTab}
-            updateTab={this.updateTab}
-            ensembleData={ensembleData}
-            />
-          </Tab>
-          <Tab eventKey="cluster" title="Cluster Analysis" disabled={disableClusterTab} >
-            <ClusterAnalysis 
-            selectedState={this.props.selectedState} 
-            selectedEnsembleID={this.props.selectedEnsembleID}
-            selectedClusterID={this.props.selectedClusterID}
-            updateSelectedClusterID={this.props.updateSelectedClusterID}
-            ensembleData={ensembleData}
-            />
-          </Tab>
-          <Tab eventKey="distance" title="Distance Measures" >
-            <DistanceMeasures 
-            selectedState={this.props.selectedState} 
-            selectedEnsembleID={this.props.selectedEnsembleID}
-            selectedClusterID={this.props.selectedClusterID}
-            updateSelectedClusterID={this.props.updateSelectedClusterID}
-            ensembleData={ensembleData}
-            />
-          </Tab>
-        </Tabs>
-    }
+  if (appState.selectedState) {
+    dataTabs =
+    <Tabs
+      id="DataPaneTabs"
+      className="mb-3"
+      fill
+      onSelect={(tab) => updateTab(tab)}
+      activeKey={state.selectedTab}
+      >
+        <Tab eventKey={DataPaneTabs.ENSEMBLE_SELECTION} title="Ensemble Selection" >
+          <EnsembleSelection 
+          updateTab={updateTab}
+          />
+        </Tab>
+        <Tab eventKey={DataPaneTabs.ENSEMBLE_INFO} title="Ensemble Info" disabled={disableEnsembleInfoTab} >
+          <EnsembleOverview
+          selectedTab={state.selectedTab}
+          updateTab={updateTab}
+          />
+        </Tab>
+        <Tab eventKey={DataPaneTabs.CLUSTER_ANALYSIS} title="Cluster Analysis" disabled={disableClusterTab} >
+          <ClusterAnalysis />
+        </Tab>
+        <Tab eventKey={DataPaneTabs.DISTANCE_MEASURES} title="Distance Measures" disabled={disableDistanceMeasuresTab} >
+          <DistanceMeasures />
+        </Tab>
+      </Tabs>
+  }
 
-    else {
-      welcomePane = 
-      <Container id="info-box">
-          <div id="welcome-text">
-            <h4>
-              Welcome to Team Giants District Plan Site!
-            </h4>
-          </div>
-          <div id="getting-started-text">
-            To get started, choose a state either by using the 'Select State' dropdown menu or by 
-            clicking on a state highlighted in blue on the map.
-          </div>
-          <div id="request-data-box">
-            <h5>Response:</h5>
-            <textarea name="postContent" id="response-display" rows={6} cols={40} readOnly={true} value={this.state.requestdatatext} onChange={(e) => this.updateRequestDataText(e.target.value)} />
-            <div id="name-request-box">
-              <h5 id="enter-name-label">Enter your name (optional):</h5>
-              <textarea id="name-request-field" rows={1} cols={40} />
-            </div>
-            <Button onClick={async () => {await this.handleCall();}}>Send Request</Button>
-          </div>
-          {/* <div id="state-info-text">
-            <h4>
-              State Information
-            </h4>
-          </div>
-          <div id="selected-state-text">
-            Selected state: {selectedState}
-          </div>
-          <div id="district-plan-text">
-            District plan: {districtPlan}
-          </div>
-          <div id="political-results-header">
-            <h4>
-              Political Results
-            </h4>
-          </div>
-          <div id="political-results-text">
-            Estimated using data from 2020 Presidential Election at the precinct level.
-          </div> */}
-        </Container>
-    }
-
-    // If no state is selected, disable ensemble dropdown in navbar
-    let ensembleDropDisable = false;
-    let ensembleDropdownItems = <div></div>;
-    if (!this.props.selectedState) {
-      ensembleDropDisable = true;
-    }
-    // Otherwise, populate dropdown
-    else {
-      ensembleDropdownItems = Object.values(ensembleData[this.props.selectedState]).map((entry) => {
-        const entryKey = entry["ensembleNum"];
-        const entryLabel = entry["name"];
-        return (
-          <NavDropdown.Item key={`ensemble-${entryKey}`} eventKey={entryKey}>
-            {entryLabel}
-          </NavDropdown.Item>);
-      });
-    }
-
-    return (
-      <Container id="visual-box">
-        <Navbar expand="lg" className="bg-body-tertiary">
-          <Container className="container-fluid">
-            <Navbar.Brand><div id="team-name-text">Team Giants</div></Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="container-fluid">
-                <Nav.Link 
-                onClick={this.handleReset}>
-                  Reset
-                </Nav.Link>
-    
-                <NavDropdown 
-                title="Select State" 
-                id="state-nav-dropdown" 
-                onSelect={this.handleStateSelection}
-                >
-                  <NavDropdown.Item eventKey={'az'}>
-                    Arizona
-                  </NavDropdown.Item>
-                  <NavDropdown.Item eventKey={'va'}>
-                    Virginia
-                  </NavDropdown.Item>
-                  <NavDropdown.Item eventKey={'wi'}>
-                    Wisconsin
-                  </NavDropdown.Item> 
-                </NavDropdown>
-
-                <NavDropdown 
-                  title="Ensemble" 
-                  id="ensemble-nav-dropdown" 
-                  onSelect={this.handleEnsembleSelection}
-                  disabled={ensembleDropDisable}
-                >
-                  {ensembleDropdownItems}
-                </NavDropdown>
-                <Nav.Item className="ms-auto">
-                  <Nav.Link>Selected State: {selectedState}</Nav.Link>
-                </Nav.Item>
-                <Nav.Item className="ms-auto">
-                  <Nav.Link>District Plan: {districtPlan}</Nav.Link>
-                </Nav.Item>
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-
-        {welcomePane}
-
-        {dataTabs}
-      </Container>
+  else {
+    welcomePane = 
+    <Container id="info-box">
+      <div id="welcome-text">
+        <h4>
+          Welcome to Team Giants District Plan Site!
+        </h4>
+      </div>
+      <div id="getting-started-text">
+        To get started, choose a state either by using the 'Select State' dropdown menu or by 
+        clicking on a state highlighted in blue on the map.
+      </div>
+    </Container>
+  }
+  // Generate state dopdown
+  let stateDropdownItems = [];
+  for (const s of appData.stateData.values()) {
+    stateDropdownItems.push(
+      <NavDropdown.Item key={`state-dropdown-${s.initials}`} eventKey={s.initials}>
+        {s.name}
+      </NavDropdown.Item>
     );
   }
-}
 
-export default DataPane;
+  return (
+    <Container id="visual-box">
+      <Navbar expand="lg" className="bg-body-tertiary">
+        <Container className="container-fluid">
+          <Navbar.Brand><div id="team-name-text">Team Giants</div></Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="container-fluid">
+              <Nav.Link 
+              onClick={handleReset}>
+                Reset
+              </Nav.Link>
+  
+              <NavDropdown 
+              title="Select State" 
+              id="state-nav-dropdown" 
+              onSelect={handleStateSelection}
+              >
+                {stateDropdownItems}
+              </NavDropdown>
+
+              <Nav.Item className="ms-auto">
+                <Nav.Link>Selected State: {selectedState}</Nav.Link>
+              </Nav.Item>
+              <Nav.Item className="ms-auto">
+                <Nav.Link>District Plan: {districtPlan}</Nav.Link>
+              </Nav.Item>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+
+      {welcomePane}
+
+      {dataTabs}
+    </Container>
+  );
+}

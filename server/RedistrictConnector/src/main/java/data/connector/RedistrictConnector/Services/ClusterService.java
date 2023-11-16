@@ -36,16 +36,32 @@ public class ClusterService {
         }
     }
 
+    public ResponseEntity<List<Cluster>> getByEnsembleId(String ensembleId){
+        Optional<Ensemble> ensemble = ensembleRepository.findById(ensembleId);
+        if(ensemble.isPresent()){
+            if(!ensemble.get().getClusters().isEmpty()){
+                List<Cluster> clusters = clusterRepository.findAllById(ensemble.get().getClusters());
+                return ResponseEntity.ok(clusters);
+            }
+            else{
+                return ResponseEntity.notFound().build();
+            }
+        }
+        else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     public String create(Cluster cluster, String ensembleId) {
         try {
             Optional<Ensemble> ensemble = ensembleRepository.findById(ensembleId);
             if (ensemble.isPresent()) {
-                Cluster newCluster = new Cluster(null, new ArrayList<String>(), cluster.getDistrictCount(), new ArrayList<District>(), cluster.getPolsbyPopper(), cluster.getMajMin(), cluster.getPartisanLean(), cluster.getDistances());
+                Cluster newCluster = new Cluster(null, new ArrayList<String>(), cluster.getDistrictCount(), new ArrayList<String>(), cluster.getPolsbyPopper(), cluster.getMajMin(), cluster.getPartisanLean(), cluster.getDistances());
                 clusterRepository.save(newCluster);
 
                 Ensemble ensembleUpdate = ensemble.get();
-                List<Cluster> clusters = ensembleUpdate.getClusters();
-                clusters.add(newCluster);
+                List<String> clusters = ensembleUpdate.getClusters();
+                clusters.add(newCluster.getId());
                 ensembleUpdate.setClusters(clusters);
                 ensembleRepository.save(ensembleUpdate);
                 return newCluster.getId();

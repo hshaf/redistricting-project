@@ -14,16 +14,16 @@ public class Ensemble {
     private Integer totalDistrictCount;
     private Integer totalClusterCount;
 
-    @DBRef
-    List<Cluster> clusters;
+    
+    List<String> clusterIds;
 
     public Ensemble() {}
 
-    public Ensemble(String name, Integer totalDistrictCount,  Integer totalClusterCount, List<Cluster> clusters) {
+    public Ensemble(String name, Integer totalDistrictCount,  Integer totalClusterCount, List<String> clusterIds) {
         this.name = name;
         this.totalDistrictCount = totalDistrictCount;
         this.totalClusterCount = totalClusterCount;
-        this.clusters = clusters;
+        this.clusterIds = clusterIds;
     }
 
     public String getId() {
@@ -38,12 +38,12 @@ public class Ensemble {
         return totalDistrictCount;
     }
 
-    public List<Cluster> getClusters() {
-        return clusters;
+    public List<String> getClusters() {
+        return clusterIds;
     }
 
-    public void setClusters(List<Cluster> clusters) {
-        this.clusters = clusters;
+    public void setClusters(List<String> clusterIds) {
+        this.clusterIds = clusterIds;
     }
 
     public Integer getTotalClusterCount(){
