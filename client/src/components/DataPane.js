@@ -88,10 +88,22 @@ export default function DataPane(props) {
   let dataTabs = <div></div>
   let welcomePane = <div></div>
 
+  // If ensemble not selected, disable ensemble info tab
+  let disableEnsembleInfoTab = false;
+  if (appState.selectedEnsembleID === "") {
+    disableEnsembleInfoTab = true;
+  }
+
   // If cluster not selected, disable cluster analysis tab
   let disableClusterTab = false;
   if (appState.selectedClusterID === "") {
     disableClusterTab = true;
+  }
+
+  // If ensemble not selected, disable distance measures tab
+  let disableDistanceMeasuresTab = false;
+  if (appState.selectedEnsembleID === "") {
+    disableDistanceMeasuresTab = true;
   }
 
   console.log(appState);
@@ -111,7 +123,7 @@ export default function DataPane(props) {
           updateTab={updateTab}
           />
         </Tab>
-        <Tab eventKey={DataPaneTabs.ENSEMBLE_INFO} title="Ensemble Info" >
+        <Tab eventKey={DataPaneTabs.ENSEMBLE_INFO} title="Ensemble Info" disabled={disableEnsembleInfoTab} >
           <EnsembleOverview
           selectedTab={state.selectedTab}
           updateTab={updateTab}
@@ -120,7 +132,7 @@ export default function DataPane(props) {
         <Tab eventKey={DataPaneTabs.CLUSTER_ANALYSIS} title="Cluster Analysis" disabled={disableClusterTab} >
           <ClusterAnalysis />
         </Tab>
-        <Tab eventKey={DataPaneTabs.DISTANCE_MEASURES} title="Distance Measures" >
+        <Tab eventKey={DataPaneTabs.DISTANCE_MEASURES} title="Distance Measures" disabled={disableDistanceMeasuresTab} >
           <DistanceMeasures />
         </Tab>
       </Tabs>

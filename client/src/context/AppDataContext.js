@@ -128,7 +128,8 @@ function appDataReducer(appData, action) {
     case AppDataActionType.SET_CLUSTERS_FOR_ENSEMBLE: {
       return {
         ...appData,
-        selectedEnsembleClusters: action.payload
+        selectedEnsembleClusters: action.payload,
+        selectedClusterDistrictPlans: null
       }
     }
     case AppDataActionType.SET_DISTRICT_PLANS_FOR_CLUSTER: {

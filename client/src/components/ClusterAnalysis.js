@@ -69,7 +69,7 @@ export default function ClusterAnalysis(props) {
   
   // Render nothing if no state is selected
   // Component should not be accessible in this state
-  if (!appState.selectedState || appState.selectedClusterID === "" || !appData.selectedClusterDistrictPlans) {
+  if (!appState.selectedState || appState.selectedClusterID === "" || !selectedEnsemble || !selectedCluster || !districtPlans) {
     return (
       <div></div>
     );

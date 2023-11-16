@@ -20,7 +20,7 @@ export default function DistanceMeasures(props) {
 
   // Render nothing if no state is selected
   // Component should not be accessible in this state
-  if (!appState.selectedState) {
+  if (!appState.selectedState || appState.selectedEnsembleID === "" || !selectedEnsemble || !clusters) {
     return (
       <div></div>
     );
