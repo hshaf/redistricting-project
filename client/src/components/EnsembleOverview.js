@@ -47,6 +47,12 @@ export default function EnsembleOverview(props) {
       yAxisVar: axisOption
     })
   }
+
+  /** 
+   * Update the current selected cluster ID.
+   * 
+   * @param {String}  clusterNum     ID of selected cluster.
+   */
   let setSelectedCluster = (clusterNum) => {
     console.log('selected cluster id=' + clusterNum);
     appStateDispatch({
@@ -59,6 +65,7 @@ export default function EnsembleOverview(props) {
     // Switch to cluster analysis tab
     props.updateTab(DataPaneTabs.CLUSTER_ANALYSIS);
   }
+
   let renderScatterplotDot = (input) => {
     const cx = input.cx;
     const cy = input.cy;

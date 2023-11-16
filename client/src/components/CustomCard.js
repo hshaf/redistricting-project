@@ -19,6 +19,9 @@ function CustomCard(props) {
   const appStateDispatch = useContext(AppStateDispatch);
   const dataAPI = useContext(AppDataDispatch);
 
+  /** 
+   * Update the current selected ensemble ID.
+   */
   let handleBtnOnClick = () => {
     // Update selected ensemble ID in AppStateContext
     appStateDispatch({

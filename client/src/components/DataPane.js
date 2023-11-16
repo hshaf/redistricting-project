@@ -39,14 +39,18 @@ export default function DataPane(props) {
     console.log(event);
   };
 
+  /** 
+   * Update the current selected state. Selected state will update if
+   * user clicks an item under the "select state" dropdown.
+   * 
+   * @param {String}  event     Abbreviated name of selected state.
+   */
   let handleStateSelection = (event) => {
-    // Set state based on provided abbreviation
     appStateDispatch({
       type: AppStateActionType.SET_SELECTED_STATE,
       payload: event
     });
 
-    // Retrieve data test
     dataAPI.getEnsemblesForState(event);
 
     // Reset tab back to ensemble selection

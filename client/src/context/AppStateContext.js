@@ -20,8 +20,7 @@ const initialAppState = {
   If no state is selected, then value is "" */
   selectedState: "",
   /* Track ID of currently selected ensemble.
-  By default this value is "" (no ensemble selected).
-  Otherwise, value is a string of alphanumeric characters. */
+  By default this value is "" (no ensemble selected). */
   selectedEnsembleID: "",
   /* Track ID of currently selected cluster.
   If no state or cluster is chosen, then value is "" */
@@ -47,13 +46,6 @@ export const AppStateActionType = {
 
 function appStateReducer(appState, action) {
   switch(action.type) {
-    /** 
-     * Update the current selected state. Selected state will update if
-     * user clicks button on "select state" dropdown, or clicks on a state
-     * boundary.
-     * 
-     * @param {String}  payload     Abbreviated name of selected state.
-     */
     case AppStateActionType.SET_SELECTED_STATE: {
       return {
         ...appState,
@@ -63,11 +55,6 @@ function appStateReducer(appState, action) {
         selectedDistrictPlanID: ""
       }
     }
-    /** 
-     * Update the current selected ensemble ID.
-     * 
-     * @param {String}  payload     ID of selected ensemble.
-     */
     case AppStateActionType.SET_SELECTED_ENSEMBLE: {
       return {
         ...appState,
@@ -76,11 +63,6 @@ function appStateReducer(appState, action) {
         selectedDistrictPlanID: ""
       }
     }
-    /** 
-     * Update the current selected cluster ID.
-     * 
-     * @param {String}  payload     ID of selected cluster.
-     */
     case AppStateActionType.SET_SELECTED_CLUSTER: {
       return {
         ...appState,
@@ -88,11 +70,6 @@ function appStateReducer(appState, action) {
         selectedDistrictPlanID: ""
       }
     }
-    /** 
-     * Update the current selected district plan ID.
-     * 
-     * @param {String}  payload     ID of selected district plan.
-     */
     case AppStateActionType.SET_SELECTED_DISTRICT_PLAN: {
       return {
         ...appState,

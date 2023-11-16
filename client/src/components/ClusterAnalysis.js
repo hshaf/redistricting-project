@@ -48,9 +48,16 @@ export default function ClusterAnalysis(props) {
       yAxisVar: axisOption
     })
   }
+
+  /** 
+   * Update the current selected district plan ID.
+   * 
+   * @param {String}  planNum     ID of selected district plan.
+   */
   let setSelectedPlan = (planNum) => {
     console.log("Select plan " + planNum);
   }
+
   let renderScatterplotDot = (input) => {
     const cx = input.cx;
     const cy = input.cy;
