@@ -12,6 +12,7 @@ const customcolstyle = {
 };
 
 export default function EnsembleSelection(props) {
+  // Context
   const appData = useContext(AppDataContext);
   const appState = useContext(AppStateContext);
 

@@ -16,6 +16,7 @@ const customcardstyle = {
 };
 
 function CustomCard(props) {
+  // Context
   const appStateDispatch = useContext(AppStateDispatch);
   const dataAPI = useContext(AppDataDispatch);
 

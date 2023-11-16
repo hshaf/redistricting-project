@@ -6,7 +6,6 @@ class CustomizedDot extends Component {
     const { cx, cy } = this.props;
     var rad = 5;
     if (this.props.payload['z'] != null) { rad = this.props.payload['z'] }
-    //console.log(this.props)
     return (
       <Dot 
       style={{ opacity: 0.6 }}

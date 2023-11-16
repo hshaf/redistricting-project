@@ -1,5 +1,5 @@
 import { Button, Container, Nav, NavDropdown, Navbar, Table } from "react-bootstrap";
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Dot } from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Dot } from 'recharts';
 import { useContext, useState } from "react";
 import { AppStateActionType, AppStateContext, AppStateDispatch } from "../context/AppStateContext";
 import { DataPaneTabs } from "./DataPane";
@@ -14,8 +14,10 @@ const axisLabels = {
 }
 
 export default function EnsembleOverview(props) {
+  // Contexts
   const appState = useContext(AppStateContext);
   const appStateDispatch = useContext(AppStateDispatch);
+
   const appData = useContext(AppDataContext);
   const dataAPI = useContext(AppDataDispatch);
 
@@ -35,12 +37,23 @@ export default function EnsembleOverview(props) {
     yAxisVar: "majMin",
   });
 
+  /**
+   * Set x-axis for scatterplot.
+   * 
+   * @param {String} axisOption 
+   */
   let setXAxisVar = (axisOption) => {
     setState({
       ...state,
       xAxisVar: axisOption
     })
   }
+
+  /**
+   * Set y-axis for scatterplot.
+   * 
+   * @param {String} axisOption 
+   */
   let setYAxisVar = (axisOption) => {
     setState({
       ...state,
@@ -54,7 +67,6 @@ export default function EnsembleOverview(props) {
    * @param {String}  clusterNum     ID of selected cluster.
    */
   let setSelectedCluster = (clusterNum) => {
-    console.log('selected cluster id=' + clusterNum);
     appStateDispatch({
       type: AppStateActionType.SET_SELECTED_CLUSTER,
       payload: clusterNum
@@ -66,6 +78,12 @@ export default function EnsembleOverview(props) {
     props.updateTab(DataPaneTabs.CLUSTER_ANALYSIS);
   }
 
+  /**
+   * Populate cluster scatterplot with dot.
+   * 
+   * @param {object}    input  Cluster data.
+   * @returns {object}         Dot object.
+   */
   let renderScatterplotDot = (input) => {
     const cx = input.cx;
     const cy = input.cy;
@@ -87,22 +105,14 @@ export default function EnsembleOverview(props) {
     );
   }
 
-  // Render nothing if no state is selected
-  // Component should not be accessible in this state
+  // Render nothing if no state or ensemble is selected
   if (!appState.selectedState || appState.selectedEnsembleID === "" || !selectedEnsemble || !clusters) {
     return (
       <div></div>
     );
   }
   
-  // Generate cluster table
-  var clusterData = [];
-
-  if (clusters) {
-    clusterData = clusters;
-  }
-  
-  const clusterTableEntries = clusterData.map((cluster, idx) => {
+  const clusterTableEntries = clusters.map((cluster, idx) => {
     const numMaps = cluster["districtCount"];
     const xAxisVar = cluster[state.xAxisVar];
     const yAxisVar = cluster[state.yAxisVar];
@@ -186,7 +196,7 @@ export default function EnsembleOverview(props) {
             name={axisLabels[state.yAxisVar]}
             label={{ value: axisLabels[state.yAxisVar], offset: -2, angle: -90, position: 'insideBottomLeft' }} />
           <Legend />
-          <Scatter name="Clusters" data={clusterData} fill={clusterDotColor} shape={renderScatterplotDot} />
+          <Scatter name="Clusters" data={clusters} fill={clusterDotColor} shape={renderScatterplotDot} />
         </ScatterChart>
       </ResponsiveContainer>
       <h4>Clusters Overview</h4>
