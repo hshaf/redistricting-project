@@ -7,6 +7,7 @@ from functools import partial
 import pandas as pd
 import geopandas
 
+import os
 import json
 import argparse
 from constants import *
@@ -14,37 +15,41 @@ from constants import *
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser(description="Run ReCom to generate political district plans for a state")
-    parser.add_argument("--prec-data-path", required=True)
-    parser.add_argument("--prec-adj-path", required=True)
-    parser.add_argument("--init-partition-path", required=True)
-    parser.add_argument("--gen-init-partition", metavar="NUM_DISTRICTS", type=int)
-    parser.add_argument("--output-folder")
-    parser.add_argument("--num-plans", type=int)
-    parser.add_argument("--num-procs", type=int)
-    parser.add_argument("--pool_num", type=int)
+    parser.add_argument("--prec-data-path", required=True, help="path to precinct data GeoJSON file")
+    parser.add_argument("--prec-adj-path", required=True, help="path to edge list file")
+    parser.add_argument("--init-partition-path", required=True, help="path to file containing initial partition")
+    parser.add_argument("--gen-init-partition", metavar="NUM_DISTRICTS", type=int, default=None, help="select flag to generate a partition with NUM_DISTRICTS districts")
+    parser.add_argument("--output-folder", default=None, help="path to folder to store generated district plans")
+    parser.add_argument("--num-plans", type=int, default=None, help="total number of plans across all parallel processes")
+    parser.add_argument("--num-procs", type=int, default=None, help="total number of parallel processes, defaults to 1 if not specified")
+    parser.add_argument("--pool_num", type=int, default=None, help="process number in GNU Parallel, defaults to 0 if not specified")
 
     args = vars(parser.parse_args())
 
     # Select the action to take
-    if args["gen-init-partition"] is None:
-        if args["output-folder"] is None or args["num-plans"] is None or args["num-procs"] is None or args["num"] is None:
+    if args["gen_init_partition"] is None:
+        if args["output_folder"] is None or args["num_plans"] is None:
             parser.print_help()
         else:
+            if args["num_procs"] is None:
+                args["num_procs"] = 1
+            if args["pool_num"] is None:
+                args["pool_num"] = 0
             gen_district_plans(
-                prec_data_path=args["prec-data-path"],
-                prec_adj_path=args["prec-adj-path"],
-                init_partition_path=args["initial-partition-path"],
-                output_folder=args["output-folder"],
-                num_plans=args["num-plans"],
-                num_procs=args["num-procs"],
+                prec_data_path=args["prec_data_path"],
+                prec_adj_path=args["prec_adj_path"],
+                init_partition_path=args["init_partition_path"],
+                output_folder=args["output_folder"],
+                num_plans=args["num_plans"],
+                num_procs=args["num_procs"],
                 pool_num=args["pool_num"]
             )
     else:
         gen_initial_partition(
-            prec_data_path=args["prec-data-path"],
-            prec_adj_path=args["prec-adj-path"],
-            init_partition_path=args["initial-partition-path"],
-            num_districts=args["gen-init-partition"]
+            prec_data_path=args["prec_data_path"],
+            prec_adj_path=args["prec_adj_path"],
+            init_partition_path=args["init_partition_path"],
+            num_districts=args["gen_init_partition"]
         )
 
 def gen_district_plans(prec_data_path: str, 
@@ -62,13 +67,16 @@ def gen_district_plans(prec_data_path: str,
     with open(init_partition_path, mode="r", encoding="utf-8") as init_partition_file:
         assign_dict = json.load(init_partition_file)
 
+    # Create output folder if it does not exist
+    os.makedirs(output_folder, exist_ok=True)
+
     # Set configuration variables
     iters_per_plan = 10000
     epsilon = 0.05
 
     # Create graph
     graph = Graph(edge_list)
-    graph.add_data(precinct_df[["pop_total"]].set_index("vtd_geo_id"))
+    graph.add_data(precinct_df.set_index("vtd_geo_id")[["pop_total"]])
 
     # Create population updater, for computing how close to equality the district populations are.
     my_updaters = {"population": updaters.Tally("pop_total", alias="population")}
@@ -129,7 +137,7 @@ def gen_initial_partition(prec_data_path: str, prec_adj_path: str, init_partitio
 
     # Create graph
     graph = Graph(edge_list)
-    graph.add_data(precinct_df[["pop_total"]].set_index("vtd_geo_id"))
+    graph.add_data(precinct_df.set_index("vtd_geo_id")[["pop_total"]])
 
     # Attempt to create partition
     pop_target = precinct_df["pop_total"].sum() / num_districts
