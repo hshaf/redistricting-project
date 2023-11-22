@@ -134,8 +134,7 @@ def gen_district_plans(prec_data_path: str,
     pop_constraint = constraints.within_percent_of_ideal_population(curr_partition, EPSILON)
 
     # Create district plans in a loop
-    plans_per_proc = math.ceil(num_plans / num_procs)
-    for plan_num in range(pool_num * plans_per_proc, min((pool_num + 1) * plans_per_proc, num_plans)):
+    for plan_num in range(pool_num, num_plans, num_procs):
         # Run <STEPS_PER_PLAN> iterations and get the partition at that stage
         chain = MarkovChain(
                     proposal=proposal,
