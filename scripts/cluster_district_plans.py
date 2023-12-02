@@ -1,11 +1,16 @@
 import argparse
 import json
+import math
 import multiprocessing as mp
 import os
+import re
 
 import geopandas
 from gerrychain import Partition, GeographicPartition, Graph
+import matplotlib.pyplot as plt
 import numpy as np
+import sklearn.manifold
+import sklearn.cluster
 
 from OptimalTransport import Pair
 
@@ -31,18 +36,20 @@ def load_assign_dicts(district_plan_files: list):
     return output
 
 def calculate_dummy_distance(plan_1: Partition, plan_2: Partition):
-    return hash(plan_1) / hash(plan_2)
+    plan_1_hash = hash(plan_1)
+    plan_2_hash = hash(plan_2)
+    return (plan_1_hash % 16) + ((plan_1_hash // 1024) % 16) + (plan_2_hash % 16) + ((plan_2_hash // 1024) % 16)
 
 def calculate_optimal_transport_distance(plan_1: Partition, plan_2: Partition):
     return Pair(plan_1, plan_2).distance
 
 def calculate_hamming_distance(plan_1: Partition, plan_2: Partition):
-    return hash(plan_1) / hash(plan_2)
+    return calculate_dummy_distance(plan_1, plan_2)
 
-def calculate_distances_runner(prec_data_path: str, 
-                                prec_adj_path: str, 
-                                district_plan_files: list, 
-                                distance_func):
+def calculate_distances_runner(prec_data_path: str,
+                                prec_adj_path: str,
+                                district_plan_files: list,
+                                distance_func) -> np.array:
     graph = load_graph(prec_data_path, prec_adj_path)
     assign_dicts = load_assign_dicts(district_plan_files)
     
@@ -53,10 +60,11 @@ def calculate_distances_runner(prec_data_path: str,
         for j in range(i + 1, num_plans):
             pair_indices.append((i, j))
     
+    num_pairs = len(pair_indices)
     per_worker_pairs = list()
     for i in range(NUM_PROCESSES):
-        start = (num_plans // NUM_PROCESSES) * i + min(i, num_plans % NUM_PROCESSES)
-        end = (num_plans // NUM_PROCESSES) * (i + 1) + min(i + 1, num_plans % NUM_PROCESSES)
+        start = (num_pairs // NUM_PROCESSES) * i + min(i, num_pairs % NUM_PROCESSES)
+        end = (num_pairs // NUM_PROCESSES) * (i + 1) + min(i + 1, num_pairs % NUM_PROCESSES)
         per_worker_pairs.append(pair_indices[start:end])
 
     # Start worker pool
@@ -70,7 +78,8 @@ def calculate_distances_runner(prec_data_path: str,
         for p1, p2, distance in distance_list:
             distance_matrix[p1, p2] = distance
             distance_matrix[p2, p1] = distance
-    #print(distance_matrix)
+    for row in distance_matrix:
+        print(",".join([str(n) for n in row]))
 
     # Normalize distances
     max_distance = distance_matrix.max()
@@ -78,7 +87,7 @@ def calculate_distances_runner(prec_data_path: str,
 
     return distance_matrix
 
-def calculate_distances_worker(args):
+def calculate_distances_worker(args) -> list:
     # Parse args
     graph, district_plan_list, district_plan_pairs, distance_func = args
 
@@ -100,17 +109,40 @@ def calculate_distances_worker(args):
         output.append((pair[0], pair[1], distance))
     return output
 
+def compute_mds_points(distance_matrix: np.array) -> np.array:
+    mds = sklearn.manifold.MDS(n_components=2, random_state=0, dissimilarity="precomputed", normalized_stress="auto")
+    return mds.fit(distance_matrix).embedding_
+
+def compute_kmeans_clusters(mds_points: np.array, return_elbow_plot: bool = False):
+    output = dict()
+    num_plans = mds_points.shape[0]
+    for k in range(2, math.ceil(2 * math.sqrt(num_plans))):
+        kmeans = sklearn.cluster.KMeans(n_clusters=k, n_init="auto", random_state=0)
+        predictions = kmeans.fit_predict(mds_points).tolist()
+        score = -1 * kmeans.score(mds_points)
+        output[k] = {"score": score, "predictions": predictions, "cluster_centers": kmeans.cluster_centers_}
+    
+    if return_elbow_plot:
+        plot_x = list(output.keys())
+        plot_y = [partition["score"] for partition in output.values()]
+        fig, ax = plt.subplots(figsize=(5,5))
+        ax.plot(plot_x, plot_y)
+        ax.scatter(plot_x, plot_y)
+        return (output, fig)
+    
+    return output
+
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser(description="Use various distance metrics to cluster district plans")
     parser.add_argument("--state", default=None, help="the state for which precincts are generated, automatically populates other file paths")
     parser.add_argument("--prec-data-path", default=None, help="path to precinct data GeoJSON file")
     parser.add_argument("--prec-adj-path", default=None, help="path to edge list file")
-    parser.add_argument("--plan-dir", default=None, help="directory containing generated district plans")
-    parser.add_argument("--distance-output-path", default=None, help="path to output distances")
-
-    distance_metric_options = ["optimal_transport", "o", "hamming", "h"]
-    parser.add_argument("--distance-metric", default=None, choices=distance_metric_options, help="distance metric to be used")
+    parser.add_argument("--plan-dir", default=None, required=True, help="directory containing generated district plans, used to automatically generate output file names")
+    parser.add_argument("--distance-output", default=False, action="store_true", help="indicates that distance data should be computed and outputted to a file")
+    distance_metric_options = ["optimal_transport", "hamming"]
+    parser.add_argument("--distance-metric", default=None, required=True, choices=distance_metric_options, help="distance metric to be used")
+    parser.add_argument("--cluster-output", default=False, action="store_true", help="indicates that cluster data should be created and outputted to files")
 
     args = vars(parser.parse_args())
 
@@ -122,22 +154,19 @@ def main():
         prec_data_path = args["prec_data_path"]
     if args["prec_adj_path"]:
         prec_adj_path = args["prec_adj_path"]
-    if args["distance_output_path"]:
-        distance_output_path = os.path.join(DATA_BASE_DIRECTORY, args["distance_output_path"])
+    plan_dir = os.path.join(DATA_BASE_DIRECTORY, args["plan_dir"])
     
-    # Calculate distances (if option is selected)
-    if args["distance_metric"]:
-        # Determine plan directory
-        if not args["plan_dir"]:
-            print("--plan-dir must be specified when calculating distances")
-            exit(-1)
-        plan_dir = os.path.join(DATA_BASE_DIRECTORY, args["plan_dir"])
-        district_plan_files = sorted(os.path.join(plan_dir, f) for f in os.listdir(plan_dir))
+    # Calculate distances
+    if args["distance_output"]:
+        # Find district plan files
+        district_plan_files = sorted([os.path.join(plan_dir, file_name) for file_name in os.listdir(plan_dir) if re.fullmatch(r"\d\d\d\d\d.json", file_name)])
 
         # Select distance measure
         distance_func = calculate_optimal_transport_distance
-        if args["distance_metric"] in ["o", "optimal_transport"]:
+        if args["distance_metric"] == "optimal_transport":
             distance_func = calculate_optimal_transport_distance
+        elif args["distance_metric"] in "hamming":
+            distance_func = calculate_hamming_distance
 
         # Calculate distances
         distance_matrix = calculate_distances_runner(prec_data_path=prec_data_path,
@@ -145,9 +174,31 @@ def main():
                                                         district_plan_files=district_plan_files,
                                                         distance_func=distance_func
                                                     )
+        np.savetxt(os.path.join(plan_dir, f"distance_{args['distance_metric']}.txt"), distance_matrix, delimiter=",")
 
-        if args["distance_output_path"]:
-            np.savetxt(distance_output_path, distance_matrix, delimiter=",")
+    # Determine MDS points and clusters with k-means clustering
+    if args["cluster_output"]:
+        # Load distances matrix from file (if needed)
+        if not args["distance_output"]:
+            distance_file_path = os.path.join(plan_dir, f"distance_{args['distance_metric']}.txt")
+            if os.path.isfile(distance_file_path):
+                distance_matrix = np.loadtxt(distance_file_path, delimiter=",")
+            else:
+                print("--cluster-output flag was given, but distance calculation was not performed and no distance file exists")
+                exit(-1)
+        
+        # Calculate clusters with incremental values of k
+        mds_points = compute_mds_points(distance_matrix)
+        cluster_partitions, k_score_plot = compute_kmeans_clusters(mds_points, return_elbow_plot=True)
+
+        # Output to files
+        mds_file_path = os.path.join(plan_dir, f"mds_points_{args['distance_metric']}.txt")
+        clusters_file_path = os.path.join(plan_dir, f"clusters_{args['distance_metric']}.json")
+        k_score_file_path = os.path.join(plan_dir, f"k_score_plot_{args['distance_metric']}.png")
+        np.savetxt(mds_file_path, mds_points, delimiter=",")
+        with open(clusters_file_path, mode="w", encoding="utf-8") as cluster_output_file:
+            json.dump(cluster_partitions, cluster_output_file)
+        k_score_plot.savefig(k_score_file_path)
 
 if __name__ == "__main__":
     main()
