@@ -1,24 +1,20 @@
-import matplotlib.pyplot as plt
-from gerrychain import (GeographicPartition, Partition, Graph, MarkovChain,
-                        proposals, updaters, constraints, accept, Election)
-from gerrychain.random import random
-from gerrychain.proposals import recom
-from gerrychain.tree import recursive_tree_part
-from functools import partial
-import pandas as pd
-import geopandas
-
 import os
 import json
 import argparse
-import math
-from constants import *
+from functools import partial
+
+from gerrychain import (GeographicPartition, Graph, MarkovChain, updaters, constraints, accept)
+from gerrychain.random import random
+from gerrychain.proposals import recom
+from gerrychain.tree import recursive_tree_part
+import geopandas
 
 
 # Configuration variables
 DATA_BASE_DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data")
 STEPS_PER_PLAN = 10000
 EPSILON = 0.05
+GEOPANDAS_ENGINE = "fiona"
 
 def main():
     # Parse arguments
@@ -31,7 +27,7 @@ def main():
     parser.add_argument("--output-folder", default=None, help="path to folder to store generated district plans")
     parser.add_argument("--num-plans", type=int, default=None, help="total number of plans across all parallel processes")
     parser.add_argument("--num-procs", type=int, default=None, help="total number of parallel processes, defaults to 1 if not specified")
-    parser.add_argument("--pool_num", type=int, default=None, help="process number in GNU Parallel, defaults to 0 if not specified")
+    parser.add_argument("--pool-num", type=int, default=None, help="process number in GNU Parallel, defaults to 0 if not specified")
 
     args = vars(parser.parse_args())
 
@@ -92,7 +88,7 @@ def gen_district_plans(prec_data_path: str,
     """
 
     # Load data files
-    precinct_df = geopandas.read_file(prec_data_path, engine="pyogrio")
+    precinct_df = geopandas.read_file(prec_data_path, engine=GEOPANDAS_ENGINE)
     with open(prec_adj_path, mode="r", encoding="utf-8") as adj_data_file:
         edge_list = json.load(adj_data_file)
     with open(init_partition_path, mode="r", encoding="utf-8") as init_partition_file:
@@ -158,7 +154,7 @@ def gen_district_plans(prec_data_path: str,
 
 def gen_initial_partition(prec_data_path: str, prec_adj_path: str, init_partition_path: str, num_districts: int):
     # Load data files
-    precinct_df = geopandas.read_file(prec_data_path, engine="pyogrio")
+    precinct_df = geopandas.read_file(prec_data_path, engine=GEOPANDAS_ENGINE)
 
     with open(prec_adj_path, mode="r", encoding="utf-8") as adj_data_file:
         edge_list = json.load(adj_data_file)
