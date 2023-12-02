@@ -49,19 +49,15 @@ def calculate_optimal_transport_distance(plan_1: Partition, plan_2: Partition):
     return Pair(plan_1, plan_2).distance
 
 def calculate_hamming_distance(plan_1: Partition, plan_2: Partition):
-    # Find Hamming distance between district_i in plan_1 and district_j in plan_2 for all i, j
-    # This is equal to the number of precincts such that (p in district_i) and (p not in district_j) or vice versa
+    # Create bitmap indicating whether each node is or is not in a given district of the partition
     nodes = plan_1.graph.nodes()
     num_districts = len(plan_1.subgraphs.parts)
-    diff_matrix = np.zeros((num_districts, num_districts))
-    for i in range(num_districts):
-        for j in range(i, num_districts):
-            total_diffs = 0
-            for n in nodes:
-                if (n in plan_1.subgraphs.parts[i + 1]) ^ (n in plan_2.subgraphs.parts[j + 1]): # District indices are 1-indexed
-                    total_diffs += 1
-            diff_matrix[i, j] = total_diffs
-            diff_matrix[j, i] = total_diffs
+    plan_1_hamming = np.array([[int(n in plan_1.subgraphs.parts[i + 1]) for n in nodes] for i in range(num_districts)]) # District indices are 1-indexed
+    plan_2_hamming = np.array([[int(n in plan_2.subgraphs.parts[i + 1]) for n in nodes] for i in range(num_districts)])
+
+    # Find Hamming distance between district_i in plan_1 and district_j in plan_2 for all i, j
+    # This is equal to the number of precincts such that (p in district_i) and (p not in district_j) or vice versa
+    diff_matrix = np.matmul(plan_1_hamming, (1 - plan_2_hamming).T) + np.matmul((1 - plan_1_hamming), plan_2_hamming.T)
 
     # Find mapping between districts in plan_1 and districts in plan_2 that minimizes total distance
     opt_assign_indices = scipy.optimize.linear_sum_assignment(diff_matrix)
