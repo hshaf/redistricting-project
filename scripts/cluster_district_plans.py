@@ -9,14 +9,16 @@ import geopandas
 from gerrychain import Partition, GeographicPartition, Graph
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import sklearn.manifold
 import sklearn.cluster
+import scipy.optimize
 
 from OptimalTransport import Pair
 
 # Configuration variables
 DATA_BASE_DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data")
-GEOPANDAS_ENGINE = "fiona"
+GEOPANDAS_ENGINE = "pyogrio"
 NUM_PROCESSES = os.cpu_count()
 
 def load_graph(prec_data_path: str, prec_adj_path: str):
@@ -38,13 +40,57 @@ def load_assign_dicts(district_plan_files: list):
 def calculate_dummy_distance(plan_1: Partition, plan_2: Partition):
     plan_1_hash = hash(plan_1)
     plan_2_hash = hash(plan_2)
-    return (plan_1_hash % 16) + ((plan_1_hash // 1024) % 16) + (plan_2_hash % 16) + ((plan_2_hash // 1024) % 16)
+    distance_subtotal = 0
+    for i in range(4):
+        distance_subtotal += ((plan_1_hash / 16**i % 256) - (plan_2_hash / 16**i % 256))**2
+    return distance_subtotal**0.5
 
 def calculate_optimal_transport_distance(plan_1: Partition, plan_2: Partition):
     return Pair(plan_1, plan_2).distance
 
 def calculate_hamming_distance(plan_1: Partition, plan_2: Partition):
-    return calculate_dummy_distance(plan_1, plan_2)
+    # Find Hamming distance between district_i in plan_1 and district_j in plan_2 for all i, j
+    # This is equal to the number of precincts such that (p in district_i) and (p not in district_j) or vice versa
+    nodes = plan_1.graph.nodes()
+    num_districts = len(plan_1.subgraphs.parts)
+    diff_matrix = np.zeros((num_districts, num_districts))
+    for i in range(num_districts):
+        for j in range(i, num_districts):
+            total_diffs = 0
+            for n in nodes:
+                if (n in plan_1.subgraphs.parts[i + 1]) ^ (n in plan_2.subgraphs.parts[j + 1]): # District indices are 1-indexed
+                    total_diffs += 1
+            diff_matrix[i, j] = total_diffs
+            diff_matrix[j, i] = total_diffs
+
+    # Find mapping between districts in plan_1 and districts in plan_2 that minimizes total distance
+    opt_assign_indices = scipy.optimize.linear_sum_assignment(diff_matrix)
+    return diff_matrix[opt_assign_indices].sum()
+
+def calculate_entropy_distance(plan_1: Partition, plan_2: Partition):
+    # Adapted from https://github.com/political-geometry/entropy
+
+    # Create DF with district assignments and total populations for each precinct
+    precinct_data = {"plan_1_assignment": dict(), "plan_2_assignment": dict(), "pop_total": dict()}
+    graph_nodes = plan_1.graph.nodes(data=True)
+    for district_num, district_precs in plan_1.subgraphs.parts.items():
+        for prec in district_precs:
+            precinct_data["plan_1_assignment"][prec] = district_num
+            precinct_data["pop_total"][prec] = graph_nodes[prec]["pop_total"]
+    for district_num, district_precs in plan_2.subgraphs.parts.items():
+        for prec in district_precs:
+            precinct_data["plan_2_assignment"][prec] = district_num
+    precinct_df = pd.DataFrame(data=precinct_data)
+
+    # Calculate entropy
+    entropy = 0
+    total_pop = precinct_df["pop_total"].sum()
+    district_county_intersections = precinct_df.groupby(by=["plan_1_assignment", "plan_2_assignment"]).sum()
+    district_2_populations = precinct_df.groupby(by="plan_2_assignment").sum()["pop_total"]
+    for _, row in district_county_intersections.iterrows():
+        if row["pop_total"] > 0:
+            entropy += (1 / total_pop) * row["pop_total"] * np.log2(district_2_populations[row.name[1]] / row["pop_total"])
+    return entropy
 
 def calculate_distances_runner(prec_data_path: str,
                                 prec_adj_path: str,
@@ -118,9 +164,9 @@ def compute_kmeans_clusters(mds_points: np.array, return_elbow_plot: bool = Fals
     num_plans = mds_points.shape[0]
     for k in range(2, math.ceil(2 * math.sqrt(num_plans))):
         kmeans = sklearn.cluster.KMeans(n_clusters=k, n_init="auto", random_state=0)
-        predictions = kmeans.fit_predict(mds_points).tolist()
+        predictions = kmeans.fit_predict(mds_points)
         score = -1 * kmeans.score(mds_points)
-        output[k] = {"score": score, "predictions": predictions, "cluster_centers": kmeans.cluster_centers_}
+        output[k] = {"score": score, "predictions": predictions.tolist(), "cluster_centers": kmeans.cluster_centers_.tolist()}
     
     if return_elbow_plot:
         plot_x = list(output.keys())
@@ -140,7 +186,7 @@ def main():
     parser.add_argument("--prec-adj-path", default=None, help="path to edge list file")
     parser.add_argument("--plan-dir", default=None, required=True, help="directory containing generated district plans, used to automatically generate output file names")
     parser.add_argument("--distance-output", default=False, action="store_true", help="indicates that distance data should be computed and outputted to a file")
-    distance_metric_options = ["optimal_transport", "hamming"]
+    distance_metric_options = ["optimal_transport", "hamming", "entropy"]
     parser.add_argument("--distance-metric", default=None, required=True, choices=distance_metric_options, help="distance metric to be used")
     parser.add_argument("--cluster-output", default=False, action="store_true", help="indicates that cluster data should be created and outputted to files")
 
@@ -167,6 +213,8 @@ def main():
             distance_func = calculate_optimal_transport_distance
         elif args["distance_metric"] in "hamming":
             distance_func = calculate_hamming_distance
+        elif args["distance_metric"] in "entropy":
+            distance_func = calculate_entropy_distance
 
         # Calculate distances
         distance_matrix = calculate_distances_runner(prec_data_path=prec_data_path,
