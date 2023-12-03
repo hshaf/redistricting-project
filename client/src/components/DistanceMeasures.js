@@ -27,17 +27,37 @@ export default function DistanceMeasures(props) {
   }
 
   const distanceTableEntries = clusters.map((cluster, idx) => {
-    const clusterSize = cluster["districtCount"]
-    const optimalTransport = cluster["distances"]["optimalTransport"];
-    const hamming = cluster["distances"]["hamming"];
-    const totalVariation = cluster["distances"]["totalVariation"];
+    let clusterSize = cluster["districtCount"]
+    let optimalTransport = cluster["distances"]["optimalTransport"];
+    let hamming = cluster["distances"]["hamming"];
+    let totalVariation = cluster["distances"]["totalVariation"];
+    if (optimalTransport) {
+      optimalTransport = optimalTransport.toFixed(3)
+    }
+    else {
+      optimalTransport = "&mdash;"
+    }
+    
+    if (hamming) {
+      hamming = hamming.toFixed(3)
+    }
+    else {
+      hamming = "&mdash;"
+    }
+    if (totalVariation) {
+      totalVariation = totalVariation.toFixed(3)
+    }
+    else {
+      totalVariation = "&mdash;"
+    }
+
     return (
       <tr key={`row-${idx}`}>
         <td>{(idx + 1)}</td>
         <td>{clusterSize}</td>
-        <td>{optimalTransport.toFixed(3)}</td>
-        <td>{hamming.toFixed(3)}</td>
-        <td>{totalVariation.toFixed(3)}</td>
+        <td>{optimalTransport}</td>
+        <td>{hamming}</td>
+        <td>{totalVariation}</td>
       </tr>
     )}
   );

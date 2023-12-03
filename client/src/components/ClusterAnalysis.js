@@ -33,7 +33,7 @@ export default function ClusterAnalysis(props) {
   }
 
   const [state, setState] = useState({
-    xAxisVar: "polsbyPopper",
+    xAxisVar: "partisanLean",
     yAxisVar: "majMin",
   });
 
@@ -109,7 +109,6 @@ export default function ClusterAnalysis(props) {
   // Fix cluster table values to 3 decimal places if variable is a float
   const clusterName = "Cluster #" + (Number(appState.selectedClusterID) + 1) + " Overview";
   const clusterNumMaps = selectedCluster["districtCount"];
-  const clusterPolsbyPopper = selectedCluster["polsbyPopper"].toFixed(3);
   const clusterMajMin = selectedCluster["majMin"].toFixed(3);
   const clusterPartisanLean = selectedCluster["partisanLean"].toFixed(3);
 
@@ -209,10 +208,6 @@ export default function ClusterAnalysis(props) {
             <tr>
               <td>Number of Plans</td>
               <td>{clusterNumMaps}</td>
-            </tr>
-            <tr>
-              <td>Mean Polsby-Popper</td>
-              <td>{clusterPolsbyPopper}</td>
             </tr>
             <tr>
               <td>Mean Majority-Minority Districts</td>

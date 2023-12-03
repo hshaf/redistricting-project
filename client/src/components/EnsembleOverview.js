@@ -33,7 +33,7 @@ export default function EnsembleOverview(props) {
   }
 
   const [state, setState] = useState({
-    xAxisVar: "polsbyPopper",
+    xAxisVar: "partisanLean",
     yAxisVar: "majMin",
   });
 
