@@ -8,7 +8,7 @@ import { AppStateActionType } from '../context/AppStateContext';
 import { AppDataDispatch } from '../context/AppDataContext';
 
 const listgroupvariant = "light";
-export const customcardwidth = '15rem';
+export const customcardwidth = '25vh';
 
 const customcardstyle = {
   maxWidth: customcardwidth,
