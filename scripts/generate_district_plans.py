@@ -9,14 +9,19 @@ from gerrychain.proposals import recom
 from gerrychain.tree import recursive_tree_part
 import geopandas
 
-
-# Configuration variables
 DATA_BASE_DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data")
 STEPS_PER_PLAN = 10000
 EPSILON = 0.05
-GEOPANDAS_ENGINE = "fiona"
+GEOPANDAS_ENGINE = "pyogrio"
 
 def main():
+    # Configuration variables
+    try:
+        import pyogrio
+    except ImportError:
+        global GEOPANDAS_ENGINE
+        GEOPANDAS_ENGINE = "fiona"
+
     # Parse arguments
     parser = argparse.ArgumentParser(description="Run ReCom to generate political district plans for a state")
     parser.add_argument("--state", default=None, help="the state for which precincts are generated, automatically populates other file paths")

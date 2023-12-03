@@ -16,10 +16,9 @@ import scipy.optimize
 
 from OptimalTransport import Pair
 
-# Configuration variables
 DATA_BASE_DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data")
-GEOPANDAS_ENGINE = "pyogrio"
 NUM_PROCESSES = os.cpu_count()
+GEOPANDAS_ENGINE = "pyogrio"
 
 def load_graph(prec_data_path: str, prec_adj_path: str):
     precinct_df = geopandas.read_file(prec_data_path, engine=GEOPANDAS_ENGINE)
@@ -166,7 +165,7 @@ def compute_kmeans_clusters(mds_points: np.array, return_elbow_plot: bool = Fals
     
     if return_elbow_plot:
         plot_x = list(output.keys())
-        plot_y = [partition["score"] for partition in output.values()]
+        plot_y = [c["score"] for c in output.values()]
         fig, ax = plt.subplots(figsize=(5,5))
         ax.plot(plot_x, plot_y)
         ax.scatter(plot_x, plot_y)
@@ -175,6 +174,13 @@ def compute_kmeans_clusters(mds_points: np.array, return_elbow_plot: bool = Fals
     return output
 
 def main():
+    # Set engine to pyogrio if it is available
+    try:
+        import pyogrio
+    except ImportError:
+        global GEOPANDAS_ENGINE
+        GEOPANDAS_ENGINE = "fiona"
+
     # Parse arguments
     parser = argparse.ArgumentParser(description="Use various distance metrics to cluster district plans")
     parser.add_argument("--state", default=None, help="the state for which precincts are generated, automatically populates other file paths")
@@ -233,7 +239,7 @@ def main():
         
         # Calculate clusters with incremental values of k
         mds_points = compute_mds_points(distance_matrix)
-        cluster_partitions, k_score_plot = compute_kmeans_clusters(mds_points, return_elbow_plot=True)
+        cluster_groupings, k_score_plot = compute_kmeans_clusters(mds_points, return_elbow_plot=True)
 
         # Output to files
         mds_file_path = os.path.join(plan_dir, f"mds_points_{args['distance_metric']}.txt")
@@ -241,7 +247,7 @@ def main():
         k_score_file_path = os.path.join(plan_dir, f"k_score_plot_{args['distance_metric']}.png")
         np.savetxt(mds_file_path, mds_points, delimiter=",")
         with open(clusters_file_path, mode="w", encoding="utf-8") as cluster_output_file:
-            json.dump(cluster_partitions, cluster_output_file)
+            json.dump(cluster_groupings, cluster_output_file)
         k_score_plot.savefig(k_score_file_path)
 
 if __name__ == "__main__":
