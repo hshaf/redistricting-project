@@ -11,24 +11,16 @@ import geopandas
 
 URL = 'http://localhost:8080'
 client = pymongo.MongoClient()
-db = client["redistricting"]                                                                                                                                                                                     
+db = client.redistricting                                                                                                                                                                                    
 
 def main():
     # Process args
-    '''
     precinct_file_path = sys.argv[1]
     ensemble_dir_path = sys.argv[2]
     state = sys.argv[3]
     ensemble_name = sys.argv[4]
     distance_metric = sys.argv[5]
     num_clusters = sys.argv[6]
-    '''
-    precinct_file_path = "../data/az_precinct_data.json"
-    ensemble_dir_path = "../data/ensembles/az_ensemble_test_0"
-    state = "AZ"
-    ensemble_name = "AZ Ensemble Test 1"
-    distance_metric = "hamming"
-    num_clusters = 2
 
     try:
         import pyogrio
@@ -66,7 +58,7 @@ def main():
                                     num_district_plans=len(district_plan_data))
 
     # Add ensemble to state
-    state_db_obj = db.state.find_one()
+    state_db_obj = db.state.find_one({"_id": state})
     new_ensemble_list = state_db_obj["ensembleIds"] + [ensemble_db_id]
     db.state.update_one({"_id": state}, {"$set": {"ensembleIds": new_ensemble_list}})
 
