@@ -84,12 +84,10 @@ export default function EnsembleOverview(props) {
    * @returns {object}         Dot object.
    */
   let renderScatterplotDot = (input) => {
-    console.log(input);
     const cx = input.cx;
     const cy = input.cy;
     const dotKey = input.payload["INDEX"];
     let rad = 2 * Math.sqrt(input.payload["DISTRICT_PLAN_COUNT"]);
-    console.log(rad);
     return (
       <Dot style={{ opacity: 0.6 }}
         cx={cx} cy={cy}
@@ -110,28 +108,23 @@ export default function EnsembleOverview(props) {
   }
 
   // Get data for ensemble and associated clusters from global app data
-  if (appState.selectedEnsembleID && appData.selectedStateEnsembles) {
-    selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
-  }
-
-  if (appData.selectedEnsembleClusters) {
-    clusters = appData.selectedEnsembleClusters;
-    clusterData = clusters.map((cluster, idx) => {
-      return {
-        "INDEX": idx,
-        "DISTRICT_PLAN_COUNT": cluster["districtPlanCount"],
-        "CLUSTER_CENTER_X": cluster["clusterCenter"][0],
-        "CLUSTER_CENTER_Y": cluster["clusterCenter"][1],
-        "MAJ_MIN": cluster["avgMajMinDistricts"]["totalMajMin"],
-        "MAJ_BLACK": cluster["avgMajMinDistricts"]["majBlack"],
-        "MAJ_NATIVE": cluster["avgMajMinDistricts"]["majNative"],
-        "MAJ_ASIAN": cluster["avgMajMinDistricts"]["majAsian"],
-        "MAJ_PACIFIC": cluster["avgMajMinDistricts"]["majPacific"],
-        "MAJ_HISPANIC": cluster["avgMajMinDistricts"]["majHispanic"],
-        "PARTISAN_LEAN": cluster["avgPartisanLean"]
-      }
-    });
-  }
+  selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
+  clusters = appData.selectedEnsembleClusters;
+  clusterData = clusters.map((cluster, idx) => {
+    return {
+      "INDEX": idx,
+      "DISTRICT_PLAN_COUNT": cluster["districtPlanCount"],
+      "CLUSTER_CENTER_X": cluster["clusterCenter"][0],
+      "CLUSTER_CENTER_Y": cluster["clusterCenter"][1],
+      "MAJ_MIN": cluster["avgMajMinDistricts"]["totalMajMin"],
+      "MAJ_BLACK": cluster["avgMajMinDistricts"]["majBlack"],
+      "MAJ_NATIVE": cluster["avgMajMinDistricts"]["majNative"],
+      "MAJ_ASIAN": cluster["avgMajMinDistricts"]["majAsian"],
+      "MAJ_PACIFIC": cluster["avgMajMinDistricts"]["majPacific"],
+      "MAJ_HISPANIC": cluster["avgMajMinDistricts"]["majHispanic"],
+      "PARTISAN_LEAN": cluster["avgPartisanLean"]
+    }
+  });
 
   // Get name of selected ensemble
   let selectedEnsembleName = "";
@@ -142,7 +135,7 @@ export default function EnsembleOverview(props) {
   // Generate axis field selection dropdown entries
   const axisDropdownEntries = Object.entries(axisLabels).map((axisOption) => {
     return (
-      <NavDropdown.Item eventKey={axisOption[0]}>
+      <NavDropdown.Item key={axisOption[0]} eventKey={axisOption[0]}>
         {axisOption[1]}
       </NavDropdown.Item>
     )

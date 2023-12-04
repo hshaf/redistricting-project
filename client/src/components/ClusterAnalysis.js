@@ -4,12 +4,19 @@ import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Legend, ResponsiveC
 import { AppStateContext } from "../context/AppStateContext";
 import { AppDataContext } from "../context/AppDataContext";
 
+const mapPresentDotColor = "#dd6efd";
 const districtDotColor = "#0d6efd";
 const axisLabels = {
-  "polsbyPopper": "Polsby-Popper",
-  "majMin": "Majority-Minority Districts",
-  "partisanLean": "Partisan Lean"
-}
+  "MDS_X": "MDS X-Coordinate",
+  "MDS_Y": "MDS Y-Coordinate",
+  "MAJ_MIN": "Avg. Maj.-Min. Districts",
+  "MAJ_BLACK": "Avg. Maj.-Black Districts",
+  "MAJ_NATIVE": "Avg. Maj.-Native American Districts",
+  "MAJ_ASIAN": "Avg. Maj.-Asian Districts",
+  "MAJ_PACIFIC": "Avg. Maj.-Pacific Islander Districts",
+  "MAJ_HISPANIC": "Avg. Maj.-Hispanic Districts",
+  "PARTISAN_LEAN": "Avg. Partisan Lean"
+};
 
 export default function ClusterAnalysis(props) {
   // Context
@@ -18,23 +25,12 @@ export default function ClusterAnalysis(props) {
 
   let selectedEnsemble = null;
   let selectedCluster = null;
-  let districtPlans = null;
-
-  if (appState.selectedEnsembleID && appData.selectedStateEnsembles) {
-    selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
-  }
-
-  if (appState.selectedClusterID && appData.selectedEnsembleClusters) {
-    selectedCluster = appData.selectedEnsembleClusters[appState.selectedClusterID];
-  }
-
-  if (appData.selectedClusterDistrictPlans) {
-    districtPlans = appData.selectedClusterDistrictPlans;
-  }
+  let districtPlans = [];
+  let districtPlanData = [];
 
   const [state, setState] = useState({
-    xAxisVar: "partisanLean",
-    yAxisVar: "majMin",
+    xAxisVar: "MDS_X",
+    yAxisVar: "MDS_Y",
   });
 
   /**
@@ -79,41 +75,76 @@ export default function ClusterAnalysis(props) {
   let renderScatterplotDot = (input) => {
     const cx = input.cx;
     const cy = input.cy;
-    const dotKey = districtPlans.indexOf(input.payload).toString();
+    const dotKey = input.payload["INDEX"];
+    const dotColor = (input.payload["BOUNDARY"]) ? mapPresentDotColor : districtDotColor
     return (
       <Dot
         cx={cx} cy={cy}
-        r={4}
+        r={(input.payload["BOUNDARY"]) ? 6 : 4}
         stroke="black"
         strokeWidth={1}
-        fill={districtDotColor}
+        fill={dotColor}
         onClick={() => setSelectedPlan(dotKey)}
         />
     );
   }
   
   // Render nothing if no state, ensemble, or cluster is selected
-  if (!appState.selectedState || !appState.selectedEnsembleID || !appState.selectedClusterID || !selectedEnsemble || !selectedCluster || !districtPlans) {
+  if (appState.selectedState === null || 
+      appState.selectedEnsembleID === null || 
+      appState.selectedClusterID === null || 
+      !appData.selectedStateEnsembles || 
+      !appData.selectedEnsembleClusters) {
     return (
       <div></div>
     );
   }
 
+  // Get data for cluster and associated district plans from global app data
+  selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
+  selectedCluster = appData.selectedEnsembleClusters[appState.selectedClusterID];
+  if (appData.selectedClusterDistrictPlans) {
+    districtPlans = appData.selectedClusterDistrictPlans;
+    districtPlanData = districtPlans.map((planEntry, idx) => {
+      return {
+        "INDEX": idx,
+        "BOUNDARY": planEntry["boundary"],
+        "MDS_X": planEntry["mdsCoords"][0],
+        "MDS_Y": planEntry["mdsCoords"][1],
+        "MAJ_MIN": planEntry["majMinDistricts"]["totalMajMin"],
+        "MAJ_BLACK": planEntry["majMinDistricts"]["majBlack"],
+        "MAJ_NATIVE": planEntry["majMinDistricts"]["majNative"],
+        "MAJ_ASIAN": planEntry["majMinDistricts"]["majAsian"],
+        "MAJ_PACIFIC": planEntry["majMinDistricts"]["majPacific"],
+        "MAJ_HISPANIC": planEntry["majMinDistricts"]["majHispanic"],
+        "PARTISAN_LEAN": planEntry["partisanLean"]
+      }
+    });
+  }
+
   // Get name of selected ensemble 
   let selectedEnsembleName = "";
-  
   if (selectedEnsemble) {
     selectedEnsembleName = selectedEnsemble['name'];
   }
+
+  // Generate axis field selection dropdown entries
+  const axisDropdownEntries = Object.entries(axisLabels).map((axisOption) => {
+    return (
+      <NavDropdown.Item key={axisOption[0]} eventKey={axisOption[0]}>
+        {axisOption[1]}
+      </NavDropdown.Item>
+    )
+  })
   
   // Fix cluster table values to 3 decimal places if variable is a float
   const clusterName = "Cluster #" + (Number(appState.selectedClusterID) + 1) + " Overview";
-  const clusterNumMaps = selectedCluster["districtCount"];
-  const clusterMajMin = selectedCluster["majMin"].toFixed(3);
-  const clusterPartisanLean = selectedCluster["partisanLean"].toFixed(3);
+  const clusterNumMaps = selectedCluster["districtPlanCount"];
+  const clusterMajMin = selectedCluster["avgMajMinDistricts"]["totalMajMin"].toFixed(3);
+  const clusterPartisanLean = selectedCluster["avgPartisanLean"].toFixed(3);
 
   // Generate table for district plan statistics
-  const districtPlanEntries = districtPlans.map((districtPlan, idx) => {
+  const districtPlanEntries = districtPlanData.map((districtPlan, idx) => {
     const xAxisVar = districtPlan[state.xAxisVar];
     const yAxisVar = districtPlan[state.yAxisVar];
     
@@ -142,29 +173,13 @@ export default function ClusterAnalysis(props) {
               title="X-Axis"
               id="x-axis-nav-dropdown"
               onSelect={setXAxisVar}>
-              <NavDropdown.Item eventKey={"polsbyPopper"}>
-                Polsby-Popper
-              </NavDropdown.Item>
-              <NavDropdown.Item eventKey={"majMin"}>
-                Majority-Minority
-              </NavDropdown.Item>
-              <NavDropdown.Item eventKey={"partisanLean"}>
-                Partisan Lean
-              </NavDropdown.Item>
+              {axisDropdownEntries}
             </NavDropdown>
             <NavDropdown
               title="Y-Axis"
               id="y-axis-nav-dropdown"
               onSelect={setYAxisVar}>
-              <NavDropdown.Item eventKey={"polsbyPopper"}>
-                Polsby-Popper
-              </NavDropdown.Item>
-              <NavDropdown.Item eventKey={"majMin"}>
-                Majority-Minority
-              </NavDropdown.Item>
-              <NavDropdown.Item eventKey={"partisanLean"}>
-                Partisan Lean
-              </NavDropdown.Item>
+              {axisDropdownEntries}
             </NavDropdown>
             <Nav.Item className="ms-auto">
               <Nav.Link>Ensemble: {selectedEnsembleName}</Nav.Link>
@@ -196,7 +211,7 @@ export default function ClusterAnalysis(props) {
             name={axisLabels[state.yAxisVar]}
             label={{ value: axisLabels[state.yAxisVar], offset: -2, angle: -90, position: 'insideBottomLeft' }} />
           <Legend />
-          <Scatter name="District Plans" fill={districtDotColor} data={districtPlans} shape={renderScatterplotDot} />
+          <Scatter name="District Plans" fill={districtDotColor} data={districtPlanData} shape={renderScatterplotDot} />
         </ScatterChart>
       </ResponsiveContainer>
       <h4>

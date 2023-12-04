@@ -83,10 +83,10 @@ export default function DataPane(props) {
 
   // Get strings for displaying selected state and district plan
   let selectedState = ""
-  let districtPlan = ""
+  let districtPlanType = ""
   if (appState.selectedState !== null) {
     selectedState = appData.stateData.get(appState.selectedState).name;
-    districtPlan = appData.stateData.get(appState.selectedState).districtType;
+    districtPlanType = appData.stateData.get(appState.selectedState).districtPlanType;
   }
   
   // Render DataPane
@@ -193,7 +193,7 @@ export default function DataPane(props) {
                 <Nav.Link>Selected State: {selectedState}</Nav.Link>
               </Nav.Item>
               <Nav.Item className="ms-auto">
-                <Nav.Link>District Plan: {districtPlan}</Nav.Link>
+                <Nav.Link>District Plan: {districtPlanType}</Nav.Link>
               </Nav.Item>
             </Nav>
           </Navbar.Collapse>
