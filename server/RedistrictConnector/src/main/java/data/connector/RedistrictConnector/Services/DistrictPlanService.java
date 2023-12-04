@@ -9,21 +9,21 @@ import org.springframework.stereotype.Service;
 
 import data.connector.RedistrictConnector.ResourceNotFoundException;
 import data.connector.RedistrictConnector.Models.Cluster;
-import data.connector.RedistrictConnector.Models.District;
+import data.connector.RedistrictConnector.Models.DistrictPlan;
 import data.connector.RedistrictConnector.Repositories.ClusterRepository;
-import data.connector.RedistrictConnector.Repositories.DistrictRepository;
+import data.connector.RedistrictConnector.Repositories.DistrictPlanRepository;
 
 @Service
-public class DistrictService {
+public class DistrictPlanService {
 
     @Autowired
-    private DistrictRepository districtRepository;
+    private DistrictPlanRepository districtRepository;
 
     @Autowired
     private ClusterRepository clusterRepository;
 
-    public ResponseEntity<District> findById(String id) {
-        Optional<District> district = districtRepository.findById(id);
+    public ResponseEntity<DistrictPlan> findById(String id) {
+        Optional<DistrictPlan> district = districtRepository.findById(id);
 
         if (district.isPresent()) {
             return ResponseEntity.ok(district.get());
@@ -33,11 +33,11 @@ public class DistrictService {
         }
     }
 
-    public ResponseEntity<List<District>> getByClusterId(String id){
+    public ResponseEntity<List<DistrictPlan>> getByClusterId(String id){
         Optional<Cluster> cluster = clusterRepository.findById(id);
         if(cluster.isPresent()){
             if(!cluster.get().getDistricts().isEmpty()){
-                List<District> districts = districtRepository.findAllById(cluster.get().getDistricts());
+                List<DistrictPlan> districts = districtRepository.findAllById(cluster.get().getDistricts());
                 return ResponseEntity.ok(districts);
             }
             else{
@@ -49,11 +49,11 @@ public class DistrictService {
         }
     }
 
-    public String create(District district, String clusterId) {
+    public String create(DistrictPlan district, String clusterId) {
         try {
             Optional<Cluster> cluster = clusterRepository.findById(clusterId);
             if (cluster.isPresent()) {
-                District newDistrict = new District(district.getPolsbyPopper(), district.getMajMin(),
+                DistrictPlan newDistrict = new DistrictPlan(district.getPolsbyPopper(), district.getMajMin(),
                         district.getPartisanLean());
                 districtRepository.save(newDistrict);
 

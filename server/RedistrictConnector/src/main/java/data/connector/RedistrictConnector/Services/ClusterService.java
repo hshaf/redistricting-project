@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import data.connector.RedistrictConnector.ResourceNotFoundException;
 import data.connector.RedistrictConnector.Models.Cluster;
-import data.connector.RedistrictConnector.Models.District;
+import data.connector.RedistrictConnector.Models.DistrictPlan;
 import data.connector.RedistrictConnector.Models.Ensemble;
 import data.connector.RedistrictConnector.Repositories.ClusterRepository;
 import data.connector.RedistrictConnector.Repositories.EnsembleRepository;

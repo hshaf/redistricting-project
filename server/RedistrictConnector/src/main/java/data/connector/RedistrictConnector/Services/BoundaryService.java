@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import data.connector.RedistrictConnector.ResourceNotFoundException;
 import data.connector.RedistrictConnector.Models.Boundary;
 import data.connector.RedistrictConnector.Models.Cluster;
-import data.connector.RedistrictConnector.Models.District;
+import data.connector.RedistrictConnector.Models.DistrictPlan;
 import data.connector.RedistrictConnector.Repositories.BoundaryRepository;
 import data.connector.RedistrictConnector.Repositories.ClusterRepository;
-import data.connector.RedistrictConnector.Repositories.DistrictRepository;
+import data.connector.RedistrictConnector.Repositories.DistrictPlanRepository;
 
 @Service
 public class BoundaryService {
@@ -21,7 +21,7 @@ public class BoundaryService {
     BoundaryRepository boundaryRepository;
 
     @Autowired
-    DistrictRepository districtRepository;
+    DistrictPlanRepository districtRepository;
 
     @Autowired
     ClusterRepository clusterRepository;
@@ -39,13 +39,13 @@ public class BoundaryService {
 
     public String create(Object data, String id) {
         try {
-            Optional<District> district = districtRepository.findById(id);
+            Optional<DistrictPlan> district = districtRepository.findById(id);
             Optional<Cluster> cluster = clusterRepository.findById(id);
             if (district.isPresent()) {
                 Boundary newBoundary = new Boundary(data);
                 boundaryRepository.save(newBoundary);
 
-                District districtUpdate = district.get();
+                DistrictPlan districtUpdate = district.get();
                 districtUpdate.setBoundary(newBoundary.getId());
                 districtRepository.save(districtUpdate);
                 return newBoundary.getId();
@@ -72,7 +72,7 @@ public class BoundaryService {
 
     public ResponseEntity<Boundary> findByDistrictId(String districtId) {
         try {
-            Optional<District> district = districtRepository.findById(districtId);
+            Optional<DistrictPlan> district = districtRepository.findById(districtId);
             if (district.isPresent()) {
 
                 Optional<Boundary> boundary = boundaryRepository.findById(district.get().getBoundary());

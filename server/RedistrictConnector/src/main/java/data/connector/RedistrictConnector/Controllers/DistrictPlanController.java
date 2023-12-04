@@ -12,23 +12,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import data.connector.RedistrictConnector.Models.District;
-import data.connector.RedistrictConnector.Services.DistrictService;
+import data.connector.RedistrictConnector.Models.DistrictPlan;
+import data.connector.RedistrictConnector.Services.DistrictPlanService;
 
 @RestController
 @RequestMapping("/district")
-public class DistrictController {
+public class DistrictPlanController {
 
     @Autowired
-    DistrictService districtService;
+    DistrictPlanService districtService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<District> getDistrictById(@PathVariable String id) {
+    public ResponseEntity<DistrictPlan> getDistrictById(@PathVariable String id) {
         return districtService.findById(id);
     }
 
     @GetMapping("/cluster/{id}")
-    public ResponseEntity<List<District>> getDistrictsByClusterId(@PathVariable String id) {
+    public ResponseEntity<List<DistrictPlan>> getDistrictsByClusterId(@PathVariable String id) {
         return districtService.getByClusterId(id);
     }
 
@@ -38,7 +38,7 @@ public class DistrictController {
     }
 
     @PostMapping("/add/{clusterId}")
-    public String createDistrict(@RequestBody District district, @PathVariable String clusterId) {
+    public String createDistrict(@RequestBody DistrictPlan district, @PathVariable String clusterId) {
         return districtService.create(district, clusterId);
     }
 }

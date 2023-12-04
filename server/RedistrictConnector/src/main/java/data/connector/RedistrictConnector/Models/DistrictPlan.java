@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 
-public class District {
+public class DistrictPlan {
 
     @Id
     private String id;
@@ -15,9 +15,9 @@ public class District {
 
     private String boundary;
 
-    public District() {}
+    public DistrictPlan() {}
 
-    public District(Double polsbyPopper, Integer majMin, Integer partisanLean) {
+    public DistrictPlan(Double polsbyPopper, Integer majMin, Integer partisanLean) {
         this.polsbyPopper = polsbyPopper;
         this.majMin = majMin;
         this.partisanLean = partisanLean;
