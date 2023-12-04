@@ -94,7 +94,8 @@ export default function ClusterAnalysis(props) {
       appState.selectedEnsembleID === null || 
       appState.selectedClusterID === null || 
       !appData.selectedStateEnsembles || 
-      !appData.selectedEnsembleClusters) {
+      !appData.selectedEnsembleClusters ||
+      !appData.selectedClusterDistrictPlans) {
     return (
       <div></div>
     );
@@ -103,24 +104,22 @@ export default function ClusterAnalysis(props) {
   // Get data for cluster and associated district plans from global app data
   selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
   selectedCluster = appData.selectedEnsembleClusters[appState.selectedClusterID];
-  if (appData.selectedClusterDistrictPlans) {
-    districtPlans = appData.selectedClusterDistrictPlans;
-    districtPlanData = districtPlans.map((planEntry, idx) => {
-      return {
-        "INDEX": idx,
-        "BOUNDARY": planEntry["boundary"],
-        "MDS_X": planEntry["mdsCoords"][0],
-        "MDS_Y": planEntry["mdsCoords"][1],
-        "MAJ_MIN": planEntry["majMinDistricts"]["totalMajMin"],
-        "MAJ_BLACK": planEntry["majMinDistricts"]["majBlack"],
-        "MAJ_NATIVE": planEntry["majMinDistricts"]["majNative"],
-        "MAJ_ASIAN": planEntry["majMinDistricts"]["majAsian"],
-        "MAJ_PACIFIC": planEntry["majMinDistricts"]["majPacific"],
-        "MAJ_HISPANIC": planEntry["majMinDistricts"]["majHispanic"],
-        "PARTISAN_LEAN": planEntry["partisanLean"]
-      }
-    });
-  }
+  districtPlans = appData.selectedClusterDistrictPlans;
+  districtPlanData = districtPlans.map((planEntry, idx) => {
+    return {
+      "INDEX": idx,
+      "BOUNDARY": planEntry["boundary"],
+      "MDS_X": planEntry["mdsCoords"][0],
+      "MDS_Y": planEntry["mdsCoords"][1],
+      "MAJ_MIN": planEntry["majMinDistricts"]["totalMajMin"],
+      "MAJ_BLACK": planEntry["majMinDistricts"]["majBlack"],
+      "MAJ_NATIVE": planEntry["majMinDistricts"]["majNative"],
+      "MAJ_ASIAN": planEntry["majMinDistricts"]["majAsian"],
+      "MAJ_PACIFIC": planEntry["majMinDistricts"]["majPacific"],
+      "MAJ_HISPANIC": planEntry["majMinDistricts"]["majHispanic"],
+      "PARTISAN_LEAN": planEntry["partisanLean"]
+    }
+  });
 
   // Get name of selected ensemble 
   let selectedEnsembleName = "";
@@ -149,7 +148,7 @@ export default function ClusterAnalysis(props) {
     const yAxisVar = districtPlan[state.yAxisVar];
     
     // Fix to 0 decimal places if variable is always an integer, 3 decimal places otherwise
-    const integerVars = ["majMin", "partisanLean"]
+    const integerVars = ["MAJ_MIN", "PARTISAN_LEAN"]
     const xVarDecimals = (integerVars.indexOf(state.xAxisVar) === -1 ? 3 : 0)
     const yVarDecimals = (integerVars.indexOf(state.yAxisVar) === -1 ? 3 : 0)
     return (

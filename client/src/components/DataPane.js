@@ -29,6 +29,7 @@ export default function DataPane(props) {
     selectedTab: DataPaneTabs.ENSEMBLE_SELECTION
   })
 
+  // Reset tab if selected state changes
   useEffect(() => {
     updateTab(DataPaneTabs.ENSEMBLE_SELECTION)
   }, [appState.selectedState]);

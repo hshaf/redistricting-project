@@ -3,64 +3,34 @@ import { Table, Container } from "react-bootstrap";
 import { AppStateContext } from "../context/AppStateContext";
 import { AppDataContext } from "../context/AppDataContext";
 
+const distanceMeasureKeys = {
+  "optimalTransport": "Optimal Transport",
+  "hamming": "Hamming",
+  "entropy": "Entropy"
+}
+
 export default function DistanceMeasures(props) {
   // Context
   const appState = useContext(AppStateContext);
   const appData = useContext(AppDataContext);
 
-  let selectedEnsemble = null;
-  let clusters = null;
-
   // Render nothing if no state or ensemble is selected
-  return (
-    <div></div>
-  );
-  if (appState.selectedState === null || appState.selectedEnsembleID === null || !appData.selectedStateEnsembles || !appData.selectedEnsembleClusters) {
+  if (appState.selectedState === null || appState.selectedEnsembleID === null || !appData.selectedStateEnsembles) {
     return (
       <div></div>
     );
   }
 
-  if (appState.selectedEnsembleID && appData.selectedStateEnsembles) {
-    selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
-  }
+  // Get data for ensemble from global app data
+  let selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
 
-  if (appData.selectedEnsembleClusters) {
-    clusters = appData.selectedEnsembleClusters;
-  }
-
-  const distanceTableEntries = clusters.map((cluster, idx) => {
-    let clusterSize = cluster["districtCount"]
-    let optimalTransport = cluster["distances"]["optimalTransport"];
-    let hamming = cluster["distances"]["hamming"];
-    let totalVariation = cluster["distances"]["totalVariation"];
-    if (optimalTransport) {
-      optimalTransport = optimalTransport.toFixed(3)
-    }
-    else {
-      optimalTransport = "&mdash;"
-    }
-    
-    if (hamming) {
-      hamming = hamming.toFixed(3)
-    }
-    else {
-      hamming = "&mdash;"
-    }
-    if (totalVariation) {
-      totalVariation = totalVariation.toFixed(3)
-    }
-    else {
-      totalVariation = "&mdash;"
-    }
-
+  const distanceTableEntries = Object.keys(distanceMeasureKeys).map((dm, idx) => {
+    // let clusterSize = cluster["districtCount"]
+    const distance = selectedEnsemble["avgDistances"][dm]
     return (
       <tr key={`row-${idx}`}>
-        <td>{(idx + 1)}</td>
-        <td>{clusterSize}</td>
-        <td>{optimalTransport}</td>
-        <td>{hamming}</td>
-        <td>{totalVariation}</td>
+        <td>{distanceMeasureKeys[dm]}</td>
+        <td>{distance ? distance.toFixed(3) : "N/A"}</td>
       </tr>
     )}
   );
@@ -80,17 +50,14 @@ export default function DistanceMeasures(props) {
         </ul>
       </Container>
       <h4>
-        Cluster Distance Measures
+        {selectedEnsemble["name"] + " Distance Measures"}
       </h4>
       <div style={{ overflowY: 'auto', minHeight: '30%' }}>
         <Table striped style={{}}>
           <thead>
             <tr>
-              <th>Cluster ID</th>
-              <th>Cluster Size</th>
-              <th>Optimal Transport</th>
-              <th>Hamming Distance</th>
-              <th>Total Variation Distance</th>
+              <th>Distance Measure</th>
+              <th>Avg. Pair Distance</th>
             </tr>
           </thead>
           <tbody>
