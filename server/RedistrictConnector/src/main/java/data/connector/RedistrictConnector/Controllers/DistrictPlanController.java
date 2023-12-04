@@ -16,7 +16,7 @@ import data.connector.RedistrictConnector.Models.DistrictPlan;
 import data.connector.RedistrictConnector.Services.DistrictPlanService;
 
 @RestController
-@RequestMapping("/district")
+@RequestMapping("/districtplan")
 public class DistrictPlanController {
 
     @Autowired

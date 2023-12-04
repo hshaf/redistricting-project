@@ -46,9 +46,9 @@ export const updateClusterById = (cluster, id) => {
   }
 
 //District Endpoints
-export const getDistrictById = (id) => api.get(`/district/${id}`)
+export const getDistrictById = (id) => api.get(`/districtplan/${id}`)
 
-export const getDistrictsByClusterId = (id) => api.get(`/district/cluster/${id}`)
+export const getDistrictsByClusterId = (id) => api.get(`/districtplan/cluster/${id}`)
                                                 .catch((error) => {
                                                   printErrorMsg(error);
                                                   return null;
