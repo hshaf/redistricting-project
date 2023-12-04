@@ -56,7 +56,7 @@ public class ClusterService {
         try {
             Optional<Ensemble> ensemble = ensembleRepository.findById(ensembleId);
             if (ensemble.isPresent()) {
-                Cluster newCluster = new Cluster(null, new ArrayList<String>(), cluster.getDistrictCount(), new ArrayList<String>(), cluster.getPolsbyPopper(), cluster.getMajMin(), cluster.getPartisanLean(), cluster.getDistances());
+                Cluster newCluster = new Cluster(null, new ArrayList<String>(), cluster.getDistrictCount(), new ArrayList<String>());
                 clusterRepository.save(newCluster);
 
                 Ensemble ensembleUpdate = ensemble.get();

@@ -53,8 +53,7 @@ public class DistrictPlanService {
         try {
             Optional<Cluster> cluster = clusterRepository.findById(clusterId);
             if (cluster.isPresent()) {
-                DistrictPlan newDistrict = new DistrictPlan(district.getPolsbyPopper(), district.getMajMin(),
-                        district.getPartisanLean());
+                DistrictPlan newDistrict = new DistrictPlan(district.getPartisanLean());
                 districtRepository.save(newDistrict);
 
                 Cluster clusterUpdate = cluster.get();

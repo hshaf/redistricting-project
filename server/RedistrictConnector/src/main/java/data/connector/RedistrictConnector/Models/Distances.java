@@ -4,7 +4,7 @@ public class Distances {
 
     private Double optimalTransport;
     private Double hamming;
-    private Double totalVariation;
+    private Double entropy;
 
     public Double getOptimalTransport() {
         return optimalTransport;
@@ -14,7 +14,7 @@ public class Distances {
         return hamming;
     }
 
-    public Double getTotalVariation() {
-        return totalVariation;
+    public Double getEntropy() {
+        return entropy;
     }
 }

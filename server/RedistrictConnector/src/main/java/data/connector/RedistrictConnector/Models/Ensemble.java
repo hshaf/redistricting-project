@@ -11,9 +11,9 @@ public class Ensemble {
     private String id;
 
     private String name;
-    private Integer totalDistrictCount;
+    private Integer totalDistrictPlanCount;
     private Integer totalClusterCount;
-
+    private Distances avgDistances;
     
     List<String> clusterIds;
 
@@ -21,7 +21,7 @@ public class Ensemble {
 
     public Ensemble(String name, Integer totalDistrictCount,  Integer totalClusterCount, List<String> clusterIds) {
         this.name = name;
-        this.totalDistrictCount = totalDistrictCount;
+        this.totalDistrictPlanCount = totalDistrictCount;
         this.totalClusterCount = totalClusterCount;
         this.clusterIds = clusterIds;
     }
@@ -30,12 +30,16 @@ public class Ensemble {
         return id;
     }
 
+    public Distances getAvgDistances(){
+        return this.avgDistances;
+    }
+
     public String getName() {
         return name;
     }
 
     public Integer getTotalDistrictCount() {
-        return totalDistrictCount;
+        return totalDistrictPlanCount;
     }
 
     public List<String> getClusters() {
