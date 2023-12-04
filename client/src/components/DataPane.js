@@ -7,6 +7,7 @@ import { AppStateContext, AppStateDispatch, AppStateActionType } from "../contex
 import { AppDataContext, AppDataDispatch } from "../context/AppDataContext";
 import EnsembleSelection from "./EnsembleSelection";
 import { AppDataActionType } from "../context/AppDataContext";
+import { useEffect } from "react";
 
 // Use these constants for checking the value of selectedTab state.
 export const DataPaneTabs = {
@@ -27,6 +28,10 @@ export default function DataPane(props) {
   const [state, setState] = useState({
     selectedTab: DataPaneTabs.ENSEMBLE_SELECTION
   })
+
+  useEffect(() => {
+    updateTab(DataPaneTabs.ENSEMBLE_SELECTION)
+  }, [appState.selectedState]);
 
   /**
    * Update selectedTab state to switch to different tab.
