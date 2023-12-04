@@ -25,11 +25,11 @@ public class DistrictPlan {
         return id;
     }
 
-   public List<Double> getMDSCords(){
+   public List<Double> getMdsCoords(){
     return this.mdsCoords;
    }
 
-    public Majorities getMajMin() {
+    public Majorities getMajMinDistricts() {
         return this.majMinDistricts;
     }
 
