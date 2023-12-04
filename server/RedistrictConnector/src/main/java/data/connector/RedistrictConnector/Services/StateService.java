@@ -42,7 +42,7 @@ public class StateService {
 
     public String create(State state) {
         try {
-            stateRepository.save(new State(state.getInitials(), state.getName(), state.getDistrictType(), new ArrayList<String>()));
+            stateRepository.save(new State(state.getInitials(), state.getName(), state.getDistrictPlanType(), new ArrayList<String>()));
             return "Added state " + state.getName() + " successfully";
         }
         catch (Exception e) {

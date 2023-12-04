@@ -63,7 +63,7 @@ public class EnsembleService {
         try {
             Optional<State> stateObj = stateRepository.findByInitials(state);
             if (stateObj.isPresent()) {
-                Ensemble newEnsemble = new Ensemble(ensemble.getName(), ensemble.getTotalDistrictCount(),
+                Ensemble newEnsemble = new Ensemble(ensemble.getName(), ensemble.getTotalDistrictPlanCount(),
                         ensemble.getTotalClusterCount(), new ArrayList<String>());
                 ensembleRepository.save(newEnsemble);
 

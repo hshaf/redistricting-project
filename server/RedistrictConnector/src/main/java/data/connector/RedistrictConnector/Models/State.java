@@ -38,7 +38,7 @@ public class State {
         return name;
     }
 
-    public String getDistrictType(){
+    public String getDistrictPlanType(){
         return districtPlanType;
     }
 

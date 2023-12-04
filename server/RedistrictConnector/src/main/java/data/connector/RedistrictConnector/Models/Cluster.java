@@ -35,7 +35,7 @@ public class Cluster {
         return this.clusterCenter;
     }
 
-    public Double avgPartisanLean(){
+    public Double getAvgPartisanLean(){
         return this.avgPartisanLean;
     }
 
@@ -63,7 +63,7 @@ public class Cluster {
         this.tags = tags;
     }
 
-    public Integer getDistrictCount() {
+    public Integer getDistrictPlanCount() {
         return districtPlanCount;
     }
 

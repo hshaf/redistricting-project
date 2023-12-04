@@ -38,7 +38,7 @@ public class Ensemble {
         return name;
     }
 
-    public Integer getTotalDistrictCount() {
+    public Integer getTotalDistrictPlanCount() {
         return totalDistrictPlanCount;
     }
 
