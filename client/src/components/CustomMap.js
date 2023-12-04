@@ -8,11 +8,14 @@ import AZDistricts from '../data/az-districts.json';
 import WIDistricts from '../data/wi-districts.json';
 import ChangeView from './ChangeView';
 import { AppStateContext, AppStateDispatch, AppStateActionType } from '../context/AppStateContext';
+import { AppDataDispatch } from '../context/AppDataContext';
 
 export default function CustomMap(props) {
   // Context
   const appState = useContext(AppStateContext);
   const appStateDispatch = useContext(AppStateDispatch);
+
+  const dataAPI = useContext(AppDataDispatch);
 
   // Center of map coordinates
   let mapCenter = [38.86438706880524, -95.47162384288428];
@@ -93,6 +96,8 @@ export default function CustomMap(props) {
               type: AppStateActionType.SET_SELECTED_STATE,
               payload: "VA"
             })
+
+            dataAPI.getEnsemblesForState("VA");
           }
         }} 
       />
@@ -107,6 +112,8 @@ export default function CustomMap(props) {
               type: AppStateActionType.SET_SELECTED_STATE,
               payload: "AZ"
             })
+
+            dataAPI.getEnsemblesForState("AZ");
           }
         }}
       />
@@ -121,6 +128,8 @@ export default function CustomMap(props) {
               type: AppStateActionType.SET_SELECTED_STATE,
               payload: "WI"
             })
+
+            dataAPI.getEnsemblesForState("WI");
           }
         }}  
       />
