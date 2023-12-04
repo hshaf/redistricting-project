@@ -8,10 +8,16 @@ import { AppDataDispatch } from "../context/AppDataContext";
 
 const clusterDotColor = "#0d6efd";
 const axisLabels = {
-  "polsbyPopper": "Avg. Polsby-Popper",
-  "majMin": "Avg. Majority-Minority Districts",
-  "partisanLean": "Avg. Partisan Lean"
-}
+  "CLUSTER_CENTER_X": "MDS X-Coordinate",
+  "CLUSTER_CENTER_Y": "MDS Y-Coordinate",
+  "MAJ_MIN": "Avg. Maj.-Min. Districts",
+  "MAJ_BLACK": "Avg. Maj.-Black Districts",
+  "MAJ_NATIVE": "Avg. Maj.-Native American Districts",
+  "MAJ_ASIAN": "Avg. Maj.-Asian Districts",
+  "MAJ_PACIFIC": "Avg. Maj.-Pacific Islander Districts",
+  "MAJ_HISPANIC": "Avg. Maj.-Hispanic Districts",
+  "PARTISAN_LEAN": "Avg. Partisan Lean"
+};
 
 export default function EnsembleOverview(props) {
   // Contexts
@@ -22,19 +28,12 @@ export default function EnsembleOverview(props) {
   const dataAPI = useContext(AppDataDispatch);
 
   let selectedEnsemble = null;
-  let clusters = null;
-
-  if (appState.selectedEnsembleID && appData.selectedStateEnsembles) {
-    selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
-  }
-
-  if (appData.selectedEnsembleClusters) {
-    clusters = appData.selectedEnsembleClusters;
-  }
+  let clusters = [];
+  let clusterData = [];
 
   const [state, setState] = useState({
-    xAxisVar: "partisanLean",
-    yAxisVar: "majMin",
+    xAxisVar: "CLUSTER_CENTER_X",
+    yAxisVar: "CLUSTER_CENTER_Y",
   });
 
   /**
@@ -85,14 +84,12 @@ export default function EnsembleOverview(props) {
    * @returns {object}         Dot object.
    */
   let renderScatterplotDot = (input) => {
+    console.log(input);
     const cx = input.cx;
     const cy = input.cy;
-    const isCurrent = (input.payload["districtCount"] === 0)
-    const dotKey = clusters.indexOf(input.payload).toString();
-    var rad = 5;
-    if (!isCurrent) {
-      rad = 2 * Math.sqrt(input.payload["districtCount"]);
-    }
+    const dotKey = input.payload["INDEX"];
+    let rad = 2 * Math.sqrt(input.payload["DISTRICT_PLAN_COUNT"]);
+    console.log(rad);
     return (
       <Dot style={{ opacity: 0.6 }}
         cx={cx} cy={cy}
@@ -105,33 +102,67 @@ export default function EnsembleOverview(props) {
     );
   }
 
-  // Render nothing if no state or ensemble is selected
-  if (!appState.selectedState || appState.selectedEnsembleID === "" || !selectedEnsemble || !clusters) {
+  // Render nothing if no state or ensemble is selected or if necessary data is not yet available
+  if (appState.selectedState === null || appState.selectedEnsembleID === null || !appData.selectedStateEnsembles || !appData.selectedEnsembleClusters) {
     return (
       <div></div>
     );
   }
-  
-  const clusterTableEntries = clusters.map((cluster, idx) => {
-    const numMaps = cluster["districtCount"];
-    const xAxisVar = cluster[state.xAxisVar];
-    const yAxisVar = cluster[state.yAxisVar];
+
+  // Get data for ensemble and associated clusters from global app data
+  if (appState.selectedEnsembleID && appData.selectedStateEnsembles) {
+    selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
+  }
+
+  if (appData.selectedEnsembleClusters) {
+    clusters = appData.selectedEnsembleClusters;
+    clusterData = clusters.map((cluster, idx) => {
+      return {
+        "INDEX": idx,
+        "DISTRICT_PLAN_COUNT": cluster["districtPlanCount"],
+        "CLUSTER_CENTER_X": cluster["clusterCenter"][0],
+        "CLUSTER_CENTER_Y": cluster["clusterCenter"][1],
+        "MAJ_MIN": cluster["avgMajMinDistricts"]["totalMajMin"],
+        "MAJ_BLACK": cluster["avgMajMinDistricts"]["majBlack"],
+        "MAJ_NATIVE": cluster["avgMajMinDistricts"]["majNative"],
+        "MAJ_ASIAN": cluster["avgMajMinDistricts"]["majAsian"],
+        "MAJ_PACIFIC": cluster["avgMajMinDistricts"]["majPacific"],
+        "MAJ_HISPANIC": cluster["avgMajMinDistricts"]["majHispanic"],
+        "PARTISAN_LEAN": cluster["avgPartisanLean"]
+      }
+    });
+  }
+
+  // Get name of selected ensemble
+  let selectedEnsembleName = "";
+  if (selectedEnsemble) {
+    selectedEnsembleName = selectedEnsemble['name'];
+  }
+
+  // Generate axis field selection dropdown entries
+  const axisDropdownEntries = Object.entries(axisLabels).map((axisOption) => {
     return (
-      <tr key={`row-${idx}`}>
-        <td><Button variant="link" onClick={() => setSelectedCluster(idx.toString())}>{(idx + 1)}</Button></td>
+      <NavDropdown.Item eventKey={axisOption[0]}>
+        {axisOption[1]}
+      </NavDropdown.Item>
+    )
+  })
+  
+  // Generate cluster table entries
+  const clusterTableEntries = clusterData.map((clusterEntry) => {
+    const index = clusterEntry["INDEX"];
+    const numMaps = clusterEntry["DISTRICT_PLAN_COUNT"];
+    const xAxisVar = clusterEntry[state.xAxisVar];
+    const yAxisVar = clusterEntry[state.yAxisVar];
+    return (
+      <tr key={`row-${index}`}>
+        <td><Button variant="link" onClick={() => setSelectedCluster(index)}>{(index + 1)}</Button></td>
         <td>{numMaps}</td>
         <td>{xAxisVar.toFixed(3)}</td>
         <td>{yAxisVar.toFixed(3)}</td>
       </tr>
     )}
   );
-
-  // Get name of selected ensemble 
-  let selectedEnsembleName = "";
-  
-  if (selectedEnsemble) {
-    selectedEnsembleName = selectedEnsemble['name'];
-  }
 
   // Render EnsembleOverview
   return (
@@ -145,29 +176,13 @@ export default function EnsembleOverview(props) {
               title="X-Axis"
               id="x-axis-nav-dropdown"
               onSelect={setXAxisVar}>
-              <NavDropdown.Item eventKey={"polsbyPopper"}>
-                Avg. Polsby-Popper
-              </NavDropdown.Item>
-              <NavDropdown.Item eventKey={"majMin"}>
-                Avg. Majority-Minority
-              </NavDropdown.Item>
-              <NavDropdown.Item eventKey={"partisanLean"}>
-                Avg. Partisan Lean
-              </NavDropdown.Item>
+              {axisDropdownEntries}
             </NavDropdown>
             <NavDropdown
               title="Y-Axis"
               id="y-axis-nav-dropdown"
               onSelect={setYAxisVar}>
-              <NavDropdown.Item eventKey={"polsbyPopper"}>
-                Avg. Polsby-Popper
-              </NavDropdown.Item>
-              <NavDropdown.Item eventKey={"majMin"}>
-                Avg. Majority-Minority
-              </NavDropdown.Item>
-              <NavDropdown.Item eventKey={"partisanLean"}>
-                Avg. Partisan Lean
-              </NavDropdown.Item>
+              {axisDropdownEntries}
             </NavDropdown>
             <Nav.Item className="ms-auto">
               <Nav.Link>Ensemble: {selectedEnsembleName}</Nav.Link>
@@ -196,7 +211,7 @@ export default function EnsembleOverview(props) {
             name={axisLabels[state.yAxisVar]}
             label={{ value: axisLabels[state.yAxisVar], offset: -2, angle: -90, position: 'insideBottomLeft' }} />
           <Legend />
-          <Scatter name="Clusters" data={clusters} fill={clusterDotColor} shape={renderScatterplotDot} />
+          <Scatter name="Clusters" data={clusterData} fill={clusterDotColor} shape={renderScatterplotDot} />
         </ScatterChart>
       </ResponsiveContainer>
       <h4>Clusters Overview</h4>

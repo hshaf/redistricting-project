@@ -70,7 +70,7 @@ export default function DataPane(props) {
     // Deselect current state
     appStateDispatch({
       type: AppStateActionType.SET_SELECTED_STATE,
-      payload: ""
+      payload: null
     });
 
     dataAPI.appDataDispatch({
@@ -84,7 +84,7 @@ export default function DataPane(props) {
   // Get strings for displaying selected state and district plan
   let selectedState = ""
   let districtPlan = ""
-  if (appState.selectedState !== "") {
+  if (appState.selectedState !== null) {
     selectedState = appData.stateData.get(appState.selectedState).name;
     districtPlan = appData.stateData.get(appState.selectedState).districtType;
   }
@@ -98,19 +98,19 @@ export default function DataPane(props) {
 
   // If ensemble not selected, disable ensemble info tab
   let disableEnsembleInfoTab = false;
-  if (appState.selectedEnsembleID === "") {
+  if (appState.selectedEnsembleID === null) {
     disableEnsembleInfoTab = true;
   }
 
   // If cluster not selected, disable cluster analysis tab
   let disableClusterTab = false;
-  if (appState.selectedClusterID === "") {
+  if (appState.selectedClusterID === null) {
     disableClusterTab = true;
   }
 
   // If ensemble not selected, disable distance measures tab
   let disableDistanceMeasuresTab = false;
-  if (appState.selectedEnsembleID === "") {
+  if (appState.selectedEnsembleID === null) {
     disableDistanceMeasuresTab = true;
   }
 

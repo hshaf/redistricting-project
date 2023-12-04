@@ -11,19 +11,22 @@ export default function DistanceMeasures(props) {
   let selectedEnsemble = null;
   let clusters = null;
 
+  // Render nothing if no state or ensemble is selected
+  return (
+    <div></div>
+  );
+  if (appState.selectedState === null || appState.selectedEnsembleID === null || !appData.selectedStateEnsembles || !appData.selectedEnsembleClusters) {
+    return (
+      <div></div>
+    );
+  }
+
   if (appState.selectedEnsembleID && appData.selectedStateEnsembles) {
     selectedEnsemble = appData.selectedStateEnsembles[appState.selectedEnsembleID];
   }
 
   if (appData.selectedEnsembleClusters) {
     clusters = appData.selectedEnsembleClusters;
-  }
-
-  // Render nothing if no state or ensemble is selected
-  if (!appState.selectedState || appState.selectedEnsembleID === "" || !selectedEnsemble || !clusters) {
-    return (
-      <div></div>
-    );
   }
 
   const distanceTableEntries = clusters.map((cluster, idx) => {
