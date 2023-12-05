@@ -37,13 +37,9 @@ export default function CustomMap(props) {
     console.log(stateEntry);
     const stateInitials = stateEntry["initials"];
 
-    // Set map zoom and center
-    mapCenter = stateEntry["mapCenter"];
-    mapZoom = stateEntry["mapZoom"];
-
     // Retrieve state boundary and current district plan map
     let stateBoundaries = appData.stateBoundaries.get(stateInitials);
-    if (appData.selectedState === stateInitials) {
+    if (appState.selectedState === stateInitials) {
       if (boundary === null) {
         stateBoundaries = appData.currDistrictPlans.get(stateInitials);
       }
@@ -70,45 +66,6 @@ export default function CustomMap(props) {
       />
     );
   })
-  /*
-  for (let stateEntry in appData.stateData.entries()) {
-    console.log(stateEntry);
-    const stateInitials = stateEntry.key;
-    const stateData = stateEntry.value;
-
-    // Set map zoom and center
-    mapCenter = stateData["mapCenter"];
-    mapZoom = stateData["mapZoom"];
-
-    // Retrieve state boundary and current district plan map
-    let stateBoundaries = appData.stateBoundaries.get(stateInitials);
-    if (appData.selectedState === stateInitials) {
-      stateBoundaries = appData.currDistrictPlans.get(stateInitials);
-    }
-    if (boundary !== null) {
-      stateBoundaries = boundary;
-    }
-
-    stateGeoJSONs.push(
-      <GeoJSON 
-        weight={1} 
-        color='blue' 
-        key={stateInitials + keyCount.current} 
-        data={JSON.parse(stateBoundaries)} 
-        eventHandlers={{
-          click: () => {
-            appStateDispatch({
-              type: AppStateActionType.SET_SELECTED_STATE,
-              payload: stateInitials
-            })
-            dataAPI.getEnsemblesForState(stateInitials);
-          }
-        }} 
-      />
-    );
-  }
-  */
-  console.log(stateGeoJSONs);
 
   // Retrieve boundary when selected cluster changes
   let getBoundary = async (boundaryID) => {
@@ -119,7 +76,7 @@ export default function CustomMap(props) {
     }
   }
   useEffect(() => {
-    if (appState.selectedClusterID) {
+    if (appState.selectedClusterID !== null) {
       getBoundary(appData.selectedEnsembleClusters[appState.selectedClusterID]["boundary"]);
     }
     else {
