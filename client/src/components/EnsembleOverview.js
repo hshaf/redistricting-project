@@ -143,6 +143,17 @@ export default function EnsembleOverview(props) {
     )
   })
 
+  // Pagination options
+  const paginationOptions = {
+    sizePerPageList: [
+      {text: '5', value: 5},
+      {text: '10', value: 10},
+      {text: '15', value: 15},
+      {text: '20', value: 20},
+      {text: 'All', value: clusterData.length},
+    ]
+  }
+
   // Formatters for the cluster table
   const clusterIdxFormatter = (data, row) => {
     return <a href="#" onClick={() => setSelectedCluster(data)}>{(data + 1)}</a>
@@ -221,7 +232,7 @@ export default function EnsembleOverview(props) {
         keyField="INDEX"
         data={clusterData}
         columns={columns}
-        pagination={paginationFactory()}
+        pagination={paginationFactory(paginationOptions)}
         striped={true}
       />
     </Container>
