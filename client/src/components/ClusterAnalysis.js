@@ -158,11 +158,16 @@ export default function ClusterAnalysis(props) {
   }
 
   // Columns for district plan table
-  const columns = [
-    { dataField: "INDEX", text: "District Plan #", formatter: districtPlanIdxFormatter },
+  const columnsOneVar = [ // Used when the same variable is selected for both axes
+    { dataField: "INDEX", text: "Cluster ID", formatter: districtPlanIdxFormatter },
+    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter }
+  ];
+  const columnsTwoVars = [
+    { dataField: "INDEX", text: "Cluster ID", formatter: districtPlanIdxFormatter },
     { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter },
     { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPrecisionFormatter }
   ];
+  const columns = (state.xAxisVar === state.yAxisVar) ? columnsOneVar : columnsTwoVars
 
   // Render ClusterAnalysis
   return (

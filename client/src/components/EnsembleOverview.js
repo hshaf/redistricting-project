@@ -153,12 +153,18 @@ export default function EnsembleOverview(props) {
   }
 
   // Columns for the cluster table
-  const columns = [
+  const columnsOneVar = [ // Used when the same variable is selected for both axes
+    { dataField: "INDEX", text: "Cluster ID", formatter: clusterIdxFormatter },
+    { dataField: "DISTRICT_PLAN_COUNT", text: "# of District Plans" },
+    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter }
+  ];
+  const columnsTwoVars = [
     { dataField: "INDEX", text: "Cluster ID", formatter: clusterIdxFormatter },
     { dataField: "DISTRICT_PLAN_COUNT", text: "# of District Plans" },
     { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter },
     { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPrecisionFormatter }
   ];
+  const columns = (state.xAxisVar === state.yAxisVar) ? columnsOneVar : columnsTwoVars
 
   // Render EnsembleOverview
   return (
