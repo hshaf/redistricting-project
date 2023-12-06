@@ -22,7 +22,7 @@ This repository contains the client and server implementation of our web applica
 ## Run Web App
 1. Under `client/`, install required packages
 
-   `npm install`
+   `npm install` (use `npm install --legacy-peer-deps` if any compatibility issues)
    
 2. Start client
 
@@ -45,7 +45,7 @@ This repository contains the client and server implementation of our web applica
    
 ## Data Sources
 Create `data/` under base project directory and add data from the following sources,
-- [Current state and district plan boundaries](https://drive.google.com/drive/folders/1LyX8l24IqyiwDo5hlyrxD4R4se2BAPeN?usp=sharing)
+- [CSE 416 Data Google Drive](https://drive.google.com/drive/folders/1LyX8l24IqyiwDo5hlyrxD4R4se2BAPeN?usp=sharing)
 ### Arizona
 - [Arizona vtd PL 94-171 2020](https://redistrictingdatahub.org/dataset/arizona-vtd-pl-94171-2020/)
 - [Arizona 2020 General Election Results Disaggregated to the 2020 Block](https://redistrictingdatahub.org/dataset/arizona-2020-general-election-results-disaggregated-to-the-2020-block)
