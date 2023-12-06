@@ -2,17 +2,11 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { AppStateActionType, AppStateContext, AppStateDispatch } from '../context/AppStateContext';
 import { AppDataContext, AppDataDispatch } from "../context/AppDataContext";
-import AZDistricts from '../data/az-districts.json';
-import AZStateBoundaries from '../data/az-state-boundary.json';
-import VADistricts from '../data/va-districts.json';
-import VAStateBoundaries from '../data/va-state-boundary.json';
-import WIDistricts from '../data/wi-districts.json';
-import WIStateBoundaries from '../data/wi-state-boundary.json';
 import ChangeView from './ChangeView';
 import serverAPI from '../serverAPI'
 
 const defaultMapCenter = [38.86438706880524, -95.47162384288428];
-const defaultMapZoom = 7;
+const defaultMapZoom = 5;
 
 export default function CustomMap(props) {
   // Context
