@@ -3,6 +3,8 @@ import { useContext, useState } from "react";
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Dot } from 'recharts';
 import { AppStateContext } from "../context/AppStateContext";
 import { AppDataContext } from "../context/AppDataContext";
+import BootstrapTable from "react-bootstrap-table-next";
+import paginationFactory from "react-bootstrap-table2-paginator";
 
 const mapPresentDotColor = "#dd6efd";
 const districtDotColor = "#0d6efd";
@@ -142,23 +144,38 @@ export default function ClusterAnalysis(props) {
   const clusterMajMin = selectedCluster["avgMajMinDistricts"]["totalMajMin"].toFixed(3);
   const clusterPartisanLean = selectedCluster["avgPartisanLean"].toFixed(3);
 
-  // Generate table for district plan statistics
-  const districtPlanEntries = districtPlanData.map((districtPlan, idx) => {
-    const xAxisVar = districtPlan[state.xAxisVar];
-    const yAxisVar = districtPlan[state.yAxisVar];
-    
-    // Fix to 0 decimal places if variable is always an integer, 3 decimal places otherwise
-    const integerVars = ["MAJ_MIN", "PARTISAN_LEAN"]
-    const xVarDecimals = (integerVars.indexOf(state.xAxisVar) === -1 ? 3 : 0)
-    const yVarDecimals = (integerVars.indexOf(state.yAxisVar) === -1 ? 3 : 0)
-    return (
-      <tr key={`row-${idx}`}>
-        <td>{idx + 1}</td>
-        <td>{xAxisVar.toFixed(xVarDecimals)}</td>
-        <td>{yAxisVar.toFixed(yVarDecimals)}</td>
-      </tr>
-    )}
-  );
+  // Row style for table (currently not working)
+  const rowStyle = (row, rowIndex) => {
+    const style = {};
+
+    if (rowIndex % 2 == 0) {
+      style.backgroundColor = '#f8f9fa';
+    } else {
+      style.backgroundColor = '#ffffff';
+    }
+
+    return style;
+  };
+
+  // Formatters for district plan table
+  const districtPlanIdxFormatter = (data, row) => {
+    return <>{data + 1}</>
+  }
+
+  const dataPercisionFormatter = (data, row) => {
+    if (Number.isInteger(data)) {
+      return <>{data}</>
+    } else {
+      return <>{data.toFixed(3)}</>
+    }
+  }
+
+  // Columns for district plan table
+  const columns = [
+    { dataField: "INDEX", text: "District Plan #", formatter: districtPlanIdxFormatter },
+    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPercisionFormatter },
+    { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPercisionFormatter }
+  ];
 
   // Render ClusterAnalysis
   return (
@@ -216,41 +233,32 @@ export default function ClusterAnalysis(props) {
       <h4>
         {clusterName}
       </h4>
-      <div style={{minHeight: '30%' }}>
-        <Table striped style={{}}>
-          <tbody>
-            <tr>
-              <td>Number of Plans</td>
-              <td>{clusterNumMaps}</td>
-            </tr>
-            <tr>
-              <td>Mean Majority-Minority Districts</td>
-              <td>{clusterMajMin}</td>
-            </tr>
-            <tr>
-              <td>Mean Partisan Lean</td>
-              <td>{clusterPartisanLean}</td>
-            </tr>
-          </tbody>
-        </Table>
-      </div>
+      <Table striped style={{}}>
+        <tbody>
+          <tr>
+            <td>Number of Plans</td>
+            <td>{clusterNumMaps}</td>
+          </tr>
+          <tr>
+            <td>Mean Majority-Minority Districts</td>
+            <td>{clusterMajMin}</td>
+          </tr>
+          <tr>
+            <td>Mean Partisan Lean</td>
+            <td>{clusterPartisanLean}</td>
+          </tr>
+        </tbody>
+      </Table>
       <h4>
         District Plans
       </h4>
-      <div style={{ overflowY: 'auto', minHeight: '30%' }}>
-        <Table striped style={{}}>
-          <thead>
-            <tr>
-              <th>District Plan #</th>
-              <th>{axisLabels[state.xAxisVar]}</th>
-              <th>{axisLabels[state.yAxisVar]}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {districtPlanEntries}
-          </tbody>
-        </Table>
-      </div>
+      <BootstrapTable 
+        keyField="INDEX"
+        data={districtPlanData}
+        columns={columns}
+        pagination={paginationFactory()}
+        rowStyle={rowStyle}
+      />
       <div>Political results estimated using data from 2020 Presidential Election at the precinct level.</div>
     </Container>
   );

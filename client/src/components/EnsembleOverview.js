@@ -5,6 +5,8 @@ import { AppStateActionType, AppStateContext, AppStateDispatch } from "../contex
 import { DataPaneTabs } from "./DataPane";
 import { AppDataContext } from "../context/AppDataContext";
 import { AppDataDispatch } from "../context/AppDataContext";
+import BootstrapTable from "react-bootstrap-table-next";
+import paginationFactory from "react-bootstrap-table2-paginator";
 
 const clusterDotColor = "#0d6efd";
 const axisLabels = {
@@ -140,22 +142,36 @@ export default function EnsembleOverview(props) {
       </NavDropdown.Item>
     )
   })
-  
-  // Generate cluster table entries
-  const clusterTableEntries = clusterData.map((clusterEntry) => {
-    const index = clusterEntry["INDEX"];
-    const numMaps = clusterEntry["DISTRICT_PLAN_COUNT"];
-    const xAxisVar = clusterEntry[state.xAxisVar];
-    const yAxisVar = clusterEntry[state.yAxisVar];
-    return (
-      <tr key={`row-${index}`}>
-        <td><Button variant="link" onClick={() => setSelectedCluster(index)}>{(index + 1)}</Button></td>
-        <td>{numMaps}</td>
-        <td>{xAxisVar.toFixed(3)}</td>
-        <td>{yAxisVar.toFixed(3)}</td>
-      </tr>
-    )}
-  );
+
+  // Row style for table (currently not working)
+  const rowStyle = (row, rowIndex) => {
+    const style = {};
+
+    if (rowIndex % 2 == 0) {
+      style.backgroundColor = '#f8f9fa';
+    } else {
+      style.backgroundColor = '#ffffff';
+    }
+
+    return style;
+  };
+
+  // Formatters for the cluster table
+  const clusterIdxFormatter = (data, row) => {
+    return <a href="#" onClick={() => setSelectedCluster(data)}>{(data + 1)}</a>
+  }
+
+  const dataPercisionFormatter = (data, row) => {
+    return <>{data.toFixed(3)}</>
+  }
+
+  // Columns for the cluster table
+  const columns = [
+    { dataField: "INDEX", text: "Cluster ID", formatter: clusterIdxFormatter },
+    { dataField: "DISTRICT_PLAN_COUNT", text: "# of District Plans" },
+    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPercisionFormatter },
+    { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPercisionFormatter }
+  ];
 
   // Render EnsembleOverview
   return (
@@ -208,21 +224,13 @@ export default function EnsembleOverview(props) {
         </ScatterChart>
       </ResponsiveContainer>
       <h4>Clusters Overview</h4>
-      <div style={{ overflowY: 'auto', minHeight: '30%' }}>
-        <Table striped style={{}}>
-          <thead>
-            <tr>
-              <th>Cluster ID</th>
-              <th># of District Plans</th>
-              <th>{axisLabels[state.xAxisVar]}</th>
-              <th>{axisLabels[state.yAxisVar]}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clusterTableEntries}
-          </tbody>
-        </Table>
-      </div>
+      <BootstrapTable 
+        keyField="INDEX"
+        data={clusterData}
+        columns={columns}
+        pagination={paginationFactory()}
+        rowStyle={rowStyle}
+      />
     </Container>
   );
 }

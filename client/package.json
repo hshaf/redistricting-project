@@ -11,6 +11,8 @@
     "leaflet": "^1.9.4",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.0",
+    "react-bootstrap-table-next": "^4.0.3",
+    "react-bootstrap-table2-paginator": "^2.1.2",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
     "react-scripts": "5.0.1",
