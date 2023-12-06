@@ -148,7 +148,7 @@ export default function EnsembleOverview(props) {
     return <a href="#" onClick={() => setSelectedCluster(data)}>{(data + 1)}</a>
   }
 
-  const dataPercisionFormatter = (data, row) => {
+  const dataPrecisionFormatter = (data, row) => {
     return <>{data.toFixed(3)}</>
   }
 
@@ -156,8 +156,8 @@ export default function EnsembleOverview(props) {
   const columns = [
     { dataField: "INDEX", text: "Cluster ID", formatter: clusterIdxFormatter },
     { dataField: "DISTRICT_PLAN_COUNT", text: "# of District Plans" },
-    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPercisionFormatter },
-    { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPercisionFormatter }
+    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter },
+    { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPrecisionFormatter }
   ];
 
   // Render EnsembleOverview

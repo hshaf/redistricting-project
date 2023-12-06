@@ -11,13 +11,13 @@ const districtDotColor = "#0d6efd";
 const axisLabels = {
   "MDS_X": "MDS X-Coordinate",
   "MDS_Y": "MDS Y-Coordinate",
-  "MAJ_MIN": "Avg. Maj.-Min. Districts",
-  "MAJ_BLACK": "Avg. Maj.-Black Districts",
-  "MAJ_NATIVE": "Avg. Maj.-Native American Districts",
-  "MAJ_ASIAN": "Avg. Maj.-Asian Districts",
-  "MAJ_PACIFIC": "Avg. Maj.-Pacific Islander Districts",
-  "MAJ_HISPANIC": "Avg. Maj.-Hispanic Districts",
-  "PARTISAN_LEAN": "Avg. Partisan Lean"
+  "MAJ_MIN": "Maj.-Min. Districts",
+  "MAJ_BLACK": "Maj.-Black Districts",
+  "MAJ_NATIVE": "Maj.-Native American Districts",
+  "MAJ_ASIAN": "Maj.-Asian Districts",
+  "MAJ_PACIFIC": "Maj.-Pacific Islander Districts",
+  "MAJ_HISPANIC": "Maj.-Hispanic Districts",
+  "PARTISAN_LEAN": "Partisan Lean"
 };
 
 export default function ClusterAnalysis(props) {
@@ -149,7 +149,7 @@ export default function ClusterAnalysis(props) {
     return <>{data + 1}</>
   }
 
-  const dataPercisionFormatter = (data, row) => {
+  const dataPrecisionFormatter = (data, row) => {
     if (Number.isInteger(data)) {
       return <>{data}</>
     } else {
@@ -160,8 +160,8 @@ export default function ClusterAnalysis(props) {
   // Columns for district plan table
   const columns = [
     { dataField: "INDEX", text: "District Plan #", formatter: districtPlanIdxFormatter },
-    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPercisionFormatter },
-    { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPercisionFormatter }
+    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter },
+    { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPrecisionFormatter }
   ];
 
   // Render ClusterAnalysis
