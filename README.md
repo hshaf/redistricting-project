@@ -41,7 +41,7 @@ This repository contains the client and server implementation of our web applica
 3. In MongoDB Compass, connect to `mongodb://localhost:27017`
 4. Populate database by running import script in `scripts/`
 
-   `python import-ensemble-data.py`
+   `python populate_db_from_zip.py <path to redistricting_db.zip>`
    
 ## Data Sources
 Create `data/` under base project directory and add data from the following sources,
