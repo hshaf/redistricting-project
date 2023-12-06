@@ -144,19 +144,6 @@ export default function ClusterAnalysis(props) {
   const clusterMajMin = selectedCluster["avgMajMinDistricts"]["totalMajMin"].toFixed(3);
   const clusterPartisanLean = selectedCluster["avgPartisanLean"].toFixed(3);
 
-  // Row style for table (currently not working)
-  const rowStyle = (row, rowIndex) => {
-    const style = {};
-
-    if (rowIndex % 2 == 0) {
-      style.backgroundColor = '#f8f9fa';
-    } else {
-      style.backgroundColor = '#ffffff';
-    }
-
-    return style;
-  };
-
   // Formatters for district plan table
   const districtPlanIdxFormatter = (data, row) => {
     return <>{data + 1}</>
@@ -257,7 +244,7 @@ export default function ClusterAnalysis(props) {
         data={districtPlanData}
         columns={columns}
         pagination={paginationFactory()}
-        rowStyle={rowStyle}
+        striped={true}
       />
       <div>Political results estimated using data from 2020 Presidential Election at the precinct level.</div>
     </Container>

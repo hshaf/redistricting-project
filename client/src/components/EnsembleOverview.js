@@ -143,19 +143,6 @@ export default function EnsembleOverview(props) {
     )
   })
 
-  // Row style for table (currently not working)
-  const rowStyle = (row, rowIndex) => {
-    const style = {};
-
-    if (rowIndex % 2 == 0) {
-      style.backgroundColor = '#f8f9fa';
-    } else {
-      style.backgroundColor = '#ffffff';
-    }
-
-    return style;
-  };
-
   // Formatters for the cluster table
   const clusterIdxFormatter = (data, row) => {
     return <a href="#" onClick={() => setSelectedCluster(data)}>{(data + 1)}</a>
@@ -229,7 +216,7 @@ export default function EnsembleOverview(props) {
         data={clusterData}
         columns={columns}
         pagination={paginationFactory()}
-        rowStyle={rowStyle}
+        striped={true}
       />
     </Container>
   );
