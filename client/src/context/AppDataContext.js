@@ -11,20 +11,37 @@ export function AppDataProvider({ children }) {
    * Initialize AppDataContext with data needed during the start of the app.
    */
   const initializeData = async () => {
-    let stateListResponse = await serverAPI.getStateNames();
-    let stateData = new Map();
+    // Load state data
+    const stateListResponse = await serverAPI.getStateNames();
+    const stateData = new Map();
+    const stateBoundaries = new Map();
+    const currDistrictPlans = new Map();
     if (stateListResponse) {
       for (const s of Object.values(stateListResponse.data)) {
         // Retrieve data for state
-        let stateDataResponse = await serverAPI.getStateByInitials(s);
+        const stateDataResponse = await serverAPI.getStateByInitials(s);
+        const stateObj = stateDataResponse.data;
         if (stateDataResponse) {
-          stateData.set(s, stateDataResponse.data);
+          stateData.set(s, stateObj);
+        }
+        // Retrieve state boundary and current district plan map
+        const stateBoundaryResponse = await serverAPI.getBoundaryById(stateObj["stateBoundary"]);
+        if (stateBoundaryResponse) {
+          stateBoundaries.set(s, stateBoundaryResponse.data.data);
+        }
+        const currDistrictPlanResponse = await serverAPI.getBoundaryById(stateObj["currDistrictPlanBoundary"]);
+        if (currDistrictPlanResponse) {
+          currDistrictPlans.set(s, currDistrictPlanResponse.data.data);
         }
       }
     }
     dispatch({
       type: AppDataActionType.INIT,
-      payload: stateData
+      payload: {
+        "stateData": stateData,
+        "stateBoundaries": stateBoundaries,
+        "currDistrictPlans": currDistrictPlans,
+      }
     });
   }
 
@@ -122,6 +139,12 @@ const initialAppData = {
   /* Map containing state objects.
   Key is the abbreviated state name, value is the corresponding state object */
   stateData: new Map(),
+  /* Map containing state boundary GeoJSONs (stored as strings).
+  Key is the abbreviated state name, value is the corresponding boundary GeoJSON */
+  stateBoundaries: new Map(),
+  /* Map containing state current district plan map GeoJSONs (stored as strings).
+  Key is the abbreviated state name, value is the corresponding boundary GeoJSON */
+  currDistrictPlans: new Map(),
   /* Array of all the ensemble objects within the selected state.
   Value can be null if no state is selected. */
   selectedStateEnsembles: null,
@@ -138,7 +161,9 @@ function appDataReducer(appData, action) {
     case AppDataActionType.INIT: {
       return {
         ...appData,
-        stateData: action.payload,
+        stateData: action.payload.stateData,
+        stateBoundaries: action.payload.stateBoundaries,
+        currDistrictPlans: action.payload.currDistrictPlans,
       }
     }
     case AppDataActionType.SET_ENSEMBLES_FOR_STATE: {

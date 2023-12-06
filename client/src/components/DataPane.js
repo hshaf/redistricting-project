@@ -29,6 +29,7 @@ export default function DataPane(props) {
     selectedTab: DataPaneTabs.ENSEMBLE_SELECTION
   })
 
+  // Reset tab if selected state changes
   useEffect(() => {
     updateTab(DataPaneTabs.ENSEMBLE_SELECTION)
   }, [appState.selectedState]);
@@ -70,7 +71,7 @@ export default function DataPane(props) {
     // Deselect current state
     appStateDispatch({
       type: AppStateActionType.SET_SELECTED_STATE,
-      payload: ""
+      payload: null
     });
 
     dataAPI.appDataDispatch({
@@ -83,10 +84,10 @@ export default function DataPane(props) {
 
   // Get strings for displaying selected state and district plan
   let selectedState = ""
-  let districtPlan = ""
-  if (appState.selectedState !== "") {
+  let districtPlanType = ""
+  if (appState.selectedState !== null) {
     selectedState = appData.stateData.get(appState.selectedState).name;
-    districtPlan = appData.stateData.get(appState.selectedState).districtType;
+    districtPlanType = appData.stateData.get(appState.selectedState).districtPlanType;
   }
   
   // Render DataPane
@@ -98,19 +99,19 @@ export default function DataPane(props) {
 
   // If ensemble not selected, disable ensemble info tab
   let disableEnsembleInfoTab = false;
-  if (appState.selectedEnsembleID === "") {
+  if (appState.selectedEnsembleID === null) {
     disableEnsembleInfoTab = true;
   }
 
   // If cluster not selected, disable cluster analysis tab
   let disableClusterTab = false;
-  if (appState.selectedClusterID === "") {
+  if (appState.selectedClusterID === null) {
     disableClusterTab = true;
   }
 
   // If ensemble not selected, disable distance measures tab
   let disableDistanceMeasuresTab = false;
-  if (appState.selectedEnsembleID === "") {
+  if (appState.selectedEnsembleID === null) {
     disableDistanceMeasuresTab = true;
   }
 
@@ -193,7 +194,7 @@ export default function DataPane(props) {
                 <Nav.Link>Selected State: {selectedState}</Nav.Link>
               </Nav.Item>
               <Nav.Item className="ms-auto">
-                <Nav.Link>District Plan: {districtPlan}</Nav.Link>
+                <Nav.Link>District Plan: {districtPlanType}</Nav.Link>
               </Nav.Item>
             </Nav>
           </Navbar.Collapse>

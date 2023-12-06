@@ -32,7 +32,7 @@ export default function EnsembleSelection(props) {
               ensembleId={ensembles[idx]['id']}
               ensembleName={ensembles[idx]['name']}
               clusterCount={ensembles[idx]['totalClusterCount']}
-              districtPlanCount={ensembles[idx]['totalDistrictCount']}
+              districtPlanCount={ensembles[idx]['totalDistrictPlanCount']}
               updateTab={props.updateTab}
               />
             </Col>

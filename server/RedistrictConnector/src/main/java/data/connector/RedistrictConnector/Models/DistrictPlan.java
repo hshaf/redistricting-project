@@ -4,22 +4,20 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 
-public class District {
+public class DistrictPlan {
 
     @Id
     private String id;
   
-    private Double polsbyPopper;
-    private Integer majMin;
+    private List<Double> mdsCoords;
+    private Majorities majMinDistricts;
     private Integer partisanLean;
 
     private String boundary;
 
-    public District() {}
+    public DistrictPlan() {}
 
-    public District(Double polsbyPopper, Integer majMin, Integer partisanLean) {
-        this.polsbyPopper = polsbyPopper;
-        this.majMin = majMin;
+    public DistrictPlan(Integer partisanLean) {
         this.partisanLean = partisanLean;
     }
 
@@ -27,12 +25,12 @@ public class District {
         return id;
     }
 
-    public Double getPolsbyPopper() {
-        return polsbyPopper;
-    }
+   public List<Double> getMdsCoords(){
+    return this.mdsCoords;
+   }
 
-    public Integer getMajMin() {
-        return majMin;
+    public Majorities getMajMinDistricts() {
+        return this.majMinDistricts;
     }
 
     public Integer getPartisanLean() {

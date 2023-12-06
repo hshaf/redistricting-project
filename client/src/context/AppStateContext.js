@@ -17,17 +17,17 @@ export function AppStateProvider({ children }) {
 
 const initialAppState = {
   /* String tracking currently selected state ("VA", "AZ", or "WI").
-  If no state is selected, then value is "" */
-  selectedState: "",
-  /* Track ID of currently selected ensemble.
-  By default this value is "" (no ensemble selected). */
-  selectedEnsembleID: "",
-  /* Track ID of currently selected cluster.
+  If no state is selected, then value is null */
+  selectedState: null,
+  /* Track index of currently selected ensemble.
+  By default this value is null (no ensemble selected). */
+  selectedEnsembleID: null,
+  /* Track index of currently selected cluster.
   If no state or cluster is chosen, then value is "" */
-  selectedClusterID: "",
-  /* Track ID of currently selected district plan.
+  selectedClusterID: null,
+  /* Track index of currently selected district plan.
   If no district plan is chosen, then value is "" */
-  selectedDistrictPlanID: ""
+  selectedDistrictPlanID: null
 }
 
 /* Actions take on the following format:
@@ -50,24 +50,24 @@ function appStateReducer(appState, action) {
       return {
         ...appState,
         selectedState: action.payload,
-        selectedEnsembleID: "",
-        selectedClusterID: "",
-        selectedDistrictPlanID: ""
+        selectedEnsembleID: null,
+        selectedClusterID: null,
+        selectedDistrictPlanID: null
       }
     }
     case AppStateActionType.SET_SELECTED_ENSEMBLE: {
       return {
         ...appState,
         selectedEnsembleID: action.payload,
-        selectedClusterID: "",
-        selectedDistrictPlanID: ""
+        selectedClusterID: null,
+        selectedDistrictPlanID: null
       }
     }
     case AppStateActionType.SET_SELECTED_CLUSTER: {
       return {
         ...appState,
         selectedClusterID: action.payload,
-        selectedDistrictPlanID: ""
+        selectedDistrictPlanID: null
       }
     }
     case AppStateActionType.SET_SELECTED_DISTRICT_PLAN: {

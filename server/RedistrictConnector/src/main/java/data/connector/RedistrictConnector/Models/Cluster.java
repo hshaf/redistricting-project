@@ -12,29 +12,35 @@ public class Cluster {
 
     private String name;
     private List<String> tags;
-    private Integer districtCount;
+    private Integer districtPlanCount;
+    private List<Double> clusterCenter;
 
     
-    private List<String> districtIds;
+    private List<String> districtPlanIds;
 
-    private Double polsbyPopper;
-    private Double majMin;
-    private Double partisanLean;
-    private Distances distances;
-
+    private Double avgPartisanLean;
+    private AverageMajorities avgMajMinDistricts;
     private String boundary;
 
     public Cluster() {};
 
-    public Cluster(String name, List<String> tags, Integer districtCount, List<String> districtIds, Double polsbyPopper, Double majMin, Double partisanLean, Distances distances) {
+    public Cluster(String name, List<String> tags, Integer districtCount, List<String> districtIds) {
         this.name = name;
         this.tags = tags;
-        this.districtCount = districtCount;
-        this.districtIds = districtIds;
-        this.polsbyPopper = polsbyPopper;
-        this.majMin = majMin;
-        this.partisanLean = partisanLean;
-        this.distances = distances;
+        this.districtPlanCount = districtCount;
+        this.districtPlanIds = districtIds;
+    }
+
+    public List<Double> getClusterCenter(){
+        return this.clusterCenter;
+    }
+
+    public Double getAvgPartisanLean(){
+        return this.avgPartisanLean;
+    }
+
+    public AverageMajorities getAvgMajMinDistricts(){
+        return this.avgMajMinDistricts;
     }
 
     public String getId() {
@@ -57,33 +63,18 @@ public class Cluster {
         this.tags = tags;
     }
 
-    public Integer getDistrictCount() {
-        return districtCount;
+    public Integer getDistrictPlanCount() {
+        return districtPlanCount;
     }
 
     public List<String> getDistricts() {
-        return districtIds;
+        return districtPlanIds;
     }
 
     public void setDistricts(List<String> districtIds) {
-        this.districtIds = districtIds;
+        this.districtPlanIds = districtIds;
     }
 
-    public Double getPolsbyPopper() {
-        return polsbyPopper;
-    }
-
-    public Double getMajMin() {
-        return majMin;
-    }
-
-    public Double getPartisanLean() {
-        return partisanLean;
-    }
-
-    public Distances getDistances() {
-        return distances;
-    }
 
     public String getBoundary(){
         return boundary;

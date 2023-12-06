@@ -10,16 +10,24 @@ public class State {
     private String initials;
 
     private String name;
-    private String districtType;
+    private String districtPlanType;
+    private String stateBoundary;
+    private String currDistrictPlanBoundary;
+    private List<Double> mapCenter;
+    private Integer mapZoom;
+    private List<List<Integer>> ensembleClusterAssociation;
     private List<String> ensembleIds;
+
 
     public State() {}
 
     public State(String initials, String name, String districtType, List<String> ensembleIds) {
         this.initials = initials;
         this.name = name;
-        this.districtType = districtType;
+        this.districtPlanType = districtType;
         this.ensembleIds = ensembleIds;
+        stateBoundary = null;
+        currDistrictPlanBoundary = null;
     }
 
     public String getInitials() {
@@ -30,8 +38,8 @@ public class State {
         return name;
     }
 
-    public String getDistrictType(){
-        return districtType;
+    public String getDistrictPlanType(){
+        return districtPlanType;
     }
 
     public List<String> getEnsembles() {
@@ -40,6 +48,34 @@ public class State {
 
     public void setEnsembles(List<String> ensembleIds) {
         this.ensembleIds = ensembleIds;
+    }
+
+    public String getStateBoundary(){
+        return this.stateBoundary;
+    }
+
+    public void setStateBoundary(String stateBoundary){
+        this.stateBoundary = stateBoundary;
+    }
+
+    public String getCurrDistrictPlanBoundary(){
+        return this.currDistrictPlanBoundary;
+    }
+
+    public void setCurrDistrictPlanBoundary(String currDistrictPlanBoundary){
+        this.currDistrictPlanBoundary = currDistrictPlanBoundary;
+    }
+
+    public List<Double> getMapCenter(){
+        return this.mapCenter;
+    }
+
+    public Integer getMapZoom(){
+        return mapZoom;
+    }
+
+    public List<List<Integer>> getEnsembleClusterAssociation(){
+        return this.ensembleClusterAssociation;
     }
 
 }
