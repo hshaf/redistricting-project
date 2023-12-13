@@ -9,19 +9,11 @@ from gerrychain.proposals import recom
 from gerrychain.tree import recursive_tree_part
 import geopandas
 
-DATA_BASE_DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data")
+DATA_BASE_DIRECTORY = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 STEPS_PER_PLAN = 10000
 EPSILON = 0.05
-GEOPANDAS_ENGINE = "pyogrio"
 
 def main():
-    # Configuration variables
-    try:
-        import pyogrio
-    except ImportError:
-        global GEOPANDAS_ENGINE
-        GEOPANDAS_ENGINE = "fiona"
-
     # Parse arguments
     parser = argparse.ArgumentParser(description="Run ReCom to generate political district plans for a state")
     parser.add_argument("--state", default=None, help="the state for which precincts are generated, automatically populates other file paths")
@@ -93,7 +85,7 @@ def gen_district_plans(prec_data_path: str,
     """
 
     # Load data files
-    precinct_df = geopandas.read_file(prec_data_path, engine=GEOPANDAS_ENGINE)
+    precinct_df = geopandas.read_file(prec_data_path)
     with open(prec_adj_path, mode="r", encoding="utf-8") as adj_data_file:
         edge_list = json.load(adj_data_file)
     with open(init_partition_path, mode="r", encoding="utf-8") as init_partition_file:
@@ -154,12 +146,13 @@ def gen_district_plans(prec_data_path: str,
         for i, subgraph in enumerate(curr_partition.subgraphs):
             for node in subgraph.nodes():
                 output_partition[node] = i + 1
-        with open(f"{output_folder}/{str(plan_num).rjust(5, '0')}.json", mode="w", encoding="utf-8") as output_file:
+        output_file_path = f"{output_folder}/{str(plan_num).rjust(5, '0')}.json"
+        with open(output_file_path, mode="w", encoding="utf-8") as output_file:
             json.dump(output_partition, output_file)
 
 def gen_initial_partition(prec_data_path: str, prec_adj_path: str, init_partition_path: str, num_districts: int):
     # Load data files
-    precinct_df = geopandas.read_file(prec_data_path, engine=GEOPANDAS_ENGINE)
+    precinct_df = geopandas.read_file(prec_data_path)
 
     with open(prec_adj_path, mode="r", encoding="utf-8") as adj_data_file:
         edge_list = json.load(adj_data_file)
