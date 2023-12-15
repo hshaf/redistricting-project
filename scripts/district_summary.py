@@ -17,10 +17,10 @@ def main():
     # Process args
     precinct_file_path = sys.argv[1]
     ensemble_dir_path = sys.argv[2]
-    state = sys.argv[3]
+    state = sys.argv[3].upper()
     ensemble_name = sys.argv[4]
     distance_metric = sys.argv[5]
-    num_clusters = sys.argv[6]
+    num_clusters = int(sys.argv[6])
 
     try:
         import pyogrio
@@ -32,7 +32,42 @@ def main():
 
     # Initialize states if they have not been created
     if len(list(db.state.find())) == 0:
-        db_setup()
+        state_data = [
+            {
+                "_id": "AZ",
+                "name": "Arizona",
+                "districtPlanType": "State Assembly",
+                "stateBoundary": "../data/state_boundaries/az-state-boundary.json",
+                "currDistrictPlanBoundary": "../data/state_boundaries/az-districts.json",
+                "mapCenter": [34.35920229576733, -111.82765189051278],
+                "mapZoom": 7,
+                "ensembleClusterAssociation": [],
+                "ensembleIds": []
+            },
+            {
+                "_id": "VA",
+                "name": "Virginia",
+                "districtPlanType": "State Assembly",
+                "stateBoundary": "../data/state_boundaries/va-state-boundary.json",
+                "currDistrictPlanBoundary": "../data/state_boundaries/va-districts.json",
+                "mapCenter": [37.47812615585515, -78.88801623378961],
+                "mapZoom": 7,
+                "ensembleClusterAssociation": [],
+                "ensembleIds": []
+            },
+            {
+                "_id": "WI",
+                "name": "Wisconsin",
+                "districtPlanType": "State Senate",
+                "stateBoundary": "../data/state_boundaries/wi-state-boundary.json",
+                "currDistrictPlanBoundary": "../data/state_boundaries/wi-districts.json",
+                "mapCenter": [44.61389658316453, -89.67045816895208],
+                "mapZoom": 7,
+                "ensembleClusterAssociation": [],
+                "ensembleIds": []
+            }
+        ]
+        db_setup(state_data)
 
     # Get district plan and cluster data
     district_plan_files = sorted([os.path.join(ensemble_dir_path, f) for f in os.listdir(ensemble_dir_path) if re.fullmatch(r"\d\d\d\d\d.json", f)])
@@ -46,15 +81,15 @@ def main():
                                                                                                 )
     files_to_render = [district_plan_files[i] for i in plans_to_render]
     boundary_db_ids = save_boundaries(precinct_df=precinct_df, district_plan_files=files_to_render)
-    district_plan_db_ids = save_district_plans(district_plan_data=district_plan_data, 
-                                                plans_to_render=plans_to_render, 
+    district_plan_db_ids = save_district_plans(district_plan_data=district_plan_data,
+                                                plans_to_render=plans_to_render,
                                                 boundary_db_ids=boundary_db_ids)
-    cluster_db_ids = save_clusters(cluster_data=cluster_data, 
-                                    centermost_plans=centermost_plans, 
+    cluster_db_ids = save_clusters(cluster_data=cluster_data,
+                                    centermost_plans=centermost_plans,
                                     district_plan_db_ids=district_plan_db_ids)
-    ensemble_db_id = save_ensemble(ensemble_dir_path=ensemble_dir_path, 
-                                    state=state, name=ensemble_name, 
-                                    cluster_db_ids=cluster_db_ids, 
+    ensemble_db_id = save_ensemble(ensemble_dir_path=ensemble_dir_path,
+                                    state=state, name=ensemble_name,
+                                    cluster_db_ids=cluster_db_ids,
                                     num_district_plans=len(district_plan_data))
 
     # Add ensemble to state
@@ -78,7 +113,6 @@ def district_summary_data(precinct_df: geopandas.GeoDataFrame, district_plan_fil
         # Process district plan data
         dem_districts = (district_df['vote_dem'] > district_df['vote_rep']).sum()
         rep_districts = (district_df['vote_rep'] > district_df['vote_dem']).sum()
-        #district_plan_entry["partisanLean"] = (rep_districts - dem_districts).item()
 
         maj_black_districts = ((district_df['pop_black'] / district_df['pop_total']) >= 0.5)
         maj_asian_districts = ((district_df['pop_asian'] / district_df['pop_total']) >= 0.5)
@@ -93,7 +127,8 @@ def district_summary_data(precinct_df: geopandas.GeoDataFrame, district_plan_fil
 
         district_plan_entry = {
             "mdsCoords": mds_coords,
-            "partisanLean": (rep_districts - dem_districts).item(),
+            "numDemocraticDistricts": dem_districts.item(),
+            "numRepublicanDistricts": rep_districts.item(),
             "majMinDistricts": {
                 "totalMajMin": maj_min_districts.sum().item(),
                 "majBlack": maj_black_districts.sum().item(),
@@ -122,7 +157,12 @@ def cluster_summary_data(district_plan_data: list, ensemble_dir_path: str, dista
             "districtPlanCount": 0,
             "districtPlanIds": [],
             "clusterCenter": coords,
-            "avgPartisanLean": 0,
+            "avgDemocraticDistricts": 0,
+            "avgRepublicanDistricts": 0,
+            "minDemocraticDistricts": float("inf"),
+            "minRepublicanDistricts": float("inf"),
+            "maxDemocraticDistricts": 0,
+            "maxRepublicanDistricts": 0,
             "avgMajMinDistricts": {
                 "totalMajMin": 0,
                 "majBlack": 0,
@@ -136,19 +176,29 @@ def cluster_summary_data(district_plan_data: list, ensemble_dir_path: str, dista
     
     # Assign district plans to clusters, calculate average value for each data field per cluster
     for district_index, cluster_assignment in enumerate(cluster_grouping["predictions"]):
-        cluster_data[cluster_assignment]["districtPlanIds"].append(district_index)
+        district_plan_dict = district_plan_data[district_index]
+        assigned_cluster_dict = cluster_data[cluster_assignment]
 
-        cluster_data[cluster_assignment]["avgPartisanLean"] += district_plan_data[district_index]["partisanLean"]
-        cluster_data[cluster_assignment]["avgMajMinDistricts"]["totalMajMin"] += district_plan_data[district_index]["majMinDistricts"]["totalMajMin"]
-        cluster_data[cluster_assignment]["avgMajMinDistricts"]["majBlack"] += district_plan_data[district_index]["majMinDistricts"]["majBlack"]
-        cluster_data[cluster_assignment]["avgMajMinDistricts"]["majAsian"] += district_plan_data[district_index]["majMinDistricts"]["majAsian"]
-        cluster_data[cluster_assignment]["avgMajMinDistricts"]["majNative"] += district_plan_data[district_index]["majMinDistricts"]["majNative"]
-        cluster_data[cluster_assignment]["avgMajMinDistricts"]["majPacific"] += district_plan_data[district_index]["majMinDistricts"]["majPacific"]
-        cluster_data[cluster_assignment]["avgMajMinDistricts"]["majHispanic"] += district_plan_data[district_index]["majMinDistricts"]["majHispanic"]
+        assigned_cluster_dict["districtPlanIds"].append(district_index)
+        
+        assigned_cluster_dict["minDemocraticDistricts"] = min(assigned_cluster_dict["minDemocraticDistricts"], district_plan_dict["numDemocraticDistricts"])
+        assigned_cluster_dict["minRepublicanDistricts"] = min(assigned_cluster_dict["minRepublicanDistricts"], district_plan_dict["numRepublicanDistricts"])
+        assigned_cluster_dict["maxDemocraticDistricts"] = max(assigned_cluster_dict["maxDemocraticDistricts"], district_plan_dict["numDemocraticDistricts"])
+        assigned_cluster_dict["maxRepublicanDistricts"] = max(assigned_cluster_dict["maxRepublicanDistricts"], district_plan_dict["numRepublicanDistricts"])
+
+        assigned_cluster_dict["avgDemocraticDistricts"] += district_plan_dict["numDemocraticDistricts"]
+        assigned_cluster_dict["avgRepublicanDistricts"] += district_plan_dict["numRepublicanDistricts"]
+        assigned_cluster_dict["avgMajMinDistricts"]["totalMajMin"] += district_plan_dict["majMinDistricts"]["totalMajMin"]
+        assigned_cluster_dict["avgMajMinDistricts"]["majBlack"] += district_plan_dict["majMinDistricts"]["majBlack"]
+        assigned_cluster_dict["avgMajMinDistricts"]["majAsian"] += district_plan_dict["majMinDistricts"]["majAsian"]
+        assigned_cluster_dict["avgMajMinDistricts"]["majNative"] += district_plan_dict["majMinDistricts"]["majNative"]
+        assigned_cluster_dict["avgMajMinDistricts"]["majPacific"] += district_plan_dict["majMinDistricts"]["majPacific"]
+        assigned_cluster_dict["avgMajMinDistricts"]["majHispanic"] += district_plan_dict["majMinDistricts"]["majHispanic"]
 
     for i in range(num_clusters):
         cluster_data[i]["districtPlanCount"] = len(cluster_data[i]["districtPlanIds"])
-        cluster_data[i]["avgPartisanLean"] /= cluster_data[i]["districtPlanCount"]
+        cluster_data[i]["avgDemocraticDistricts"] /= cluster_data[i]["districtPlanCount"]
+        cluster_data[i]["avgRepublicanDistricts"] /= cluster_data[i]["districtPlanCount"]
         cluster_data[i]["avgMajMinDistricts"]["totalMajMin"] /= cluster_data[i]["districtPlanCount"]
         cluster_data[i]["avgMajMinDistricts"]["majBlack"] /= cluster_data[i]["districtPlanCount"]
         cluster_data[i]["avgMajMinDistricts"]["majAsian"] /= cluster_data[i]["districtPlanCount"]
@@ -179,42 +229,7 @@ def cluster_summary_data(district_plan_data: list, ensemble_dir_path: str, dista
 
     return cluster_data, cluster_grouping["predictions"], centermost_plans, plans_to_render
 
-def db_setup():
-    state_data = [
-        {
-            "_id": "AZ",
-            "name": "Arizona",
-            "districtPlanType": "State Assembly",
-            "stateBoundary": "../data/state_boundaries/az-state-boundary.json",
-            "currDistrictPlanBoundary": "../data/state_boundaries/az-districts.json",
-            "mapCenter": [34.35920229576733, -111.82765189051278],
-            "mapZoom": 7,
-            "ensembleClusterAssociation": [],
-            "ensembleIds": []
-        },
-        {
-            "_id": "VA",
-            "name": "Virginia",
-            "districtPlanType": "State Assembly",
-            "stateBoundary": "../data/state_boundaries/va-state-boundary.json",
-            "currDistrictPlanBoundary": "../data/state_boundaries/va-districts.json",
-            "mapCenter": [37.47812615585515, -78.88801623378961],
-            "mapZoom": 7,
-            "ensembleClusterAssociation": [],
-            "ensembleIds": []
-        },
-        {
-            "_id": "WI",
-            "name": "Wisconsin",
-            "districtPlanType": "State Senate",
-            "stateBoundary": "../data/state_boundaries/wi-state-boundary.json",
-            "currDistrictPlanBoundary": "../data/state_boundaries/wi-districts.json",
-            "mapCenter": [44.61389658316453, -89.67045816895208],
-            "mapZoom": 7,
-            "ensembleClusterAssociation": [],
-            "ensembleIds": []
-        }
-    ]
+def db_setup(state_data):
     for state_obj in state_data:
         # Insert state and current district boundaries and get DB IDs
         with open(state_obj["stateBoundary"], mode="r", encoding="utf-8") as f:
@@ -242,7 +257,7 @@ def save_boundaries(precinct_df: geopandas.GeoDataFrame, district_plan_files: li
         boundary = precinct_df[["geometry", "district_assignment"]].dissolve(by="district_assignment")
 
         # Save to database
-        inserted_id = db.boundary.insert_one({"category": "district_plan", "data": boundary.to_json()}).inserted_id
+        inserted_id = db.boundary.insert_one({"category": "districtPlan", "data": boundary.to_json()}).inserted_id
         boundary_db_ids.append(inserted_id)
     return boundary_db_ids
 
@@ -250,12 +265,12 @@ def save_district_plans(district_plan_data: list, plans_to_render: list, boundar
     # Save each district plan to the database and record the database ID for each
     district_plan_db_ids = list()
     for entry in district_plan_data:
-        inserted_id = db.district_plan.insert_one(entry).inserted_id
+        inserted_id = db["districtPlan"].insert_one(entry).inserted_id
         district_plan_db_ids.append(inserted_id)
 
     # Add boundaries to district plans
     for index, b_id in zip(plans_to_render, boundary_db_ids):
-        db.district_plan.update_one({"_id": district_plan_db_ids[index]}, {"$set": {"boundary": b_id}})
+        db["districtPlan"].update_one({"_id": district_plan_db_ids[index]}, {"$set": {"boundary": b_id}})
     
     return district_plan_db_ids
 
@@ -264,7 +279,7 @@ def save_clusters(cluster_data: list, centermost_plans: list, district_plan_db_i
     cluster_db_ids = list()
     for entry, center_plan_index in zip(cluster_data, centermost_plans):
         # Find centermost district plan and get boundary ID
-        center_plan_obj = db.district_plan.find_one({"_id": district_plan_db_ids[center_plan_index]})
+        center_plan_obj = db["districtPlan"].find_one({"_id": district_plan_db_ids[center_plan_index]})
         entry["boundary"] = center_plan_obj["boundary"]
 
         # Set districtPlanIds (mapping from indices to database IDs)
