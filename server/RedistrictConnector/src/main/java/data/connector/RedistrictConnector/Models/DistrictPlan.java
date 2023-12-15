@@ -12,7 +12,7 @@ public class DistrictPlan {
     private List<Double> mdsCoords;
     private Majorities majMinDistricts;
     private Integer numRepublicanDistricts;
-    private Integer numDemocratDistricts;
+    private Integer numDemocraticDistricts;
 
     private String boundary;
 
@@ -36,8 +36,8 @@ public class DistrictPlan {
         return this.numRepublicanDistricts;
     }
 
-    public Integer getNumDemocratDistricts() {
-        return this.numDemocratDistricts;
+    public Integer getNumDemocraticDistricts() {
+        return this.numDemocraticDistricts;
     }
 
     public String getBoundary(){

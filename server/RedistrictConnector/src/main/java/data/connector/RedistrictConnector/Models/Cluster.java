@@ -17,8 +17,10 @@ public class Cluster {
 
     private Integer maxRepublicanDistricts;
     private Integer minRepublicanDistricts;
-    private Integer maxDemocratDistricts;
-    private Integer minDemocratDistricts;
+    private Integer maxDemocraticDistricts;
+    private Integer minDemocraticDistricts;
+    private Double avgRepublicanDistricts;
+    private Double avgDemocraticDistricts;
 
     private List<String> districtPlanIds;
 
@@ -51,13 +53,22 @@ public class Cluster {
         return this.minRepublicanDistricts;
     }
 
-    public Integer getMaxDemocratDistricts(){
-        return this.maxDemocratDistricts;
+    public Integer getMaxDemocraticDistricts(){
+        return this.maxDemocraticDistricts;
     }
 
-    public Integer getMinDemocratDistricts(){
-        return this.minDemocratDistricts;
+    public Integer getMinDemocraticDistricts(){
+        return this.minDemocraticDistricts;
     }
+
+    public Double getAvgRepublicanDistricts(){
+        return this.avgRepublicanDistricts;
+    }
+
+    public Double getAvgDemocraticDistricts(){
+        return this.avgDemocraticDistricts;
+    }
+    
 
     public String getId() {
         return id;
