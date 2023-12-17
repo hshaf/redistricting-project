@@ -11,15 +11,14 @@ public class DistrictPlan {
   
     private List<Double> mdsCoords;
     private Majorities majMinDistricts;
-    private Integer partisanLean;
+    private Integer numRepublicanDistricts;
+    private Integer numDemocraticDistricts;
 
     private String boundary;
 
     public DistrictPlan() {}
 
-    public DistrictPlan(Integer partisanLean) {
-        this.partisanLean = partisanLean;
-    }
+    
 
     public String getId() {
         return id;
@@ -33,8 +32,12 @@ public class DistrictPlan {
         return this.majMinDistricts;
     }
 
-    public Integer getPartisanLean() {
-        return partisanLean;
+    public Integer getNumRepublicanDistricts() {
+        return this.numRepublicanDistricts;
+    }
+
+    public Integer getNumDemocraticDistricts() {
+        return this.numDemocraticDistricts;
     }
 
     public String getBoundary(){

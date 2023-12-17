@@ -18,7 +18,12 @@ const axisLabels = {
   "MAJ_ASIAN": "Avg. Maj.-Asian Districts",
   "MAJ_PACIFIC": "Avg. Maj.-Pacific Islander Districts",
   "MAJ_HISPANIC": "Avg. Maj.-Hispanic Districts",
-  "PARTISAN_LEAN": "Avg. Partisan Lean"
+  "AVG_DEM_DISTRICTS": "Avg. Dem. Districts",
+  "AVG_REP_DISTRICTS": "Avg. Rep. Districts",
+  "MIN_DEM_DISTRICTS": "Min. Dem. Districts",
+  "MIN_REP_DISTRICTS": "Min. Rep. Districts",
+  "MAX_DEM_DISTRICTS": "Max. Dem. Districts",
+  "MAX_REP_DISTRICTS": "Max. Rep. Districts"
 };
 
 export default function EnsembleOverview(props) {
@@ -124,7 +129,12 @@ export default function EnsembleOverview(props) {
       "MAJ_ASIAN": cluster["avgMajMinDistricts"]["majAsian"],
       "MAJ_PACIFIC": cluster["avgMajMinDistricts"]["majPacific"],
       "MAJ_HISPANIC": cluster["avgMajMinDistricts"]["majHispanic"],
-      "PARTISAN_LEAN": cluster["avgPartisanLean"]
+      "AVG_DEM_DISTRICTS": cluster["avgDemocraticDistricts"],
+      "AVG_REP_DISTRICTS": cluster["avgRepublicanDistricts"],
+      "MIN_DEM_DISTRICTS": cluster["minDemocraticDistricts"],
+      "MIN_REP_DISTRICTS": cluster["minRepublicanDistricts"],
+      "MAX_DEM_DISTRICTS": cluster["maxDemocraticDistricts"],
+      "MAX_REP_DISTRICTS": cluster["maxRepublicanDistricts"]
     }
   });
 
@@ -160,7 +170,11 @@ export default function EnsembleOverview(props) {
   }
 
   const dataPrecisionFormatter = (data, row) => {
-    return <>{data.toFixed(3)}</>
+    if (Number.isInteger(data)) {
+      return <>{data}</>
+    } else {
+      return <>{data.toFixed(3)}</>
+    }
   }
 
   // Columns for the cluster table

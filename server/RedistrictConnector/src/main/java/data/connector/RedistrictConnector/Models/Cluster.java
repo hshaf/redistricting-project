@@ -15,10 +15,16 @@ public class Cluster {
     private Integer districtPlanCount;
     private List<Double> clusterCenter;
 
-    
+    private Integer maxRepublicanDistricts;
+    private Integer minRepublicanDistricts;
+    private Integer maxDemocraticDistricts;
+    private Integer minDemocraticDistricts;
+    private Double avgRepublicanDistricts;
+    private Double avgDemocraticDistricts;
+
     private List<String> districtPlanIds;
 
-    private Double avgPartisanLean;
+    
     private AverageMajorities avgMajMinDistricts;
     private String boundary;
 
@@ -35,13 +41,34 @@ public class Cluster {
         return this.clusterCenter;
     }
 
-    public Double getAvgPartisanLean(){
-        return this.avgPartisanLean;
-    }
-
     public AverageMajorities getAvgMajMinDistricts(){
         return this.avgMajMinDistricts;
     }
+
+    public Integer getMaxRepublicanDistricts(){
+        return this.maxRepublicanDistricts;
+    }
+
+    public Integer getMinRepublicanDistricts(){
+        return this.minRepublicanDistricts;
+    }
+
+    public Integer getMaxDemocraticDistricts(){
+        return this.maxDemocraticDistricts;
+    }
+
+    public Integer getMinDemocraticDistricts(){
+        return this.minDemocraticDistricts;
+    }
+
+    public Double getAvgRepublicanDistricts(){
+        return this.avgRepublicanDistricts;
+    }
+
+    public Double getAvgDemocraticDistricts(){
+        return this.avgDemocraticDistricts;
+    }
+    
 
     public String getId() {
         return id;

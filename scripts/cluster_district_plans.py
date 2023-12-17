@@ -1,6 +1,5 @@
 import argparse
 import json
-import math
 import multiprocessing as mp
 import os
 import re
@@ -87,16 +86,19 @@ def main():
         
         # Calculate clusters with incremental values of k
         mds_points = compute_mds_points(distance_matrix)
-        cluster_groupings, k_score_plot = compute_kmeans_clusters(mds_points, return_elbow_plot=True)
+        cluster_groupings, k_score_plot, k_bic_plot = compute_kmeans_clusters(mds_points, return_plots=True)
 
         # Output to files
         mds_file_path = os.path.join(plan_dir, f"mds_points_{args['distance_metric']}.txt")
         clusters_file_path = os.path.join(plan_dir, f"clusters_{args['distance_metric']}.json")
         k_score_file_path = os.path.join(plan_dir, f"k_score_plot_{args['distance_metric']}.png")
+        k_bic_file_path = os.path.join(plan_dir, f"k_bic_plot_{args['distance_metric']}.png")
+
         np.savetxt(mds_file_path, mds_points, delimiter=",")
         with open(clusters_file_path, mode="w", encoding="utf-8") as cluster_output_file:
             json.dump(cluster_groupings, cluster_output_file)
         k_score_plot.savefig(k_score_file_path)
+        k_bic_plot.savefig(k_bic_file_path)
 
 def load_graph(prec_data_path: str, prec_adj_path: str):
     precinct_df = geopandas.read_file(prec_data_path)
@@ -271,25 +273,55 @@ def compute_mds_points(distance_matrix: np.array) -> np.array:
     mds = sklearn.manifold.MDS(n_components=2, random_state=0, dissimilarity="precomputed", normalized_stress="auto")
     return mds.fit(distance_matrix).embedding_
 
-def compute_kmeans_clusters(mds_points: np.array, return_elbow_plot: bool = False):
+def bayesian_information_criterion(kmeans: sklearn.cluster.KMeans, mds_points: np.array):
+    # Adapted from https://github.com/bobhancock/goxmeans/blob/master/doc/BIC_notes.pdf
+
+    # n is the number of points, d is the dimension of each point
+    n, d = mds_points.shape
+
+    # Cluster count and size
+    cl_size = np.bincount(kmeans.labels_)
+    k = len(cl_size)
+    # Square of the Euclidean distance of each point from its cluster center
+    squared_distances = np.array([np.power(point - kmeans.cluster_centers_[lbl], 2).sum() for point, lbl in zip(mds_points, kmeans.labels_)])
+    # Maximum likelihood estimate of variance
+    variance = squared_distances.sum() / (n - k)
+
+    model_invariant_term = 0.5 * k * np.log(n) * (d + 1)
+    log_likelihood = (np.sum([cl_size[i] * np.log(cl_size[i]) for i in range(k)]) -
+                        n * np.log(n) -
+                        ((n * d) / 2) * np.log(2 * np.pi * variance) -
+                        ((n - k) * d / 2))
+    bic = -(log_likelihood - model_invariant_term)
+    return bic
+
+def compute_kmeans_clusters(mds_points: np.array, return_plots: bool = False):
     output = dict()
     num_plans = mds_points.shape[0]
 
-    # Compute score, predictions, and cluster centers iterating through values of k
-    for k in range(2, math.ceil(2 * math.sqrt(num_plans))):
+    # Compute score, BIC, predictions, and cluster centers iterating through values of k
+    for k in range(2, int(np.sqrt(num_plans)) + 1):
         kmeans = sklearn.cluster.KMeans(n_clusters=k, n_init="auto", random_state=0)
         predictions = kmeans.fit_predict(mds_points)
         score = -1 * kmeans.score(mds_points)
-        output[k] = {"score": score, "predictions": predictions.tolist(), "cluster_centers": kmeans.cluster_centers_.tolist()}
+        bic = bayesian_information_criterion(kmeans, mds_points)
+        output[k] = {"score": score, "bic": bic, "predictions": predictions.tolist(), "cluster_centers": kmeans.cluster_centers_.tolist()}
     
-    # Generate elbow plot if requested
-    if return_elbow_plot:
-        plot_x = list(output.keys())
-        plot_y = [c["score"] for c in output.values()]
-        fig, ax = plt.subplots(figsize=(5,5))
-        ax.plot(plot_x, plot_y)
-        ax.scatter(plot_x, plot_y)
-        return (output, fig)
+    # Generate plots if requested
+    if return_plots:
+        score_plot_x = list(output.keys())
+        score_plot_y = [c["score"] for c in output.values()]
+        score_fig, score_ax = plt.subplots(figsize=(5,5))
+        score_ax.plot(score_plot_x, score_plot_y)
+        score_ax.scatter(score_plot_x, score_plot_y)
+
+        bic_plot_x = list(output.keys())
+        bic_plot_y = [c["bic"] for c in output.values()]
+        bic_fig, bic_ax = plt.subplots(figsize=(5,5))
+        bic_ax.plot(bic_plot_x, bic_plot_y)
+        bic_ax.scatter(bic_plot_x, bic_plot_y)
+        
+        return (output, score_fig, bic_fig)
     
     return output
 
