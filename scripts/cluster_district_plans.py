@@ -148,15 +148,14 @@ def preproc_hamming_distance(graph: Graph, assign_dicts: list):
     nodes = graph.nodes()
     num_districts = len(set(assign_dicts[0].values()))
     num_plans = len(assign_dicts)
-    
-    hamming_bit_map = list()
-    for i in range(num_plans):
-        plan_bit_map = list()
-        for dist_num in range(1, num_districts + 1): # District indices are 1-indexed
-            district_bit_map = [(assign_dicts[i][n] == dist_num) for n in nodes]
-            plan_bit_map.append(district_bit_map)
-        hamming_bit_map.append(plan_bit_map)
-    return np.array(hamming_bit_map, dtype=int)
+    num_precs = len(nodes)
+
+    hamming_bit_map = np.zeros((num_plans, num_districts, num_precs), dtype=bool)
+    for plan_num in range(num_plans):
+        for prec_index, prec_id in enumerate(nodes):
+            dist_num = assign_dicts[plan_num][prec_id] - 1 # District indices are 1-indexed
+            hamming_bit_map[plan_num, dist_num, prec_index] = True
+    return hamming_bit_map
 
 def calculate_hamming_distance(args):
     # Parse args
@@ -164,7 +163,8 @@ def calculate_hamming_distance(args):
 
     # Find Hamming distance between district_i in plan_1 and district_j in plan_2 for all i, j
     # This is equal to the number of precincts such that (p in district_i) and (p not in district_j) or vice versa
-    diff_matrix = np.matmul(plan_data[index_1], (1 - plan_data[index_2]).T) + np.matmul((1 - plan_data[index_1]), plan_data[index_2].T)
+    diff_matrix = (np.matmul(plan_data[index_1], (1 - plan_data[index_2]).T, dtype=np.int16) +
+                    np.matmul((1 - plan_data[index_1]), plan_data[index_2].T, dtype=np.int16))
 
     # Find mapping between districts in plan_1 and districts in plan_2 that minimizes total distance
     opt_assign_indices = scipy.optimize.linear_sum_assignment(diff_matrix)
