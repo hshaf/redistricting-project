@@ -5,6 +5,7 @@ import { AppStateActionType, AppStateContext, AppStateDispatch } from "../contex
 import { DataPaneTabs } from "./DataPane";
 import { AppDataContext } from "../context/AppDataContext";
 import { AppDataDispatch } from "../context/AppDataContext";
+import { FaEye } from 'react-icons/fa';
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
@@ -85,6 +86,18 @@ export default function EnsembleOverview(props) {
   }
 
   /**
+   * Update the ID of the generated plan boundary to be displayed on the map.
+   * 
+   * @param {String}  boundaryId   ID of selected boundary.
+   */
+  let setDisplayedBoundary = (boundaryId) => {
+    appStateDispatch({
+      type: AppStateActionType.SET_DISPLAYED_BOUNDARY,
+      payload: boundaryId
+    })
+  }
+
+  /**
    * Populate cluster scatterplot with dot.
    * 
    * @param {object}    input  Cluster data.
@@ -120,6 +133,7 @@ export default function EnsembleOverview(props) {
   clusterData = clusters.map((cluster, idx) => {
     return {
       "INDEX": idx,
+      "BOUNDARY": cluster["boundary"],
       "DISTRICT_PLAN_COUNT": cluster["districtPlanCount"],
       "CLUSTER_CENTER_X": cluster["clusterCenter"][0],
       "CLUSTER_CENTER_Y": cluster["clusterCenter"][1],
@@ -177,17 +191,34 @@ export default function EnsembleOverview(props) {
     }
   }
 
+  const linkVisualizeButton = (data, row) => {
+    // Disable button if boundary set to null
+    const boundaryId = clusterData[row.INDEX]["BOUNDARY"];
+    const disableBtn = (boundaryId) ? false : true;
+
+    return (
+      <Button
+        onClick={() => setDisplayedBoundary(boundaryId)}
+        disabled={disableBtn}
+      >
+        <FaEye />
+      </Button>
+    );
+  }
+
   // Columns for the cluster table
   const columnsOneVar = [ // Used when the same variable is selected for both axes
     { dataField: "INDEX", text: "Cluster ID", formatter: clusterIdxFormatter },
     { dataField: "DISTRICT_PLAN_COUNT", text: "# of District Plans" },
-    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter }
+    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter },
+    { dataField: "visualize_button", text: "Show Boundary", formatter: linkVisualizeButton }
   ];
   const columnsTwoVars = [
     { dataField: "INDEX", text: "Cluster ID", formatter: clusterIdxFormatter },
     { dataField: "DISTRICT_PLAN_COUNT", text: "# of District Plans" },
     { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter },
-    { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPrecisionFormatter }
+    { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPrecisionFormatter },
+    { dataField: "visualize_button", text: "Show Boundary", formatter: linkVisualizeButton }
   ];
   const columns = (state.xAxisVar === state.yAxisVar) ? columnsOneVar : columnsTwoVars
 

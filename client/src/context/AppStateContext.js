@@ -27,7 +27,10 @@ const initialAppState = {
   selectedClusterID: null,
   /* Track index of currently selected district plan.
   If no district plan is chosen, then value is "" */
-  selectedDistrictPlanID: null
+  selectedDistrictPlanID: null,
+  /* ID of the generated plan boundary to be displayed on the map.
+  Set to null if no generated cluster or district plan boundary is selected. */
+  displayedBoundary: null
 }
 
 /* Actions take on the following format:
@@ -41,7 +44,8 @@ export const AppStateActionType = {
   SET_SELECTED_STATE: "SET_SELECTED_STATE",
   SET_SELECTED_ENSEMBLE: "SET_SELECTED_ENSEMBLE",
   SET_SELECTED_CLUSTER: "SET_SELECTED_CLUSTER",
-  SET_SELECTED_DISTRICT_PLAN: "SET_SELECTED_DISTRICT_PLAN"
+  SET_SELECTED_DISTRICT_PLAN: "SET_SELECTED_DISTRICT_PLAN",
+  SET_DISPLAYED_BOUNDARY: "SET_DISPLAYED_BOUNDARY"
 }
 
 function appStateReducer(appState, action) {
@@ -52,7 +56,8 @@ function appStateReducer(appState, action) {
         selectedState: action.payload,
         selectedEnsembleID: null,
         selectedClusterID: null,
-        selectedDistrictPlanID: null
+        selectedDistrictPlanID: null,
+        displayedBoundary: null
       }
     }
     case AppStateActionType.SET_SELECTED_ENSEMBLE: {
@@ -60,7 +65,8 @@ function appStateReducer(appState, action) {
         ...appState,
         selectedEnsembleID: action.payload,
         selectedClusterID: null,
-        selectedDistrictPlanID: null
+        selectedDistrictPlanID: null,
+        displayedBoundary: null
       }
     }
     case AppStateActionType.SET_SELECTED_CLUSTER: {
@@ -74,6 +80,12 @@ function appStateReducer(appState, action) {
       return {
         ...appState,
         selectedDistrictPlanID: action.payload
+      }
+    }
+    case AppStateActionType.SET_DISPLAYED_BOUNDARY: {
+      return {
+        ...appState,
+        displayedBoundary: action.payload
       }
     }
     default: {

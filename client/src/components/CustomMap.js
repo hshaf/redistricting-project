@@ -34,7 +34,7 @@ export default function CustomMap(props) {
     // Retrieve state boundary and current district plan map
     let stateBoundaries = appData.stateBoundaries.get(stateInitials);
     if (appState.selectedState === stateInitials) {
-      if (boundary === null) {
+      if (appState.displayedBoundary === null) {
         stateBoundaries = appData.currDistrictPlans.get(stateInitials);
       }
       else {
@@ -70,13 +70,13 @@ export default function CustomMap(props) {
     }
   }
   useEffect(() => {
-    if (appState.selectedClusterID !== null) {
-      getBoundary(appData.selectedEnsembleClusters[appState.selectedClusterID]["boundary"]);
+    if (appState.displayedBoundary !== null) {
+      getBoundary(appState.displayedBoundary);
     }
     else {
       setBoundary(null);
     }
-  }, [appData.selectedEnsembleClusters, appState.selectedClusterID]);
+  }, [appState.displayedBoundary]);
 
   // Render CustomMap
   return (

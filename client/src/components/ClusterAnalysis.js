@@ -1,8 +1,9 @@
-import { Container, Nav, NavDropdown, Navbar, Table } from "react-bootstrap";
+import { Button, Container, Nav, NavDropdown, Navbar, Table } from "react-bootstrap";
 import { useContext, useState } from "react";
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Dot } from 'recharts';
-import { AppStateContext } from "../context/AppStateContext";
+import { AppStateActionType, AppStateContext, AppStateDispatch } from "../context/AppStateContext";
 import { AppDataContext } from "../context/AppDataContext";
+import { FaEye } from 'react-icons/fa';
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
@@ -24,6 +25,8 @@ const axisLabels = {
 export default function ClusterAnalysis(props) {
   // Context
   const appState = useContext(AppStateContext);
+  const appStateDispatch = useContext(AppStateDispatch);
+
   const appData = useContext(AppDataContext);
 
   let selectedEnsemble = null;
@@ -70,6 +73,22 @@ export default function ClusterAnalysis(props) {
   }
 
   /**
+   * Update the ID of the generated plan boundary to be displayed on the map.
+   * 
+   * @param {String}  boundaryId   ID of selected boundary.
+   */
+  let setDisplayedBoundary = (boundaryId) => {
+    if (boundaryId === null) {
+      return;
+    }
+
+    appStateDispatch({
+      type: AppStateActionType.SET_DISPLAYED_BOUNDARY,
+      payload: boundaryId
+    })
+  }
+
+  /**
    * Populate district plan scatterplot with dot.
    * 
    * @param {object}    input  District plan data.
@@ -87,7 +106,7 @@ export default function ClusterAnalysis(props) {
         stroke="black"
         strokeWidth={1}
         fill={dotColor}
-        onClick={() => setSelectedPlan(dotKey)}
+        onClick={() => setDisplayedBoundary(input.payload["BOUNDARY"])}
         />
     );
   }
@@ -170,15 +189,32 @@ export default function ClusterAnalysis(props) {
     }
   }
 
+  const linkVisualizeButton = (data, row) => {
+    // Disable button if boundary set to null
+    const boundaryId = districtPlanData[row.INDEX]["BOUNDARY"];
+    const disableBtn = (boundaryId) ? false : true;
+
+    return (
+      <Button
+        onClick={() => setDisplayedBoundary(boundaryId)}
+        disabled={disableBtn}
+      >
+        <FaEye />
+      </Button>
+    );
+  }
+
   // Columns for district plan table
   const columnsOneVar = [ // Used when the same variable is selected for both axes
     { dataField: "INDEX", text: "District Plan ID", formatter: districtPlanIdxFormatter },
-    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter }
+    { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter },
+    { dataField: "visualize_button", text: "Show Boundary", formatter: linkVisualizeButton }
   ];
   const columnsTwoVars = [
     { dataField: "INDEX", text: "District Plan ID", formatter: districtPlanIdxFormatter },
     { dataField: state.xAxisVar, text: axisLabels[state.xAxisVar], formatter: dataPrecisionFormatter },
-    { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPrecisionFormatter }
+    { dataField: state.yAxisVar, text: axisLabels[state.yAxisVar], formatter: dataPrecisionFormatter },
+    { dataField: "visualize_button", text: "Show Boundary", formatter: linkVisualizeButton }
   ];
   const columns = (state.xAxisVar === state.yAxisVar) ? columnsOneVar : columnsTwoVars
 
