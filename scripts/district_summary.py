@@ -20,7 +20,9 @@ def main():
     state = sys.argv[3].upper()
     ensemble_name = sys.argv[4]
     distance_metric = sys.argv[5]
-    num_clusters = int(sys.argv[6])
+    num_clusters = None
+    if len(sys.argv) > 6:
+        num_clusters = int(sys.argv[6])
 
     try:
         import pyogrio
@@ -145,18 +147,27 @@ def district_summary_data(precinct_df: geopandas.GeoDataFrame, district_plan_fil
     
     return district_plan_data
 
-def cluster_summary_data(district_plan_data: list, ensemble_dir_path: str, distance_metric: str, num_clusters: int):
+def cluster_summary_data(district_plan_data: list, ensemble_dir_path: str, distance_metric: str, num_clusters: int = None):
     with open(os.path.join(ensemble_dir_path, f"clusters_{distance_metric}.json"), mode='r', encoding='utf-8') as f:
         cluster_grouping_data = json.load(f)
+
+    # Select predictions based on selected cluster count
+    # Select cluster count based on lowest BIC if not specified
+    if num_clusters is None:
+        min_bic_k = None
+        for key, grouping_data_entry in cluster_grouping_data.items():
+            if (min_bic_k is None) or (grouping_data_entry["bic"] < cluster_grouping_data[str(min_bic_k)]["bic"]):
+                min_bic_k = int(key)
+        num_clusters = min_bic_k
     cluster_grouping = cluster_grouping_data[str(num_clusters)]
 
     # Create cluster entries, fill in cluster center data
     cluster_data = list()
-    for i, coords in enumerate(cluster_grouping["cluster_centers"]):
+    for i, center_coords in enumerate(cluster_grouping["cluster_centers"]):
         cluster_entry = {
             "districtPlanCount": 0,
             "districtPlanIds": [],
-            "clusterCenter": coords,
+            "clusterCenter": center_coords,
             "avgDemocraticDistricts": 0,
             "avgRepublicanDistricts": 0,
             "minDemocraticDistricts": float("inf"),
