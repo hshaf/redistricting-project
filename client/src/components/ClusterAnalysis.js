@@ -6,8 +6,8 @@ import { AppDataContext } from "../context/AppDataContext";
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
-const mapPresentDotColor = "#dd6efd";
-const districtDotColor = "#0d6efd";
+const mapAvailableDotColor = "#0d6efd";
+const mapUnavailableDotColor = "#9b989c";
 const axisLabels = {
   "MDS_X": "MDS X-Coordinate",
   "MDS_Y": "MDS Y-Coordinate",
@@ -78,7 +78,7 @@ export default function ClusterAnalysis(props) {
     const cx = input.cx;
     const cy = input.cy;
     const dotKey = input.payload["INDEX"];
-    const dotColor = (input.payload["BOUNDARY"]) ? mapPresentDotColor : districtDotColor
+    const dotColor = (input.payload["BOUNDARY"]) ? mapAvailableDotColor : mapUnavailableDotColor
     return (
       <Dot
         cx={cx} cy={cy}
@@ -230,7 +230,8 @@ export default function ClusterAnalysis(props) {
             name={axisLabels[state.yAxisVar]}
             label={{ value: axisLabels[state.yAxisVar], offset: -2, angle: -90, position: 'insideBottomLeft' }} />
           <Legend />
-          <Scatter name="District Plans" fill={districtDotColor} data={districtPlanData} shape={renderScatterplotDot} />
+          <Scatter name="District Plans (map available)" fill={mapAvailableDotColor} data={districtPlanData} shape={renderScatterplotDot} />
+          <Scatter name="District Plans (map unavailable)" fill={mapUnavailableDotColor} data={[]} shape={renderScatterplotDot} />
         </ScatterChart>
       </ResponsiveContainer>
       <h4>
