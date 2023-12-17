@@ -17,7 +17,8 @@ const axisLabels = {
   "MAJ_ASIAN": "Maj.-Asian Districts",
   "MAJ_PACIFIC": "Maj.-Pacific Islander Districts",
   "MAJ_HISPANIC": "Maj.-Hispanic Districts",
-  "PARTISAN_LEAN": "Partisan Lean"
+  "DEM_DISTRICTS": "Democratic Districts",
+  "REP_DISTRICTS": "Republican Districts"
 };
 
 export default function ClusterAnalysis(props) {
@@ -119,7 +120,8 @@ export default function ClusterAnalysis(props) {
       "MAJ_ASIAN": planEntry["majMinDistricts"]["majAsian"],
       "MAJ_PACIFIC": planEntry["majMinDistricts"]["majPacific"],
       "MAJ_HISPANIC": planEntry["majMinDistricts"]["majHispanic"],
-      "PARTISAN_LEAN": planEntry["partisanLean"]
+      "DEM_DISTRICTS": planEntry["numDemocraticDistricts"],
+      "REP_DISTRICTS": planEntry["numRepublicanDistricts"]
     }
   });
 
@@ -142,7 +144,7 @@ export default function ClusterAnalysis(props) {
   const clusterName = "Cluster #" + (Number(appState.selectedClusterID) + 1) + " Overview";
   const clusterNumMaps = selectedCluster["districtPlanCount"];
   const clusterMajMin = selectedCluster["avgMajMinDistricts"]["totalMajMin"].toFixed(3);
-  const clusterPartisanLean = selectedCluster["avgPartisanLean"].toFixed(3);
+  const clusterPartySplit = `${selectedCluster["avgDemocraticDistricts"].toFixed(3)}D \u2013 ${selectedCluster["avgRepublicanDistricts"].toFixed(3)}R`
 
   // Pagination options
   const paginationOptions = {
@@ -247,8 +249,8 @@ export default function ClusterAnalysis(props) {
             <td>{clusterMajMin}</td>
           </tr>
           <tr>
-            <td>Mean Partisan Lean</td>
-            <td>{clusterPartisanLean}</td>
+            <td>Avg. Party Split</td>
+            <td>{clusterPartySplit}</td>
           </tr>
         </tbody>
       </Table>
