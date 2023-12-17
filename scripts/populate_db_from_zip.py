@@ -20,7 +20,7 @@ def main():
         ("redistricting.state.json", "state"),
         ("redistricting.ensemble.json", "ensemble"),
         ("redistricting.cluster.json", "cluster"),
-        ("redistricting.district_plan.json", "districtPlan"),
+        ("redistricting.districtPlan.json", "districtPlan"),
         ("redistricting.boundary.json", "boundary")
     ]
     archive = zipfile.ZipFile(file=file_path, mode="r")
