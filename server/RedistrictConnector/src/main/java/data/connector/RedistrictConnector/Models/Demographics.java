@@ -13,6 +13,8 @@ public class Demographics {
     private Double percentPacific;
     
     private Double percentHispanic;
+
+    private Double percentTwoOrMore;
     
     public Double getPercentWhite(){
         return this.percentWhite;
@@ -38,6 +40,9 @@ public class Demographics {
         return this.percentHispanic;
     }
 
+    public Double getPercentTwoOrMore(){
+        return this.percentTwoOrMore;
+    }
    
 }
 
