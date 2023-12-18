@@ -43,7 +43,7 @@ def main():
                 "currDistrictPlanBoundary": "../data/state_boundaries/az-districts.json",
                 "mapCenter": [34.35920229576733, -111.82765189051278],
                 "mapZoom": 7,
-                "ensembleClusterAssociation": [],
+                "ensembleClusterAssociation": "../data/ensembles/az_ensemble_2/eca_hamming.json",
                 "ensembleIds": []
             },
             {
@@ -54,7 +54,7 @@ def main():
                 "currDistrictPlanBoundary": "../data/state_boundaries/va-districts.json",
                 "mapCenter": [37.47812615585515, -78.88801623378961],
                 "mapZoom": 7,
-                "ensembleClusterAssociation": [],
+                "ensembleClusterAssociation": "../data/ensembles/va_ensemble_2/eca_hamming.json",
                 "ensembleIds": []
             },
             {
@@ -65,10 +65,11 @@ def main():
                 "currDistrictPlanBoundary": "../data/state_boundaries/wi-districts.json",
                 "mapCenter": [44.61389658316453, -89.67045816895208],
                 "mapZoom": 7,
-                "ensembleClusterAssociation": [],
+                "ensembleClusterAssociation": "../data/ensembles/wi_ensemble_2/eca_hamming.json",
                 "ensembleIds": []
             }
         ]
+        print("Initializing state data")
         db_setup(state_data)
 
     # Get district plan and cluster data
@@ -221,21 +222,30 @@ def cluster_summary_data(district_plan_data: list, ensemble_dir_path: str, dista
     centermost_plans = list()
     for i in range(num_clusters):
         cluster_center = cluster_data[i]["clusterCenter"]
-        closest_district_index = cluster_data[i]["districtPlanIds"][0]
+        closest_plan_index = cluster_data[i]["districtPlanIds"][0]
         for j in range(1, cluster_data[i]["districtPlanCount"]):
-            curr_district_index = cluster_data[i]["districtPlanIds"][j]
-            closest_district_coords = district_plan_data[closest_district_index]["mdsCoords"]
-            curr_district_coords = district_plan_data[curr_district_index]["mdsCoords"]
-            closest_district_dist = ((cluster_center[0] - closest_district_coords[0])**2 + (cluster_center[1] - closest_district_coords[1])**2)**0.5
-            curr_district_dist = ((cluster_center[0] - curr_district_coords[0])**2 + (cluster_center[1] - curr_district_coords[1])**2)**0.5
-            if curr_district_dist < closest_district_dist:
-                closest_district_index = curr_district_index
-        centermost_plans.append(closest_district_index)
+            curr_plan_index = cluster_data[i]["districtPlanIds"][j]
+            closest_plan_coords = district_plan_data[closest_plan_index]["mdsCoords"]
+            curr_plan_coords = district_plan_data[curr_plan_index]["mdsCoords"]
+            closest_plan_dist = ((cluster_center[0] - closest_plan_coords[0])**2 + (cluster_center[1] - closest_plan_coords[1])**2)**0.5
+            curr_plan_dist = ((cluster_center[0] - curr_plan_coords[0])**2 + (cluster_center[1] - curr_plan_coords[1])**2)**0.5
+            if curr_plan_dist < closest_plan_dist:
+                closest_plan_index = curr_plan_index
+        centermost_plans.append(closest_plan_index)
 
     # Identify other "interesting" district plans to be rendered
-    # TODO
     plans_to_render = list()
     plans_to_render.extend(centermost_plans)
+    for i in range(num_clusters):
+        # Find a candidate district plan which has the most 
+        # Democratic districts, Republican districts, majority-minority districts
+        max_dem_candidate = max(cluster_data[i]["districtPlanIds"], key=(lambda x : district_plan_data[x]["numDemocraticDistricts"]))
+        max_rep_candidate = max(cluster_data[i]["districtPlanIds"], key=(lambda x : district_plan_data[x]["numRepublicanDistricts"]))
+        max_maj_min_candidate = max(cluster_data[i]["districtPlanIds"], key=(lambda x : district_plan_data[x]["majMinDistricts"]["totalMajMin"]))
+
+        plans_to_render.append(max_dem_candidate)
+        plans_to_render.append(max_rep_candidate)
+        plans_to_render.append(max_maj_min_candidate)
     plans_to_render = list(set(plans_to_render))
 
     return cluster_data, cluster_grouping["predictions"], centermost_plans, plans_to_render
@@ -244,13 +254,19 @@ def db_setup(state_data):
     for state_obj in state_data:
         # Insert state and current district boundaries and get DB IDs
         with open(state_obj["stateBoundary"], mode="r", encoding="utf-8") as f:
+            # Uncomment to load boundary as raw GeoJSON object instead of JSON string
             #state_boundary = json.load(f)
             state_boundary = f.read()
         state_obj["stateBoundary"] = db.boundary.insert_one({"category": "state_boundary", "data": state_boundary}).inserted_id
         with open(state_obj["currDistrictPlanBoundary"], mode="r", encoding="utf-8") as f:
+            # Uncomment to load boundary as raw GeoJSON object instead of JSON string
             #state_boundary = json.load(f)
             state_boundary = f.read()
         state_obj["currDistrictPlanBoundary"] = db.boundary.insert_one({"category": "curr_district_plan", "data": state_boundary}).inserted_id
+
+        # Load ensemble size vs cluster count association data
+        with open(state_obj["ensembleClusterAssociation"], mode="r", encoding="utf-8") as f:
+            state_obj["ensembleClusterAssociation"] = json.load(f)
 
         # Insert state object
         db.state.insert_one(state_obj)
@@ -302,7 +318,7 @@ def save_clusters(cluster_data: list, centermost_plans: list, district_plan_db_i
     return cluster_db_ids
 
 def save_ensemble(ensemble_dir_path: str, state: str, name: str, cluster_db_ids: list, num_district_plans: int):
-    # Determine average value for each distance measure
+    # Determine (normalized) average value for each distance measure
     distance_measures = ["optimal_transport", "hamming", "entropy"]
     distance_measure_keys = [(dm.split("_", maxsplit=1)[0] + "".join([w.capitalize() for w in dm.split("_")[1:]])) for dm in distance_measures]
     distances_dict = dict([(d, None) for d in distance_measure_keys])
@@ -310,7 +326,8 @@ def save_ensemble(ensemble_dir_path: str, state: str, name: str, cluster_db_ids:
         if os.path.isfile(os.path.join(ensemble_dir_path, f"distance_{dm}.txt")):
             with open(os.path.join(ensemble_dir_path, f"distance_{dm}.txt"), encoding="utf-8") as distance_file:
                 distances = np.loadtxt(distance_file, delimiter=",")
-                distances_dict[dk] = distances.mean()
+                max_distance = distances.max()
+                distances_dict[dk] = distances.mean() / max_distance
 
     # Save ensemble to database and record the database ID
     ensemble_obj = {

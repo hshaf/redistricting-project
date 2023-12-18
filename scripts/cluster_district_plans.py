@@ -29,6 +29,7 @@ def main():
     distance_metric_options = ["optimal_transport", "hamming", "entropy"]
     parser.add_argument("--distance-metric", default=None, required=True, choices=distance_metric_options, help="distance metric to be used")
     parser.add_argument("--cluster-output", default=False, action="store_true", help="indicates that cluster data should be created and outputted to files")
+    parser.add_argument("--eca-output", default=None, metavar="SIZE_LIST", help="the sizes to use for the ensemble size vs cluster count graph")
     parser.add_argument("--num-procs", default=None, type=int, help="indicates the number of processing to use in worker pool, defaults to number of CPU cores if not specified")
 
     args = vars(parser.parse_args())
@@ -99,6 +100,31 @@ def main():
             json.dump(cluster_groupings, cluster_output_file)
         k_score_plot.savefig(k_score_file_path)
         k_bic_plot.savefig(k_bic_file_path)
+
+    # Determine relationship between ensemble size and cluster count
+    if args["eca_output"]:
+        # Load distances matrix from file
+        distance_file_path = os.path.join(plan_dir, f"distance_{args['distance_metric']}.txt")
+        if os.path.isfile(distance_file_path):
+            distance_matrix = np.loadtxt(distance_file_path, delimiter=",")
+        else:
+            print("--eca_output flag was given, but no distance file exists")
+            exit(-1)
+
+        # Load MDS points for full distance matrix if available
+        mds_file_path = os.path.join(plan_dir, f"mds_points_{args['distance_metric']}.txt")
+        full_mds_points = None
+        if os.path.isfile(mds_file_path):
+            full_mds_points = np.loadtxt(mds_file_path, delimiter=",")
+        
+        # Calculate ensemble size vs cluster count association and save to file
+        size_list = [int(n) for n in args["eca_output"].split(",")]
+        cluster_size_data = ensemble_cluster_assoc_graph(distance_matrix=distance_matrix, 
+                                                            sizes=size_list, 
+                                                            full_mds_points=full_mds_points)
+        eca_file_path = os.path.join(plan_dir, f"eca_{args['distance_metric']}.json")
+        with open(eca_file_path, mode="w", encoding="utf-8") as eca_output_file:
+            json.dump(cluster_size_data, eca_output_file)
 
 def load_graph(prec_data_path: str, prec_adj_path: str):
     precinct_df = geopandas.read_file(prec_data_path)
@@ -300,7 +326,7 @@ def compute_kmeans_clusters(mds_points: np.array, return_plots: bool = False):
     num_plans = mds_points.shape[0]
 
     # Compute score, BIC, predictions, and cluster centers iterating through values of k
-    for k in range(2, int(np.sqrt(num_plans)) + 1):
+    for k in range(2, max(int(np.sqrt(num_plans)) + 1, 3)):
         kmeans = sklearn.cluster.KMeans(n_clusters=k, n_init="auto", random_state=0)
         predictions = kmeans.fit_predict(mds_points)
         score = -1 * kmeans.score(mds_points)
@@ -324,6 +350,25 @@ def compute_kmeans_clusters(mds_points: np.array, return_plots: bool = False):
         return (output, score_fig, bic_fig)
     
     return output
+
+def ensemble_cluster_assoc_graph(distance_matrix: np.array, sizes: list, full_mds_points: np.array = None):
+    cluster_count_list = list()
+    for s in sizes:
+        # Use pre-computed MDS points for full distance matrix if available
+        # and s equals the full size of the directory
+        if s == distance_matrix.shape[0] and full_mds_points is not None:
+            mds_points = full_mds_points
+        else:
+            mds_points = compute_mds_points(distance_matrix[0:s, 0:s])
+        # Compute BIC iterating through values of k
+        bic_scores = dict()
+        for k in range(2, int(np.sqrt(s)) + 1):
+            kmeans = sklearn.cluster.KMeans(n_clusters=k, n_init="auto", random_state=0).fit(mds_points)
+            bic = bayesian_information_criterion(kmeans, mds_points)
+            bic_scores[k] = bic
+        min_bic_k = min(bic_scores.keys(), key=lambda k : bic_scores[k])
+        cluster_count_list.append(min_bic_k)
+    return list(zip(sizes, cluster_count_list))
 
 if __name__ == "__main__":
     main()
