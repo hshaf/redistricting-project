@@ -24,6 +24,7 @@ public class Cluster {
 
     private List<String> districtPlanIds;
 
+    private Distances avgDistances;
     
     private AverageMajorities avgMajMinDistricts;
     private String boundary;
@@ -43,6 +44,10 @@ public class Cluster {
 
     public AverageMajorities getAvgMajMinDistricts(){
         return this.avgMajMinDistricts;
+    }
+
+    public Distances getAvgDistances(){
+        return this.avgDistances;
     }
 
     public Integer getMaxRepublicanDistricts(){
