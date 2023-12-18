@@ -22,6 +22,8 @@ public class State {
     private Double percentDemocraticVoters;
     private Demographics demographics;
 
+    private Distances distanceCorrCoeffs;
+
     public State() {}
 
     public State(String initials, String name, String districtType, List<String> ensembleIds) {
@@ -45,6 +47,9 @@ public class State {
         return this.percentRepublicanVoters;
     }
 
+    public Distances getDistanceCorrCoeffs(){
+        return this.distanceCorrCoeffs;
+    }
     public Double getPercentDemocraticVoters(){
         return this.percentDemocraticVoters;
     }
