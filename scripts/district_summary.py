@@ -43,8 +43,10 @@ def main():
                 "currDistrictPlanBoundary": "../data/state_boundaries/az-districts.json",
                 "mapCenter": [34.35920229576733, -111.82765189051278],
                 "mapZoom": 7,
+                "demographics": dict(),
                 "ensembleClusterAssociation": "../data/ensembles/az_ensemble_2/eca_hamming.json",
-                "ensembleIds": []
+                "ensembleIds": [],
+                "precinctDataFile": "../data/az_precinct_data.json"
             },
             {
                 "_id": "VA",
@@ -54,8 +56,10 @@ def main():
                 "currDistrictPlanBoundary": "../data/state_boundaries/va-districts.json",
                 "mapCenter": [37.47812615585515, -78.88801623378961],
                 "mapZoom": 7,
+                "demographics": dict(),
                 "ensembleClusterAssociation": "../data/ensembles/va_ensemble_2/eca_hamming.json",
-                "ensembleIds": []
+                "ensembleIds": [],
+                "precinctDataFile": "../data/va_precinct_data.json"
             },
             {
                 "_id": "WI",
@@ -65,8 +69,10 @@ def main():
                 "currDistrictPlanBoundary": "../data/state_boundaries/wi-districts.json",
                 "mapCenter": [44.61389658316453, -89.67045816895208],
                 "mapZoom": 7,
+                "demographics": dict(),
                 "ensembleClusterAssociation": "../data/ensembles/wi_ensemble_2/eca_hamming.json",
-                "ensembleIds": []
+                "ensembleIds": [],
+                "precinctDataFile": "../data/wi_precinct_data.json"
             }
         ]
         print("Initializing state data")
@@ -267,6 +273,34 @@ def db_setup(state_data):
         # Load ensemble size vs cluster count association data
         with open(state_obj["ensembleClusterAssociation"], mode="r", encoding="utf-8") as f:
             state_obj["ensembleClusterAssociation"] = json.load(f)
+
+        # Generate state-wide statistics
+        precinct_file_path = state_obj["precinctDataFile"]
+        del state_obj["precinctDataFile"]
+        precinct_df = geopandas.read_file(precinct_file_path).set_index("vtd_geo_id")
+
+        pop_total = precinct_df["pop_total"].sum()
+        dem_voters = precinct_df["vote_dem"].sum()
+        rep_voters = precinct_df["vote_rep"].sum()
+        pct_dem = dem_voters / (dem_voters + rep_voters)
+        pct_rep = rep_voters / (dem_voters + rep_voters)
+        pct_white = precinct_df["pop_white"].sum() / pop_total
+        pct_black = precinct_df["pop_black"].sum() / pop_total
+        pct_asian = precinct_df["pop_asian"].sum() / pop_total
+        pct_native = precinct_df["pop_native"].sum() / pop_total
+        pct_pacific = precinct_df["pop_pacific"].sum() / pop_total
+        pct_two_or_more = precinct_df["pop_two_or_more"].sum() / pop_total
+        pct_hispanic = precinct_df["pop_hispanic"].sum() / pop_total
+
+        state_obj["percentDemocraticVoters"] = pct_dem
+        state_obj["percentRepublicanVoters"] = pct_rep
+        state_obj["demographics"]["percentWhite"] = pct_white
+        state_obj["demographics"]["percentBlack"] = pct_black
+        state_obj["demographics"]["percentAsian"] = pct_asian
+        state_obj["demographics"]["percentNative"] = pct_native
+        state_obj["demographics"]["percentPacific"] = pct_pacific
+        state_obj["demographics"]["percentTwoOrMore"] = pct_two_or_more
+        state_obj["demographics"]["percentHispanic"] = pct_hispanic
 
         # Insert state object
         db.state.insert_one(state_obj)
