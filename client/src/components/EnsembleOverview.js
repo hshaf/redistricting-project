@@ -1,5 +1,5 @@
 import { Button, Container, Nav, NavDropdown, Navbar, Table } from "react-bootstrap";
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Dot } from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Dot, Tooltip } from 'recharts';
 import { useContext, useState } from "react";
 import { AppStateActionType, AppStateContext, AppStateDispatch } from "../context/AppStateContext";
 import { DataPaneTabs } from "./DataPane";
@@ -222,6 +222,19 @@ export default function EnsembleOverview(props) {
   ];
   const columns = (state.xAxisVar === state.yAxisVar) ? columnsOneVar : columnsTwoVars
 
+  // Custom tooltip for cluster scatter plot
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip">
+          <p style={{ padding: 8 }} className="label">{`Cluster ID : ${(payload[0].payload.INDEX + 1)}`}</p>
+        </div>
+      );
+    }
+  
+    return null;
+  };
+
   // Render EnsembleOverview
   return (
     <Container style={{ height: '80vh' }}>
@@ -268,6 +281,7 @@ export default function EnsembleOverview(props) {
             dataKey={state.yAxisVar}
             name={axisLabels[state.yAxisVar]}
             label={{ value: axisLabels[state.yAxisVar], offset: -2, angle: -90, position: 'insideBottomLeft' }} />
+          <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Scatter name="Clusters" data={clusterData} fill={clusterDotColor} shape={renderScatterplotDot} />
         </ScatterChart>
