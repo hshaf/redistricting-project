@@ -44,9 +44,11 @@ def main():
                 "mapCenter": [34.35920229576733, -111.82765189051278],
                 "mapZoom": 7,
                 "demographics": dict(),
+                "distCorrCoeffs": dict(),
                 "ensembleClusterAssociation": "../data/ensembles/az_ensemble_2/eca_hamming.json",
                 "ensembleIds": [],
-                "precinctDataFile": "../data/az_precinct_data.json"
+                "precinctDataFile": "../data/az_precinct_data.json",
+                "distCorrCoeffsDir": "../data/ensembles/az_ensemble_1/"
             },
             {
                 "_id": "VA",
@@ -57,9 +59,11 @@ def main():
                 "mapCenter": [37.47812615585515, -78.88801623378961],
                 "mapZoom": 7,
                 "demographics": dict(),
+                "distCorrCoeffs": dict(),
                 "ensembleClusterAssociation": "../data/ensembles/va_ensemble_2/eca_hamming.json",
                 "ensembleIds": [],
-                "precinctDataFile": "../data/va_precinct_data.json"
+                "precinctDataFile": "../data/va_precinct_data.json",
+                "distCorrCoeffsDir": None
             },
             {
                 "_id": "WI",
@@ -70,9 +74,11 @@ def main():
                 "mapCenter": [44.61389658316453, -89.67045816895208],
                 "mapZoom": 7,
                 "demographics": dict(),
+                "distCorrCoeffs": dict(),
                 "ensembleClusterAssociation": "../data/ensembles/wi_ensemble_2/eca_hamming.json",
                 "ensembleIds": [],
-                "precinctDataFile": "../data/wi_precinct_data.json"
+                "precinctDataFile": "../data/wi_precinct_data.json",
+                "distCorrCoeffsDir": None
             }
         ]
         print("Initializing state data")
@@ -301,6 +307,22 @@ def db_setup(state_data):
         state_obj["demographics"]["percentPacific"] = pct_pacific
         state_obj["demographics"]["percentTwoOrMore"] = pct_two_or_more
         state_obj["demographics"]["percentHispanic"] = pct_hispanic
+
+        # Generate distance measure correlations for state
+        if state_obj["distCorrCoeffsDir"] is not None:
+            other_distance_metrics = ["hamming", "entropy"]
+            dist_optimal_transport = np.loadtxt(os.path.join(state_obj["distCorrCoeffsDir"], "distance_optimal_transport.txt"), delimiter=",").flatten()
+            dist_optimal_transport = dist_optimal_transport / dist_optimal_transport.max()
+            state_obj["distCorrCoeffs"]["optimal_transport"] = 1.0
+
+            for dm in other_distance_metrics:
+                distance_file_path = os.path.join(state_obj["distCorrCoeffsDir"], f"distance_{dm}.txt")
+                if os.path.isfile(distance_file_path):
+                    dist_data = np.loadtxt(distance_file_path, delimiter=",").flatten()
+                    dist_data = dist_data / dist_data.max()
+                    corr_coeff = np.corrcoef(dist_optimal_transport, dist_data)[0, 1]
+                    state_obj["distCorrCoeffs"][dm] = corr_coeff
+        del state_obj["distCorrCoeffsDir"]
 
         # Insert state object
         db.state.insert_one(state_obj)
