@@ -18,6 +18,9 @@ public class State {
     private List<List<Integer>> ensembleClusterAssociation;
     private List<String> ensembleIds;
 
+    private Double percentRepublicanVoters;
+    private Double percentDemocraticVoters;
+    private Demographics demographics;
 
     public State() {}
 
@@ -36,6 +39,18 @@ public class State {
 
     public String getName() {
         return name;
+    }
+
+    public Double getPercentRepublicanVoters(){
+        return this.percentRepublicanVoters;
+    }
+
+    public Double getPercentDemocraticVoters(){
+        return this.percentDemocraticVoters;
+    }
+
+    public Demographics getDemographics(){
+        return this.demographics;
     }
 
     public String getDistrictPlanType(){
