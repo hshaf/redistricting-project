@@ -15,6 +15,7 @@ db = client.redistricting
 
 def main():
     # Process args
+    '''
     precinct_file_path = sys.argv[1]
     ensemble_dir_path = sys.argv[2]
     state = sys.argv[3].upper()
@@ -23,6 +24,13 @@ def main():
     num_clusters = None
     if len(sys.argv) > 6:
         num_clusters = int(sys.argv[6])
+    '''
+    precinct_file_path = "../data/az_precinct_data.json"
+    ensemble_dir_path = "../data/ensembles/az_ensemble_test_0"
+    state = "AZ"
+    ensemble_name = "AZ Ensemble 1"
+    distance_metric = "hamming"
+    num_clusters = None
 
     try:
         import pyogrio
@@ -89,19 +97,31 @@ def main():
     district_plan_data = district_summary_data(precinct_df=precinct_df, 
                                                 district_plan_files=district_plan_files, 
                                                 distance_file=os.path.join(ensemble_dir_path, f"mds_points_{distance_metric}.txt"))
-    cluster_data, cluster_assignments, centermost_plans, plans_to_render = cluster_summary_data(district_plan_data=district_plan_data,
-                                                                                                ensemble_dir_path=ensemble_dir_path,
-                                                                                                distance_metric=distance_metric,
-                                                                                                num_clusters=num_clusters
-                                                                                                )
-    files_to_render = [district_plan_files[i] for i in plans_to_render]
+    
+    clusters = list()
+    for distance_measure in ["optimal_transport", "hamming", "entropy"]:
+        if os.path.isfile(os.path.join(ensemble_dir_path, f"clusters_{distance_measure}.json")):
+            cluster_data, cluster_assignments, centermost_plans, plans_to_render = cluster_summary_data(district_plan_data=district_plan_data,
+                                                                                                        ensemble_dir_path=ensemble_dir_path,
+                                                                                                        distance_metric=distance_measure,
+                                                                                                        num_clusters=num_clusters
+                                                                                                        )
+            clusters.append({"distance_measure": distance_measure, "cluster_data": cluster_data, "cluster_assignments": cluster_assignments, "centermost_plans": centermost_plans, "plans_to_render": plans_to_render})
+    plans_to_render = list()
+    for c in clusters:
+        plans_to_render.extend(c["plans_to_render"])
+    files_to_render = [district_plan_files[i] for i in set(plans_to_render)]
+    
     boundary_db_ids = save_boundaries(precinct_df=precinct_df, district_plan_files=files_to_render)
     district_plan_db_ids = save_district_plans(district_plan_data=district_plan_data,
                                                 plans_to_render=plans_to_render,
                                                 boundary_db_ids=boundary_db_ids)
-    cluster_db_ids = save_clusters(cluster_data=cluster_data,
-                                    centermost_plans=centermost_plans,
-                                    district_plan_db_ids=district_plan_db_ids)
+    cluster_db_ids = list()
+    for c in clusters:
+        dm_cluster_db_ids = save_clusters(cluster_data=c["cluster_data"],
+                                            centermost_plans=c["centermost_plans"],
+                                            district_plan_db_ids=district_plan_db_ids)
+        cluster_db_ids.extend(dm_cluster_db_ids)
     ensemble_db_id = save_ensemble(ensemble_dir_path=ensemble_dir_path,
                                     state=state, name=ensemble_name,
                                     cluster_db_ids=cluster_db_ids,
@@ -177,7 +197,9 @@ def cluster_summary_data(district_plan_data: list, ensemble_dir_path: str, dista
     # Create cluster entries, fill in cluster center data
     cluster_data = list()
     for i, center_coords in enumerate(cluster_grouping["cluster_centers"]):
+        processed_cluster_type_name = distance_metric.split("_", maxsplit=1)[0] + "".join([w.capitalize() for w in distance_metric.split("_")[1:]])
         cluster_entry = {
+            "clusterType": processed_cluster_type_name,
             "districtPlanCount": 0,
             "districtPlanIds": [],
             "clusterCenter": center_coords,
@@ -372,6 +394,12 @@ def save_boundaries(precinct_df: geopandas.GeoDataFrame, district_plan_files: li
         
         # Create boundary by combining precincts into districts
         boundary = precinct_df.dissolve(by="district_assignment", aggfunc="sum")
+        boundary["is_maj_black"] = (boundary["pop_black"] / boundary["pop_total"]) >= 0.5
+        boundary["is_maj_asian"] = (boundary["pop_asian"] / boundary["pop_total"]) >= 0.5
+        boundary["is_maj_native"] = (boundary["pop_native"] / boundary["pop_total"]) >= 0.5
+        boundary["is_maj_pacific"] = (boundary["pop_pacific"] / boundary["pop_total"]) >= 0.5
+        boundary["is_maj_hispanic"] = (boundary["pop_hispanic"] / boundary["pop_total"]) >= 0.5
+        boundary["is_maj_min"] = (boundary["is_maj_black"] | boundary["is_maj_asian"] | boundary["is_maj_native"] | boundary["is_maj_pacific"] | boundary["is_maj_hispanic"])
         #boundary = ""
 
         # Save to database
