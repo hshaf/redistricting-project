@@ -225,9 +225,13 @@ export default function EnsembleOverview(props) {
   // Custom tooltip for cluster scatter plot
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
+      const xValue = (Number.isInteger(payload[0].payload[state.xAxisVar])) ? payload[0].payload[state.xAxisVar] : payload[0].payload[state.xAxisVar].toFixed(3);
+      const yValue = (Number.isInteger(payload[0].payload[state.yAxisVar])) ? payload[0].payload[state.yAxisVar] : payload[0].payload[state.yAxisVar].toFixed(3);
       return (
         <div className="custom-tooltip">
-          <p style={{ padding: 8 }} className="label">{`Cluster ID : ${(payload[0].payload.INDEX + 1)}`}</p>
+          <p style={{ fontSize: '14px', paddingTop: 4, paddingLeft: 4, paddingRight: 4, paddingBottom: 0 }} className="label">{`Cluster ID : ${(payload[0].payload.INDEX + 1)}`}</p>
+          <p style={{ fontSize: '14px', paddingTop: 0, paddingLeft: 4, paddingRight: 4, paddingBottom: 0 }} className="label">{`${axisLabels[state.xAxisVar]} : ${xValue}`}</p>
+          <p style={{ fontSize: '14px', paddingTop: 0, paddingLeft: 4, paddingRight: 4, paddingBottom: 4 }} className="label">{`${axisLabels[state.yAxisVar]} : ${yValue}`}</p>
         </div>
       );
     }
