@@ -27,6 +27,7 @@ public class Cluster {
     private Distances avgDistances;
     
     private AverageMajorities avgMajMinDistricts;
+    private String clusterType;
     private String boundary;
 
     public Cluster() {};
@@ -40,6 +41,10 @@ public class Cluster {
 
     public List<Double> getClusterCenter(){
         return this.clusterCenter;
+    }
+
+    public String getClusterType(){
+        return this.clusterType;
     }
 
     public AverageMajorities getAvgMajMinDistricts(){
