@@ -41,6 +41,36 @@ export default function CustomMap(props) {
       }
     }
 
+    /* For the selected state, display information and color districts for current district plan
+    or generated cluster/district plan. */
+    if (appState.selectedState === stateInitials && appState.displayedBoundary !== null) {
+      return (
+        <GeoJSON  
+          key={stateInitials + keyCount.current} 
+          data={JSON.parse(stateBoundaries)} 
+          onEachFeature={(feature, layer) => {
+            layer.on({
+              mouseover: (e) => {
+                console.log(feature);
+                e.target.bindTooltip('<b>District</b> : ' + feature.id + ', <b>Dem. Votes</b> : ' + feature.properties.vote_dem + ', <b>Rep. Votes</b> : ' + feature.properties.vote_rep).openTooltip();
+              },
+            });
+            layer.setStyle((feature.properties.vote_dem > feature.properties.vote_rep) ? { fillColor: 'blue', color: 'black', weight: 1 } : { fillColor: 'red', color: 'black', weight: 1 });
+          }}
+          eventHandlers={{
+            click: () => {
+              appStateDispatch({
+                type: AppStateActionType.SET_SELECTED_STATE,
+                payload: stateInitials
+              })
+              dataAPI.getEnsemblesForState(stateInitials);
+            }
+          }} 
+        />
+      );
+    }
+
+    // Otherwise, return state boundary for unselected state
     return (
       <GeoJSON 
         weight={1} 
