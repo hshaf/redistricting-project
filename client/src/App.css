@@ -192,3 +192,8 @@ html, body {
 #ensemble-cluster-plot-title {
   text-align: center;
 }
+
+#ensemble-cluster-container {
+  display: flex;
+  flex-direction: row;
+}

@@ -96,11 +96,7 @@ export default function EnsembleSelection(props) {
   // Ensemble-cluster association pagination options
   const associationPaginationOptions = {
     sizePerPageList: [
-      {text: '5', value: 5},
-      {text: '10', value: 10},
-      {text: '15', value: 15},
-      {text: '20', value: 20},
-      {text: 'All', value: associationData.length},
+      {text: '6', value: 6}
     ]
   }
 
@@ -122,45 +118,50 @@ export default function EnsembleSelection(props) {
 
   return (
     <Container style={{ height: '80vh' }}>
+      <div id='ensemble-cluster-container' style={{ height: '43vh' }}>
+        <div id='ensemble-cluster-plot' style={{width: '75%'}}>
+          <h4 id='ensemble-cluster-plot-title' >Cluster Count vs. Ensemble Size</h4>
+          <ResponsiveContainer width="100%" height={'90%'} >
+            <LineChart 
+              margin={{
+                top: 20,
+                right: 10,
+                bottom: 10,
+                left: 10,
+              }}
+              data={associationData}
+            >
+              <CartesianGrid />
+              <XAxis
+                type="number"
+                dataKey={"ENSEMBLE_SIZE"}
+                name={"Ensemble Size"}
+                label={{ value: "Ensemble Size", offset: -1, position: 'bottom' }} />
+              <YAxis 
+                type="number"
+                name={"Cluster Count"}
+                label={{ value: "Cluster Count", offset: -11, angle: -90, position: 'left' }} />
+              <Tooltip content={<CustomTooltip />} />
+              <Line type="linear" dataKey="CLUSTER_COUNT" stroke="#268bc9" activeDot={{ r: 8 }} />
+            </LineChart >
+          </ResponsiveContainer>
+        </div>
+        <div id='ensemble-cluster-table' style={{width: '25%'}}>
+          <BootstrapTable 
+            keyField="INDEX"
+            data={associationData}
+            columns={associationColumns}
+            pagination={paginationFactory(associationPaginationOptions)}
+            striped={true}
+          />
+        </div>
+      </div>
       <h4>Select Ensemble</h4>
       <BootstrapTable 
         keyField="INDEX"
         data={ensembleData}
         columns={ensembleSelectionColumns}
         pagination={paginationFactory(ensemblePaginationOptions)}
-        striped={true}
-      />
-      <h4 id='ensemble-cluster-plot-title' >Cluster Count vs. Ensemble Size</h4>
-      <ResponsiveContainer width="100%" height={'50%'} >
-        <LineChart 
-          margin={{
-            top: 20,
-            right: 10,
-            bottom: 10,
-            left: 10,
-          }}
-          data={associationData}
-        >
-          <CartesianGrid />
-          <XAxis
-            type="number"
-            dataKey={"ENSEMBLE_SIZE"}
-            name={"Ensemble Size"}
-            label={{ value: "Ensemble Size", offset: -1, position: 'bottom' }} />
-          <YAxis 
-            type="number"
-            name={"Cluster Count"}
-            label={{ value: "Cluster Count", offset: -11, angle: -90, position: 'left' }} />
-          <Tooltip content={<CustomTooltip />} />
-          <Line type="linear" dataKey="CLUSTER_COUNT" stroke="#268bc9" activeDot={{ r: 8 }} />
-        </LineChart >
-      </ResponsiveContainer>
-      <h4 style={{paddingBottom: '15px'}}></h4>
-      <BootstrapTable 
-        keyField="INDEX"
-        data={associationData}
-        columns={associationColumns}
-        pagination={paginationFactory(associationPaginationOptions)}
         striped={true}
       />
     </Container>
