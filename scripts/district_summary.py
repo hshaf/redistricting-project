@@ -44,11 +44,11 @@ def main():
                 "mapCenter": [34.35920229576733, -111.82765189051278],
                 "mapZoom": 7,
                 "demographics": dict(),
-                "distCorrCoeffs": dict(),
+                "distanceCorrCoeffs": dict(),
                 "ensembleClusterAssociation": "../data/ensembles/az_ensemble_2/eca_hamming.json",
                 "ensembleIds": [],
                 "precinctDataFile": "../data/az_precinct_data.json",
-                "distCorrCoeffsDir": "../data/ensembles/az_ensemble_1/"
+                "distanceCorrCoeffsDir": "../data/ensembles/az_ensemble_1/"
             },
             {
                 "_id": "VA",
@@ -59,11 +59,11 @@ def main():
                 "mapCenter": [37.47812615585515, -78.88801623378961],
                 "mapZoom": 7,
                 "demographics": dict(),
-                "distCorrCoeffs": dict(),
+                "distanceCorrCoeffs": dict(),
                 "ensembleClusterAssociation": "../data/ensembles/va_ensemble_2/eca_hamming.json",
                 "ensembleIds": [],
                 "precinctDataFile": "../data/va_precinct_data.json",
-                "distCorrCoeffsDir": None
+                "distanceCorrCoeffsDir": None
             },
             {
                 "_id": "WI",
@@ -74,11 +74,11 @@ def main():
                 "mapCenter": [44.61389658316453, -89.67045816895208],
                 "mapZoom": 7,
                 "demographics": dict(),
-                "distCorrCoeffs": dict(),
+                "distanceCorrCoeffs": dict(),
                 "ensembleClusterAssociation": "../data/ensembles/wi_ensemble_2/eca_hamming.json",
                 "ensembleIds": [],
                 "precinctDataFile": "../data/wi_precinct_data.json",
-                "distCorrCoeffsDir": None
+                "distanceCorrCoeffsDir": None
             }
         ]
         print("Initializing state data")
@@ -187,6 +187,7 @@ def cluster_summary_data(district_plan_data: list, ensemble_dir_path: str, dista
             "minRepublicanDistricts": float("inf"),
             "maxDemocraticDistricts": 0,
             "maxRepublicanDistricts": 0,
+            "avgDistances": dict(),
             "avgMajMinDistricts": {
                 "totalMajMin": 0,
                 "majBlack": 0,
@@ -199,11 +200,11 @@ def cluster_summary_data(district_plan_data: list, ensemble_dir_path: str, dista
         cluster_data.append(cluster_entry)
     
     # Assign district plans to clusters, calculate average value for each data field per cluster
-    for district_index, cluster_assignment in enumerate(cluster_grouping["predictions"]):
-        district_plan_dict = district_plan_data[district_index]
+    for district_plan_index, cluster_assignment in enumerate(cluster_grouping["predictions"]):
+        district_plan_dict = district_plan_data[district_plan_index]
         assigned_cluster_dict = cluster_data[cluster_assignment]
 
-        assigned_cluster_dict["districtPlanIds"].append(district_index)
+        assigned_cluster_dict["districtPlanIds"].append(district_plan_index)
         
         assigned_cluster_dict["minDemocraticDistricts"] = min(assigned_cluster_dict["minDemocraticDistricts"], district_plan_dict["numDemocraticDistricts"])
         assigned_cluster_dict["minRepublicanDistricts"] = min(assigned_cluster_dict["minRepublicanDistricts"], district_plan_dict["numRepublicanDistricts"])
@@ -229,6 +230,32 @@ def cluster_summary_data(district_plan_data: list, ensemble_dir_path: str, dista
         cluster_data[i]["avgMajMinDistricts"]["majNative"] /= cluster_data[i]["districtPlanCount"]
         cluster_data[i]["avgMajMinDistricts"]["majPacific"] /= cluster_data[i]["districtPlanCount"]
         cluster_data[i]["avgMajMinDistricts"]["majHispanic"] /= cluster_data[i]["districtPlanCount"]
+
+    # Calculate average pair distances for each available distance measure
+    distance_metrics = ["optimal_transport", "hamming", "entropy"]
+    distance_metric_keys = [(dm.split("_", maxsplit=1)[0] + "".join([w.capitalize() for w in dm.split("_")[1:]])) for dm in distance_metrics]
+    for i in range(num_clusters):
+        distances_dict = dict()
+        for dm, dk in zip(distance_metrics, distance_metric_keys):
+            if os.path.isfile(os.path.join(ensemble_dir_path, f"distance_{dm}.txt")):
+                with open(os.path.join(ensemble_dir_path, f"distance_{dm}.txt"), encoding="utf-8") as distance_file:
+                    # Get normalized distances
+                    distances = np.loadtxt(distance_file, delimiter=",")
+                    distances = distances / distances.max()
+                    
+                    # Find all pairs and calculate average pair distance
+                    cluster_plan_indices = cluster_data[i]["districtPlanIds"]
+                    pair_indices = list()
+                    for plan_1_index in range(len(cluster_plan_indices)):
+                        for plan_2_index in range(plan_1_index, len(cluster_plan_indices)):
+                            pair_indices.append((cluster_plan_indices[plan_1_index], cluster_plan_indices[plan_2_index]))
+                    distances_dict[dk] = distances[pair_indices].mean()
+                    #print(pair_indices)
+                    #print(distances[pair_indices])
+                    #print(f"avgDistances[{dk}] = {distances_dict[dk]}")
+            else:
+                distances_dict[dk] = None
+        cluster_data[i]["avgDistances"] = distances_dict
 
     # Identify district plans in each cluster closest to the center
     centermost_plans = list()
@@ -309,20 +336,27 @@ def db_setup(state_data):
         state_obj["demographics"]["percentHispanic"] = pct_hispanic
 
         # Generate distance measure correlations for state
-        if state_obj["distCorrCoeffsDir"] is not None:
+        if state_obj["distanceCorrCoeffsDir"] is not None:
             other_distance_metrics = ["hamming", "entropy"]
-            dist_optimal_transport = np.loadtxt(os.path.join(state_obj["distCorrCoeffsDir"], "distance_optimal_transport.txt"), delimiter=",").flatten()
+            dist_optimal_transport = np.loadtxt(os.path.join(state_obj["distanceCorrCoeffsDir"], "distance_optimal_transport.txt"), delimiter=",").flatten()
             dist_optimal_transport = dist_optimal_transport / dist_optimal_transport.max()
-            state_obj["distCorrCoeffs"]["optimal_transport"] = 1.0
+            state_obj["distanceCorrCoeffs"]["optimalTransport"] = 1.0
 
             for dm in other_distance_metrics:
-                distance_file_path = os.path.join(state_obj["distCorrCoeffsDir"], f"distance_{dm}.txt")
+                distance_file_path = os.path.join(state_obj["distanceCorrCoeffsDir"], f"distance_{dm}.txt")
                 if os.path.isfile(distance_file_path):
                     dist_data = np.loadtxt(distance_file_path, delimiter=",").flatten()
                     dist_data = dist_data / dist_data.max()
                     corr_coeff = np.corrcoef(dist_optimal_transport, dist_data)[0, 1]
-                    state_obj["distCorrCoeffs"][dm] = corr_coeff
-        del state_obj["distCorrCoeffsDir"]
+                    state_obj["distanceCorrCoeffs"][dm] = corr_coeff
+                else:
+                    state_obj["distanceCorrCoeffs"][dm] = None
+        else:
+            state_obj["distanceCorrCoeffs"]["optimalTransport"] = None
+            other_distance_metrics = ["hamming", "entropy"]
+            for dm in other_distance_metrics:
+                state_obj["distanceCorrCoeffs"][dm] = None
+        del state_obj["distanceCorrCoeffsDir"]
 
         # Insert state object
         db.state.insert_one(state_obj)
@@ -337,10 +371,12 @@ def save_boundaries(precinct_df: geopandas.GeoDataFrame, district_plan_files: li
         precinct_df["district_assignment"] = pd.Series(data=assign_dict)
         
         # Create boundary by combining precincts into districts
-        boundary = precinct_df[["geometry", "district_assignment"]].dissolve(by="district_assignment")
+        boundary = precinct_df.dissolve(by="district_assignment", aggfunc="sum")
+        #boundary = ""
 
         # Save to database
         inserted_id = db.boundary.insert_one({"category": "districtPlan", "data": boundary.to_json()}).inserted_id
+        #inserted_id = db.boundary.insert_one({"category": "districtPlan", "data": ""}).inserted_id
         boundary_db_ids.append(inserted_id)
     return boundary_db_ids
 
@@ -375,15 +411,17 @@ def save_clusters(cluster_data: list, centermost_plans: list, district_plan_db_i
 
 def save_ensemble(ensemble_dir_path: str, state: str, name: str, cluster_db_ids: list, num_district_plans: int):
     # Determine (normalized) average value for each distance measure
-    distance_measures = ["optimal_transport", "hamming", "entropy"]
-    distance_measure_keys = [(dm.split("_", maxsplit=1)[0] + "".join([w.capitalize() for w in dm.split("_")[1:]])) for dm in distance_measures]
-    distances_dict = dict([(d, None) for d in distance_measure_keys])
-    for dm, dk in zip(distance_measures, distance_measure_keys):
+    distance_metrics = ["optimal_transport", "hamming", "entropy"]
+    distance_metric_keys = [(dm.split("_", maxsplit=1)[0] + "".join([w.capitalize() for w in dm.split("_")[1:]])) for dm in distance_metrics]
+    distances_dict = dict([(d, None) for d in distance_metric_keys])
+    for dm, dk in zip(distance_metrics, distance_metric_keys):
         if os.path.isfile(os.path.join(ensemble_dir_path, f"distance_{dm}.txt")):
             with open(os.path.join(ensemble_dir_path, f"distance_{dm}.txt"), encoding="utf-8") as distance_file:
                 distances = np.loadtxt(distance_file, delimiter=",")
                 max_distance = distances.max()
                 distances_dict[dk] = distances.mean() / max_distance
+        else:
+            distances_dict[dk] = None
 
     # Save ensemble to database and record the database ID
     ensemble_obj = {
