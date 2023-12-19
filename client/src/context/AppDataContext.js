@@ -35,10 +35,14 @@ export function AppDataProvider({ children }) {
         }
       }
     }
+
+    // Sort stateData map by name of each state ('A' -> 'Z')
+    const sortedStateData = new Map([...stateData.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name)));
+
     dispatch({
       type: AppDataActionType.INIT,
       payload: {
-        "stateData": stateData,
+        "stateData": sortedStateData,
         "stateBoundaries": stateBoundaries,
         "currDistrictPlans": currDistrictPlans,
       }

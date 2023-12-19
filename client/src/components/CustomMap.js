@@ -28,7 +28,6 @@ export default function CustomMap(props) {
   let mapZoom = appState.selectedState ? appData.stateData.get(appState.selectedState)["mapZoom"] : defaultMapZoom;
 
   let stateGeoJSONs = [...appData.stateData.values()].map((stateEntry) => {
-    console.log(stateEntry);
     const stateInitials = stateEntry["initials"];
 
     // Retrieve state boundary and current district plan map
@@ -61,9 +60,8 @@ export default function CustomMap(props) {
     );
   })
 
-  // Retrieve boundary when selected cluster changes
+  // Retrieve boundary
   let getBoundary = async (boundaryID) => {
-    console.log("Retrieve boundary " + boundaryID);
     const response = await serverAPI.getBoundaryById(boundaryID);
     if (response.status === 200) {
       setBoundary(response.data.data);

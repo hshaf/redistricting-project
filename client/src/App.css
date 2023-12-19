@@ -99,7 +99,18 @@ html, body {
 #getting-started-text {
   margin: 0 auto;
   width: 85%;
-  padding-bottom: 12px;
+  padding-bottom: 35px;
+}
+
+#state-info-table {
+  margin: 0 auto;
+  width: 85%;
+  padding-bottom: 15px;
+}
+
+#state-demographics-table {
+  margin: 0 auto;
+  width: 85%;
 }
 
 #request-data-box {
