@@ -52,13 +52,14 @@ export default function CustomMap(props) {
             layer.on({
               mouseover: (e) => {
                 console.log(feature);
-                e.target.bindTooltip('<b>District</b> : ' + feature.id + ', <b>Dem. Votes</b> : ' + Math.round(feature.properties.vote_dem).toLocaleString() + ', <b>Rep. Votes</b> : ' + Math.round(feature.properties.vote_rep).toLocaleString() + ',<br /><b>Is Maj-Min</b> : ' + ((feature.properties.is_maj_min) ? 'Yes' : 'No')).openTooltip();
+                e.target.bindTooltip('<b>District</b> : ' + feature.id + ', <b>Dem. Votes</b> : ' + Math.round(feature.properties.vote_dem).toLocaleString() + ', <b>Rep. Votes</b> : ' + Math.round(feature.properties.vote_rep).toLocaleString() + ', <b>Is Maj-Min</b> : ' + ((feature.properties.is_maj_min) ? 'Yes' : 'No')).openTooltip();
               },
             });
             layer.setStyle((feature.properties.vote_dem > feature.properties.vote_rep) ? { fillColor: 'blue', color: 'black', weight: 1 } : { fillColor: 'red', color: 'black', weight: 1 });
           }}
           eventHandlers={{
             click: () => {
+              if (appState.selectedState === stateInitials) return;
               appStateDispatch({
                 type: AppStateActionType.SET_SELECTED_STATE,
                 payload: stateInitials
@@ -79,6 +80,7 @@ export default function CustomMap(props) {
         data={JSON.parse(stateBoundaries)} 
         eventHandlers={{
           click: () => {
+            if (appState.selectedState === stateInitials) return;
             appStateDispatch({
               type: AppStateActionType.SET_SELECTED_STATE,
               payload: stateInitials
