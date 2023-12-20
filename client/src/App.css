@@ -89,6 +89,10 @@ html, body {
   color: #0d6efd;
 }
 
+path.leaflet-interactive:focus {
+  outline: none;
+}
+
 #welcome-text {
   margin: 0 auto;
   width: 85%;
