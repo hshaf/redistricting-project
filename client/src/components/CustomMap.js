@@ -5,8 +5,8 @@ import { AppDataContext, AppDataDispatch } from "../context/AppDataContext";
 import ChangeView from './ChangeView';
 import serverAPI from '../serverAPI'
 
-const defaultMapCenter = [38.86438706880524, -95.47162384288428];
-const defaultMapZoom = 5;
+const defaultMapCenter = [37.80988506414483, -98.06487297329794];
+const defaultMapZoom = 4;
 
 export default function CustomMap(props) {
   // Context
@@ -52,7 +52,7 @@ export default function CustomMap(props) {
             layer.on({
               mouseover: (e) => {
                 console.log(feature);
-                e.target.bindTooltip('<b>District</b> : ' + feature.id + ', <b>Dem. Votes</b> : ' + feature.properties.vote_dem + ', <b>Rep. Votes</b> : ' + feature.properties.vote_rep).openTooltip();
+                e.target.bindTooltip('<b>District</b> : ' + feature.id + ', <b>Dem. Votes</b> : ' + Math.round(feature.properties.vote_dem).toLocaleString() + ', <b>Rep. Votes</b> : ' + Math.round(feature.properties.vote_rep).toLocaleString() + ',<br /><b>Is Maj-Min</b> : ' + ((feature.properties.is_maj_min) ? 'Yes' : 'No')).openTooltip();
               },
             });
             layer.setStyle((feature.properties.vote_dem > feature.properties.vote_rep) ? { fillColor: 'blue', color: 'black', weight: 1 } : { fillColor: 'red', color: 'black', weight: 1 });
