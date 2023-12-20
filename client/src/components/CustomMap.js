@@ -41,8 +41,8 @@ export default function CustomMap(props) {
       }
     }
 
-    /* For the selected state, display information and color districts for current district plan
-    or generated cluster/district plan. */
+    /* For the selected state, display information and color districts for
+    generated cluster/district plan. */
     if (appState.selectedState === stateInitials && appState.displayedBoundary !== null) {
       return (
         <GeoJSON  
@@ -57,6 +57,29 @@ export default function CustomMap(props) {
             });
             layer.setStyle((feature.properties.vote_dem > feature.properties.vote_rep) ? { fillColor: 'blue', color: 'black', weight: 1 } : { fillColor: 'red', color: 'black', weight: 1 });
           }}
+          eventHandlers={{
+            click: () => {
+              if (appState.selectedState === stateInitials) return;
+              appStateDispatch({
+                type: AppStateActionType.SET_SELECTED_STATE,
+                payload: stateInitials
+              })
+              dataAPI.getEnsemblesForState(stateInitials);
+            }
+          }} 
+        />
+      );
+    }
+
+    /* For the current district plan, use colors other than blue and red
+    (temp until we can add property data to current plans). */
+    if (appState.selectedState === stateInitials) {
+      return (
+        <GeoJSON 
+          weight={1} 
+          style={{color: 'black', fillColor: 'grey'}}
+          key={stateInitials + keyCount.current} 
+          data={JSON.parse(stateBoundaries)} 
           eventHandlers={{
             click: () => {
               if (appState.selectedState === stateInitials) return;
