@@ -207,8 +207,9 @@ export default function EnsembleOverview(props) {
 
   // Generate distance measure selection dropdown entries
   const distanceDropdownEntries = Object.entries(distanceLabels).map((measure) => {
+    const isMeasurePresent = (selectedEnsemble["avgDistances"][measure[0]] === null);
     return (
-      <NavDropdown.Item key={measure[0]} eventKey={measure[0]}>
+      <NavDropdown.Item key={measure[0]} eventKey={measure[0]} disabled={isMeasurePresent}>
         {(measure[0] === appState.selectedDistanceMeasure) ? measure[1] + ' •' : measure[1]}
       </NavDropdown.Item>
     )
