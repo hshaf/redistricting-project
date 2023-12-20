@@ -51,7 +51,6 @@ export default function CustomMap(props) {
           onEachFeature={(feature, layer) => {
             layer.on({
               mouseover: (e) => {
-                console.log(feature);
                 e.target.bindTooltip('<b>District</b> : ' + feature.id + ', <b>Dem. Votes</b> : ' + Math.round(feature.properties.vote_dem).toLocaleString() + ', <b>Rep. Votes</b> : ' + Math.round(feature.properties.vote_rep).toLocaleString() + ', <b>Is Maj-Min</b> : ' + ((feature.properties.is_maj_min) ? 'Yes' : 'No')).openTooltip();
               },
             });
@@ -80,6 +79,14 @@ export default function CustomMap(props) {
           style={{color: 'black', fillColor: 'grey'}}
           key={stateInitials + keyCount.current} 
           data={JSON.parse(stateBoundaries)} 
+          onEachFeature={(feature, layer) => {
+            layer.on({
+              mouseover: (e) => {
+                let districtNum = (appState.selectedState === 'WI') ? feature.properties.SEN2021 : feature.properties.DISTRICT; 
+                e.target.bindTooltip('<b>District</b> : ' + districtNum).openTooltip();
+              },
+            });
+          }}
           eventHandlers={{
             click: () => {
               if (appState.selectedState === stateInitials) return;
