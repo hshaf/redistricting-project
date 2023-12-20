@@ -252,7 +252,14 @@ export default function DataPane(props) {
     <Container id="visual-box">
       <Navbar expand="lg" className="bg-body-tertiary">
         <Container className="container-fluid">
-          <Navbar.Brand><div id="team-name-text">Team Giants</div></Navbar.Brand>
+          <img 
+            src="./new-york-giants-favicon.ico" 
+            alt="giants logo" 
+            width={45} 
+            height={45} 
+            style={{marginRight: '10px'}}
+          />
+          <Navbar.Brand>Team Giants</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="container-fluid">
